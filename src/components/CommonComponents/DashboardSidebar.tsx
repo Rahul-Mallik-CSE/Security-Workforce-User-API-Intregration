@@ -31,7 +31,14 @@ import { AiOutlineDollarCircle } from "react-icons/ai";
 import { FiSettings } from "react-icons/fi";
 import { BiSupport, BiUserPlus } from "react-icons/bi";
 import { FaShieldAlt, FaUserAlt } from "react-icons/fa";
+import { IoLogOutOutline } from "react-icons/io5";
 import LogoutModal from "./LogOutModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // import { logout } from "@/service/authService";
 export default function DashboardSidebar() {
@@ -97,9 +104,8 @@ function DashboardSidebarContent() {
       <Sidebar className="border-r-0  " collapsible="icon">
         <SidebarContent className="bg-white">
           <div
-            className={`flex items-center justify-center  px-0 md:px-4 py-4 relative ${
-              isCollapsed ? "px-2" : "gap-2"
-            }`}
+            className={`flex items-center justify-center  px-0 md:px-4 py-4 relative ${isCollapsed ? "px-2" : "gap-2"
+              }`}
           >
             <div className="flex items-center gap-3">
               <Link href="/">
@@ -141,34 +147,60 @@ function DashboardSidebarContent() {
         <SidebarFooter className={`bg-white  ${isCollapsed ? "px-2" : "px-6"}`}>
           <div className={`${isCollapsed ? "w-full" : "w-full"} py-4`}>
             {!isCollapsed ? (
-              <div className="bg-blue-50 rounded-lg p-3 flex items-center gap-4">
-                <Image
-                  src="/logo.png"
-                  alt="profile"
-                  width={44}
-                  height={44}
-                  className="rounded-full object-cover"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-base font-semibold">Jhon Marcel</p>
-                      <p className="text-sm text-gray-400">Premium</p>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="bg-blue-50 rounded-lg p-1 flex items-center gap-4 cursor-pointer hover:bg-blue-100 transition-colors">
+                    <Image
+                      src="/logo.png"
+                      alt="profile"
+                      width={34}
+                      height={34}
+                      className="rounded-full object-cover"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-semibold">Jhon Marcel</p>
+                          <p className="text-xs text-gray-400">Premium</p>
+                        </div>
+                        <div className="text-gray-500">▾</div>
+                      </div>
                     </div>
-                    <div className="text-gray-500">▾</div>
                   </div>
-                </div>
-              </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem
+                    onClick={() => setIsLogoutModalOpen(true)}
+                    className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                  >
+                    <IoLogOutOutline className="mr-2 h-4 w-4" />
+                    <span>Log Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <div className="flex items-center justify-center py-2">
-                <div className="rounded-full p-1 bg-blue-100">
-                  <FaUserAlt className="h-4 w-4" />
-                </div>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="flex items-center justify-center py-2 cursor-pointer">
+                    <div className="rounded-full p-1 bg-blue-100 hover:bg-blue-200 transition-colors">
+                      <FaUserAlt className="h-4 w-4" />
+                    </div>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem
+                    onClick={() => setIsLogoutModalOpen(true)}
+                    className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                  >
+                    <IoLogOutOutline className="mr-2 h-4 w-4" />
+                    <span>Log Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
 
             <div className="mt-4">
-              <button className="w-full bg-white border border-blue-100 rounded-lg py-3 flex items-center justify-center gap-3 text-blue-800 font-medium">
+              <button className="w-full bg-white border border-blue-100 rounded-lg py-1 flex items-center justify-center gap-3 text-blue-800 font-medium">
                 <span className="text-xl">👑</span>
                 {!isCollapsed && <span>Upgrade Plan</span>}
               </button>
