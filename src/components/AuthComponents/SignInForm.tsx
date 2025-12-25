@@ -7,16 +7,40 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLoginMutation } from "@/redux/freatures/authAPI";
+import { saveTokens } from "@/services/authService";
+import { toast } from "react-toastify";
 
 const SignInForm = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [login, { isLoading }] = useLoginMutation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle sign in logic here
-    console.log("Sign in with:", { email, password });
+
+    try {
+      const response = await login({ email, password }).unwrap();
+
+      if (response.success) {
+        // Save the access token
+        await saveTokens(response.access);
+
+        // Show success toast
+        toast.success(response.message);
+
+        console.log("Login successful:", response);
+
+        // Redirect to dashboard
+        router.push("/job-management");
+      }
+    } catch (error: any) {
+      // Handle error response
+      const errorMessage =
+        error?.data?.message || "Login failed. Please try again.";
+      toast.error(errorMessage);
+    }
   };
 
   const handleGoogleSignIn = () => {
@@ -87,9 +111,10 @@ const SignInForm = () => {
         {/* Sign In Button */}
         <Button
           type="submit"
-          className="w-full h-12 bg-blue-950 hover:bg-blue-900 text-white rounded-lg font-semibold text-base"
+          disabled={isLoading}
+          className="w-full h-12 bg-blue-950 hover:bg-blue-900 text-white rounded-lg font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Sign In
+          {isLoading ? "Signing In..." : "Sign In"}
         </Button>
 
         {/* Divider */}
