@@ -24,16 +24,19 @@ const SignInForm = () => {
       const response = await login({ email, password }).unwrap();
 
       if (response.success) {
-        // Save the access token
+        // Save the access token to both cookies and localStorage
         await saveTokens(response.access);
+        localStorage.setItem("accessToken", response.access);
 
         // Show success toast
         toast.success(response.message || "Login successful!");
 
         console.log("Login successful:", response);
 
-        // Small delay to ensure cookie is set before redirect
-        router.push("/");
+        // Small delay to ensure token is saved before redirect
+        setTimeout(() => {
+          router.push("/");
+        }, 100);
       }
     } catch (error: any) {
       // Handle error response
