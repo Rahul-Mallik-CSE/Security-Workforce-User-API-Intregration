@@ -4,6 +4,15 @@ import baseApi from "../api/baseAPI";
 
 const jobManagementAPI = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    // Get all job posts
+    getJobPosts: builder.query({
+      query: () => ({
+        url: `api/jobs/job-posts/`,
+        method: "GET",
+      }),
+      providesTags: ["Job"],
+    }),
+
     // Get license types
     getLicenseTypes: builder.query({
       query: () => ({
@@ -38,6 +47,7 @@ const jobManagementAPI = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetJobPostsQuery,
   useGetLicenseTypesQuery,
   useGetCertificateTypesQuery,
   useCreateJobPostMutation,

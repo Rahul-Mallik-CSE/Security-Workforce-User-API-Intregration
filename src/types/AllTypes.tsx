@@ -81,6 +81,68 @@ export interface JobManagementData {
   status: "Tasked" | "In Progress" | "Untasked";
 }
 
+// API Response Types
+export interface JobPostAPIResponse {
+  id: number;
+  applications: any[];
+  job_provider: {
+    id: number;
+    company: {
+      id: number;
+      first_name: string;
+      email: string;
+      is_email_varified: boolean;
+      create_at: string;
+      updated_at: string;
+      image: string | null;
+      last_activity: string;
+      user_type: string;
+      gender: string;
+      is_admin_aproved: boolean;
+      is_admin_rejected: boolean;
+      is_subscribe: boolean;
+    };
+    company_name: string | null;
+    phone_number: string | null;
+    average_rating_main: string;
+    average_comunication: string;
+    average_reliability: string;
+    average_pay_rate: string;
+    average_professionalism: string;
+    average_job_support: string;
+  };
+  selected_list: any[];
+  job_title: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  job_date: string;
+  start_time: string;
+  end_time: string;
+  job_duration: string;
+  pay_type: string;
+  pay_rate: string;
+  operative_required: number;
+  licence_type_requirements: number;
+  min_rating_requirements: number;
+  accreditations_requirements: number;
+  is_preferred_guard: string;
+  gender_requirements: string;
+  language_requirements: string;
+  status: string;
+  engagement_type: string;
+  provident_fund: number;
+  job_details: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface JobPostsResponse {
+  success: boolean;
+  message: string;
+  jobs_posts: JobPostAPIResponse[];
+}
+
 export interface JobDetailsData {
   id: string;
   jobTitle: string;

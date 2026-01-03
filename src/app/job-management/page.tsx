@@ -2,17 +2,24 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Eye, Trash2 } from "lucide-react";
 import CustomTable from "@/components/CommonComponents/CustomTable";
-import { TableColumn, JobManagementData } from "@/types/AllTypes";
-import { jobManagementData } from "@/data/JobManagementData";
+import {
+  TableColumn,
+  JobManagementData,
+  JobPostAPIResponse,
+} from "@/types/AllTypes";
 import { Button } from "@/components/ui/button";
+import { useGetJobPostsQuery } from "@/redux/freatures/jobManagementAPI";
 
 const JobManagementPage = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Fetch job posts from API
+  const { data: apiResponse, isLoading, isError } = useGetJobPostsQuery({});
 
   const columns: TableColumn[] = [
     { key: "jobId", label: "Job ID" },
@@ -28,13 +35,45 @@ const JobManagementPage = () => {
     { key: "action", label: "Action" },
   ];
 
-  const filteredData = jobManagementData.filter(
-    (job) =>
-      job.jobId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.status.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Transform API data to table format
+  const transformedData = useMemo(() => {
+    if (!apiResponse?.jobs_posts) return [];
+
+    return apiResponse.jobs_posts.map(
+      (job: JobPostAPIResponse): JobManagementData => ({
+        id: job.id.toString(),
+        jobId: `JOB-${job.id.toString().padStart(4, "0")}`,
+        role: job.job_title,
+        location: job.address,
+        date: job.job_date,
+        duration: `${job.job_duration} hrs`,
+        startTime: job.start_time,
+        payRate: `$${job.pay_rate}/hr`,
+        required: job.operative_required,
+        selected: job.selected_list?.length || 0,
+        status:
+          job.status === "published"
+            ? "In Progress"
+            : job.applications?.length > 0
+            ? "Tasked"
+            : "Untasked",
+      })
+    );
+  }, [apiResponse]);
+
+  // Filter data based on search query
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) return transformedData;
+
+    const query = searchQuery.toLowerCase();
+    return transformedData.filter(
+      (job) =>
+        job.jobId.toLowerCase().includes(query) ||
+        job.role.toLowerCase().includes(query) ||
+        job.location.toLowerCase().includes(query) ||
+        job.status.toLowerCase().includes(query)
+    );
+  }, [transformedData, searchQuery]);
 
   const handleViewJob = (job: JobManagementData) => {
     router.push(`/job-management/${job.id}`);
@@ -92,6 +131,28 @@ const JobManagementPage = () => {
     return item[columnKey as keyof JobManagementData];
   };
 
+  if (isLoading) {
+    return (
+      <div className="max-w-[2000px] mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-gray-600">Loading job posts...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="max-w-[2000px] mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-red-600">
+            Error loading job posts. Please try again.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-[2000px] mx-auto p-6">
       {/* Header with Title, Search and Create Button */}
@@ -127,6 +188,7 @@ const JobManagementPage = () => {
         columns={columns}
         data={filteredData}
         renderCell={renderCell}
+        itemsPerPage={20}
       />
     </div>
   );

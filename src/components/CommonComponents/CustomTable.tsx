@@ -82,6 +82,8 @@ export default function CustomTable<T extends { id: string }>({
     return pages;
   };
 
+  const showPagination = data.length > itemsPerPage;
+
   return (
     <div className="w-full">
       {/* Table */}
@@ -124,52 +126,54 @@ export default function CustomTable<T extends { id: string }>({
         </Table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-6">
-        <Pagination>
-          <PaginationContent className="flex items-center gap-2">
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => handlePageChange(currentPage - 1)}
-                className={`cursor-pointer ${
-                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                }`}
-              />
-            </PaginationItem>
-
-            {getPageNumbers().map((page, index) => (
-              <PaginationItem key={index}>
-                {page === "..." ? (
-                  <span className="px-3 py-2">...</span>
-                ) : (
-                  <PaginationLink
-                    onClick={() => handlePageChange(page as number)}
-                    isActive={currentPage === page}
-                    className={`cursor-pointer ${
-                      currentPage === page
-                        ? "bg-orange-500 text-white hover:bg-orange-600"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    {page}
-                  </PaginationLink>
-                )}
+      {/* Pagination - only show if data exceeds itemsPerPage */}
+      {showPagination && (
+        <div className="flex justify-center mt-6">
+          <Pagination>
+            <PaginationContent className="flex items-center gap-2">
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className={`cursor-pointer ${
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }`}
+                />
               </PaginationItem>
-            ))}
 
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => handlePageChange(currentPage + 1)}
-                className={`cursor-pointer ${
-                  currentPage === totalPages
-                    ? "pointer-events-none opacity-50"
-                    : ""
-                }`}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+              {getPageNumbers().map((page, index) => (
+                <PaginationItem key={index}>
+                  {page === "..." ? (
+                    <span className="px-3 py-2">...</span>
+                  ) : (
+                    <PaginationLink
+                      onClick={() => handlePageChange(page as number)}
+                      isActive={currentPage === page}
+                      className={`cursor-pointer ${
+                        currentPage === page
+                          ? "bg-orange-500 text-white hover:bg-orange-600"
+                          : "hover:bg-gray-100"
+                      }`}
+                    >
+                      {page}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className={`cursor-pointer ${
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }`}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 }
