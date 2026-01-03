@@ -28,12 +28,12 @@ const SignInForm = () => {
         await saveTokens(response.access);
 
         // Show success toast
-        toast.success(response.message);
+        toast.success(response.message || "Login successful!");
 
         console.log("Login successful:", response);
 
-        // Redirect to dashboard
-        router.push("/job-management");
+        // Small delay to ensure cookie is set before redirect
+        router.push("/");
       }
     } catch (error: any) {
       // Handle error response

@@ -39,6 +39,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { logout } from "@/services/authService";
 
 // import { logout } from "@/service/authService";
 export default function DashboardSidebar() {
@@ -57,7 +58,9 @@ function DashboardSidebarContent() {
     // Redirect to login page
     // await logout();
     // localStorage.removeItem("accessToken");
+    await logout();
     router.push("/sign-in");
+
     setIsLogoutModalOpen(false);
   };
 
@@ -104,8 +107,9 @@ function DashboardSidebarContent() {
       <Sidebar className="border-r-0  " collapsible="icon">
         <SidebarContent className="bg-white">
           <div
-            className={`flex items-center justify-center  px-0 md:px-4 py-4 relative ${isCollapsed ? "px-2" : "gap-2"
-              }`}
+            className={`flex items-center justify-center  px-0 md:px-4 py-4 relative ${
+              isCollapsed ? "px-2" : "gap-2"
+            }`}
           >
             <div className="flex items-center gap-3">
               <Link href="/">
