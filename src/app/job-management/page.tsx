@@ -6,20 +6,28 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Eye, Trash2 } from "lucide-react";
 import CustomTable from "@/components/CommonComponents/CustomTable";
+import DeleteModal from "@/components/CommonComponents/DeleteModal";
 import {
   TableColumn,
   JobManagementData,
   JobPostAPIResponse,
 } from "@/types/AllTypes";
 import { Button } from "@/components/ui/button";
-import { useGetJobPostsQuery } from "@/redux/freatures/jobManagementAPI";
+import {
+  useGetJobPostsQuery,
+  useDeleteJobPostMutation,
+} from "@/redux/freatures/jobManagementAPI";
 
 const JobManagementPage = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
   // Fetch job posts from API
   const { data: apiResponse, isLoading, isError } = useGetJobPostsQuery({});
+
+  const [deleteJobPost, { isLoading: isDeleting }] = useDeleteJobPostMutation();
 
   const columns: TableColumn[] = [
     { key: "jobId", label: "Job ID" },
@@ -80,7 +88,20 @@ const JobManagementPage = () => {
   };
 
   const handleDeleteJob = (job: JobManagementData) => {
-    console.log("Delete job:", job.id);
+    setSelectedJobId(job.id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedJobId) return;
+
+    try {
+      await deleteJobPost(selectedJobId).unwrap();
+      setShowDeleteModal(false);
+      setSelectedJobId(null);
+    } catch (error) {
+      console.error("Failed to delete job post:", error);
+    }
   };
 
   const handleCreateNewJob = () => {
@@ -189,6 +210,16 @@ const JobManagementPage = () => {
         data={filteredData}
         renderCell={renderCell}
         itemsPerPage={20}
+      />
+
+      {/* Delete Modal */}
+      <DeleteModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Job Post"
+        description="Are you sure you want to delete this job post? This action cannot be undone."
+        itemName="This job post"
       />
     </div>
   );
