@@ -7,6 +7,7 @@ import { Star } from "lucide-react";
 import { ApplicantData } from "@/types/AllTypes";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { getFullImageFullUrl } from "@/lib/utils";
 
 interface ApplicantsCardProps {
   applicant: ApplicantData;
@@ -23,16 +24,21 @@ const ApplicantsCard = ({
   showDelete = false,
   onDelete,
 }: ApplicantsCardProps) => {
+  const imageUrl =
+    getFullImageFullUrl(applicant.profileImage) || "/profile-img.png";
+  const isExternalImage = imageUrl.startsWith("http");
+
   return (
     <div className="border border-gray-200 rounded-lg p-6 flex flex-col">
       {/* Profile Image */}
       <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden">
         <Image
-          src="/profile-img.png"
+          src={imageUrl}
           alt={applicant.operativeName}
           width={80}
           height={80}
           className="w-full h-full object-cover"
+          unoptimized={isExternalImage}
         />
       </div>
 

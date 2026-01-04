@@ -177,3 +177,71 @@ export interface ContractData {
   status: "Cancelled" | "Pending" | "Complete" | "Signed";
   amendRequest: "Pending" | "Accepted" | "Reject";
 }
+
+// Job Details API Response Types
+export interface JobDetailsAPICandidate {
+  id: number;
+  first_name: string;
+  email: string;
+  is_email_varified: boolean;
+  create_at: string;
+  updated_at: string;
+  image: string | null;
+  last_activity: string;
+  user_type: string;
+  gender: string;
+  is_admin_aproved: boolean;
+  is_admin_rejected: boolean;
+  is_subscribe: boolean;
+  exprience_in_years: number;
+}
+
+export interface JobDetailsAPIApplication {
+  id: number;
+  status: string;
+  candidate: JobDetailsAPICandidate;
+  currency: string;
+  is_admin_aproved: boolean;
+  avg_rating_main: string;
+  avg_presentation_grooming: string;
+  avg_communication: string;
+  avg_reports_administration: string;
+  avg_punctuality_reliability: string;
+  avg_skills_attributes: string;
+}
+
+export interface JobDetailsAPIData {
+  id: number;
+  applications: JobDetailsAPIApplication[];
+  job_provider: any;
+  selected_list: any[];
+  job_title: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  job_date: string;
+  start_time: string;
+  end_time: string;
+  job_duration: string;
+  pay_type: string;
+  pay_rate: string;
+  operative_required: number;
+  licence_type_requirements: number;
+  min_rating_requirements: number;
+  accreditations_requirements: number;
+  is_preferred_guard: string;
+  gender_requirements: string;
+  language_requirements: string;
+  status: string;
+  engagement_type: string;
+  provident_fund: number;
+  job_details: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface JobDetailsAPIResponse {
+  success: boolean;
+  message: string;
+  data: JobDetailsAPIData;
+}

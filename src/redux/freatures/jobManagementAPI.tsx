@@ -7,7 +7,7 @@ const jobManagementAPI = baseApi.injectEndpoints({
     // Get all job posts
     getJobPosts: builder.query({
       query: () => ({
-        url: `api/jobs/job-posts/`,
+        url: `/api/jobs/job-posts/`,
         method: "GET",
       }),
       providesTags: ["Job"],
@@ -16,7 +16,7 @@ const jobManagementAPI = baseApi.injectEndpoints({
     // Get license types
     getLicenseTypes: builder.query({
       query: () => ({
-        url: `api/jobs/licence-types/`,
+        url: `/api/jobs/licence-types/`,
 
         method: "GET",
       }),
@@ -26,7 +26,7 @@ const jobManagementAPI = baseApi.injectEndpoints({
     // Get certificate types
     getCertificateTypes: builder.query({
       query: () => ({
-        url: `api/jobs/certificate-types/`,
+        url: `/api/jobs/certificate-types/`,
 
         method: "GET",
       }),
@@ -36,12 +36,21 @@ const jobManagementAPI = baseApi.injectEndpoints({
     // Create job post
     createJobPost: builder.mutation({
       query: (data) => ({
-        url: `api/jobs/job-posts/`,
+        url: `/api/jobs/job-posts/`,
 
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["Job"],
+    }),
+
+    // Get job details by ID
+    getJobDetails: builder.query({
+      query: (id) => ({
+        url: `/api/jobs/job-details/${id}/`,
+        method: "GET",
+      }),
+      providesTags: ["Job"],
     }),
   }),
 });
@@ -51,4 +60,5 @@ export const {
   useGetLicenseTypesQuery,
   useGetCertificateTypesQuery,
   useCreateJobPostMutation,
+  useGetJobDetailsQuery,
 } = jobManagementAPI;
