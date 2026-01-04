@@ -29,7 +29,7 @@ const ApplicantsCard = ({
   const isExternalImage = imageUrl.startsWith("http");
 
   return (
-    <div className="border border-gray-200 rounded-lg p-6 flex flex-col">
+    <div className="border border-gray-200 rounded-lg p-6 flex flex-col overflow-hidden">
       {/* Profile Image */}
       <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden">
         <Image
@@ -43,7 +43,7 @@ const ApplicantsCard = ({
       </div>
 
       {/* Operative Name */}
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex justify-between items-start mb-3 flex-wrap">
         <span className="text-sm font-semibold text-black">
           Operative Name :
         </span>
@@ -53,7 +53,7 @@ const ApplicantsCard = ({
       </div>
 
       {/* Rating */}
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex justify-between items-start mb-3 flex-wrap">
         <span className="text-sm font-semibold text-black">Rating :</span>
         <div className="flex items-center gap-1">
           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -62,7 +62,7 @@ const ApplicantsCard = ({
       </div>
 
       {/* Job Experience */}
-      <div className="flex justify-between items-start mb-6">
+      <div className="flex justify-between items-start mb-6 flex-wrap">
         <span className="text-sm font-semibold text-black">
           Job Experience :
         </span>
@@ -72,7 +72,7 @@ const ApplicantsCard = ({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-3 w-full mt-auto">
+      <div className="flex gap-3 w-full mt-auto flex-wrap">
         <Button className="flex-1 px-4 py-2.5 border bg-transparent border-gray-300 rounded-md flex items-center justify-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
           Chat
         </Button>
