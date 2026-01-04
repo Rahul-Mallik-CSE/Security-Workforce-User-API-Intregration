@@ -209,7 +209,7 @@ const JobManagementPage = () => {
         columns={columns}
         data={filteredData}
         renderCell={renderCell}
-        itemsPerPage={20}
+        itemsPerPage={15}
       />
 
       {/* Delete Modal */}

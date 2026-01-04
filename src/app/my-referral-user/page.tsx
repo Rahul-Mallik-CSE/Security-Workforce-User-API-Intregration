@@ -2,14 +2,17 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import CustomTable from "@/components/CommonComponents/CustomTable";
-import { TableColumn, ReferralUserData } from "@/types/AllTypes";
-import { myReferralData } from "@/data/MyReferralData";
-import { Eye, Search, Trash2 } from "lucide-react";
+import {
+  TableColumn,
+  ReferralUserData,
+  ReferralUserAPIResponse,
+} from "@/types/AllTypes";
+import { Eye, Search } from "lucide-react";
 import UserDetailsModal from "@/components/MyReferralComponents/UserDetailsModal";
-import DeleteModal from "@/components/CommonComponents/DeleteModal";
 import { Button } from "@/components/ui/button";
+import { useGetReferralUsersQuery } from "@/redux/freatures/myReferralUserAPI";
 
 const MyReferralUserPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,10 +20,46 @@ const MyReferralUserPage = () => {
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<ReferralUserData | null>(
-    null
-  );
+
+  // Fetch referral users from API
+  const {
+    data: apiResponse,
+    isLoading,
+    isError,
+  } = useGetReferralUsersQuery({});
+
+  // Transform API data to component format
+  const transformedData = useMemo(() => {
+    if (!apiResponse?.users) return [];
+
+    return apiResponse.users.map(
+      (user: ReferralUserAPIResponse): ReferralUserData => ({
+        id: user.id.toString(),
+        userName: user.first_name,
+        email: user.email,
+        joinDate: new Date(user.create_at).toLocaleDateString(),
+        subscribed: user.is_subscribe ? "Yes" : "No",
+        status: user.is_earned ? "Earned" : "Pending",
+        address: user.address || undefined,
+        purchaseDate: user.is_subscribe
+          ? new Date(user.create_at).toLocaleDateString()
+          : undefined,
+      })
+    );
+  }, [apiResponse]);
+
+  // Filter data based on search query
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) return transformedData;
+
+    const query = searchQuery.toLowerCase();
+    return transformedData.filter(
+      (user) =>
+        user.userName.toLowerCase().includes(query) ||
+        user.email.toLowerCase().includes(query) ||
+        user.status.toLowerCase().includes(query)
+    );
+  }, [transformedData, searchQuery]);
 
   const columns: TableColumn[] = [
     { key: "userName", label: "User Name", width: "20%" },
@@ -31,30 +70,36 @@ const MyReferralUserPage = () => {
     { key: "action", label: "Action", width: "13%" },
   ];
 
-  const filteredData = myReferralData.filter(
-    (user) =>
-      user.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.status.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const handleViewUser = (user: ReferralUserData) => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
 
-  const handleDeleteUser = (user: ReferralUserData) => {
-    setUserToDelete(user);
-    setIsDeleteModalOpen(true);
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen p-6">
+        <div className="max-w-[2000px] mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-gray-600">Loading referral users...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const confirmDelete = () => {
-    if (userToDelete) {
-      console.log("Deleting user:", userToDelete.id);
-      // Add actual delete logic here (e.g., API call, state update)
-      setUserToDelete(null);
-    }
-  };
+  if (isError) {
+    return (
+      <div className="min-h-screen p-6">
+        <div className="max-w-[2000px] mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-red-600">
+              Error loading referral users. Please try again.
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const renderCell = (item: ReferralUserData, columnKey: string) => {
     if (columnKey === "status") {
@@ -80,13 +125,6 @@ const MyReferralUserPage = () => {
             aria-label="View details"
           >
             <Eye className="w-5 h-5" />
-          </Button>
-          <Button
-            onClick={() => handleDeleteUser(item)}
-            className="text-gray-600 bg-transparent hover:bg-gray-50 hover:text-red-600 transition-colors"
-            aria-label="Delete user"
-          >
-            <Trash2 className="w-5 h-5" />
           </Button>
         </div>
       );
@@ -129,15 +167,6 @@ const MyReferralUserPage = () => {
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
           user={selectedUser}
-        />
-
-        {/* Delete Confirmation Modal */}
-        <DeleteModal
-          open={isDeleteModalOpen}
-          onOpenChange={setIsDeleteModalOpen}
-          onConfirm={confirmDelete}
-          title="Delete User"
-          itemName={userToDelete?.userName}
         />
       </div>
     </div>

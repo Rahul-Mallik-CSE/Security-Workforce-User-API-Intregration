@@ -6,7 +6,7 @@ import { useState } from "react";
 import CustomTable from "@/components/CommonComponents/CustomTable";
 import { payrollData } from "@/data/PayrollData";
 import { TableColumn, PayrollData } from "@/types/AllTypes";
-import { Search, Download } from "lucide-react";
+import { Search, Download, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const PayrollPage = () => {
@@ -50,9 +50,9 @@ const PayrollPage = () => {
       case "action":
         return (
           <div className="flex items-center gap-2">
-            {/* <button className="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+            <button className="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
               <Eye className="w-4 h-4 text-gray-600" />
-            </button> */}
+            </button>
             <Button className="p-0.5 bg-transparent hover:bg-gray-100 rounded-md transition-colors">
               <Download className="w-4 h-4 text-gray-600" />
             </Button>

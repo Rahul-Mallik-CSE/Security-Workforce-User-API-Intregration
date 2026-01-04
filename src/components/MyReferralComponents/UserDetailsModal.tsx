@@ -71,14 +71,14 @@ const UserDetailsModal = ({
           </div>
 
           {/* Purchase Date */}
-          <div className="flex items-center justify-between py-3 border-b border-gray-200">
+          {/* <div className="flex items-center justify-between py-3 border-b border-gray-200">
             <label className="text-sm font-medium text-gray-700">
               Purchase Date :
             </label>
             <div className="text-sm text-gray-600">
               {user.purchaseDate || "N/A"}
             </div>
-          </div>
+          </div> */}
 
           {/* Status */}
           <div className="flex items-center justify-between py-3 border-b border-gray-200">
@@ -96,13 +96,6 @@ const UserDetailsModal = ({
                 {user.status}
               </span>
             </div>
-          </div>
-
-          {/* Message Button */}
-          <div className="pt-6">
-            <button className="w-full bg-[#1e3a5f] hover:bg-[#2d4a6f] text-white py-2.5 rounded-lg font-medium transition-colors">
-              Message
-            </button>
           </div>
         </div>
       </DialogContent>

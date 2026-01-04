@@ -246,3 +246,25 @@ export interface JobDetailsAPIResponse {
   message: string;
   data: JobDetailsAPIData;
 }
+
+// Referral User API Response Types
+export interface ReferralUserAPIResponse {
+  id: number;
+  email: string;
+  first_name: string;
+  phone: string | null;
+  is_email_varified: boolean;
+  user_type: string;
+  is_subscribe: boolean;
+  is_earned: boolean;
+  gender: string;
+  language: string | null;
+  address: string;
+  create_at: string;
+}
+
+export interface ReferralUsersAPIResponse {
+  success: boolean;
+  message: string;
+  users: ReferralUserAPIResponse[];
+}
