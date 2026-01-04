@@ -156,6 +156,7 @@ export interface JobDetailsData {
   minimumRating: string;
   usePreferredOperatives: string;
   description: string;
+  status?: "Tasked" | "In Progress" | "Untasked";
 }
 
 export interface ApplicantData {

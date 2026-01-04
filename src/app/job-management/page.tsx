@@ -133,14 +133,14 @@ const JobManagementPage = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleViewJob(item)}
-            className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+            className="cursor-pointer p-1.5 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
             aria-label="View job"
           >
             <Eye className="w-5 h-5" />
           </button>
           <button
             onClick={() => handleDeleteJob(item)}
-            className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 hover:text-red-600 transition-colors"
+            className="cursor-pointer p-1.5 rounded-full hover:bg-gray-100 text-gray-600 hover:text-red-600 transition-colors"
             aria-label="Delete job"
           >
             <Trash2 className="w-5 h-5" />

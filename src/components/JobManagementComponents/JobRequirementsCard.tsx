@@ -6,12 +6,29 @@ import React from "react";
 import { Star } from "lucide-react";
 import { JobDetailsData } from "@/types/AllTypes";
 import { Button } from "../ui/button";
+import { useCompleteJobSelectionMutation } from "@/redux/freatures/jobManagementAPI";
 
 interface JobRequirementsCardProps {
   jobDetails: JobDetailsData;
+  jobId: string;
 }
 
-const JobRequirementsCard = ({ jobDetails }: JobRequirementsCardProps) => {
+const JobRequirementsCard = ({
+  jobDetails,
+  jobId,
+}: JobRequirementsCardProps) => {
+  const [completeJobSelection, { isLoading: isCompleting }] =
+    useCompleteJobSelectionMutation();
+
+  const handleSelectionComplete = async () => {
+    try {
+      await completeJobSelection(jobId).unwrap();
+      // Optionally show success message or redirect
+      console.log("Job selection completed successfully");
+    } catch (error) {
+      console.error("Failed to complete job selection:", error);
+    }
+  };
   return (
     <div>
       <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -131,8 +148,12 @@ const JobRequirementsCard = ({ jobDetails }: JobRequirementsCardProps) => {
       </div>
       {/* Selection Complete Button */}
       <div className="pt-6 flex justify-center">
-        <Button className=" py-2.5 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm font-medium">
-          Selection Complete
+        <Button
+          onClick={handleSelectionComplete}
+          disabled={isCompleting || jobDetails.status === "Untasked"}
+          className=" py-2.5 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isCompleting ? "Completing..." : "Selection Complete"}
         </Button>
       </div>
     </div>

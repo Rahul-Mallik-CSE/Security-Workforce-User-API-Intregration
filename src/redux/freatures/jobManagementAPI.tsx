@@ -79,6 +79,15 @@ const jobManagementAPI = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Job"],
     }),
+
+    // Complete job selection (delete job details)
+    completeJobSelection: builder.mutation({
+      query: (jobId) => ({
+        url: `/api/jobs/job-details/${jobId}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Job"],
+    }),
   }),
 });
 
@@ -91,4 +100,5 @@ export const {
   useSelectOperativeMutation,
   useRemoveOperativeMutation,
   useDeleteJobPostMutation,
+  useCompleteJobSelectionMutation,
 } = jobManagementAPI;

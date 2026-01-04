@@ -30,6 +30,13 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
     if (!apiResponse?.data) return null;
 
     const data = apiResponse.data;
+    const status =
+      data.status === "published"
+        ? "In Progress"
+        : data.applications?.length > 0
+        ? "Tasked"
+        : "Untasked";
+
     return {
       id: data.id.toString(),
       jobTitle: data.job_title,
@@ -43,6 +50,7 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
       minimumRating: data.min_rating_requirements.toString(),
       usePreferredOperatives: data.is_preferred_guard,
       description: data.job_details,
+      status: status,
     };
   }, [apiResponse]);
 
@@ -122,7 +130,7 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Job Requirements */}
-          <JobRequirementsCard jobDetails={jobDetails} />
+          <JobRequirementsCard jobDetails={jobDetails} jobId={jobId} />
 
           {/* Right Column - Applicants View */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
