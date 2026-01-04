@@ -9,6 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { OperativeTrackerData } from "@/types/AllTypes";
+import { useApproveEngagementMutation } from "@/redux/freatures/operativesTrackerAPI";
+import { useState } from "react";
 
 interface GuardDetailsModalProps {
   open: boolean;
@@ -21,7 +23,27 @@ const GuardDetailsModal = ({
   onOpenChange,
   guard,
 }: GuardDetailsModalProps) => {
+  const [approveEngagement] = useApproveEngagementMutation();
+  const [isApproving, setIsApproving] = useState(false);
+
   if (!guard) return null;
+
+  const isShiftCompleted = guard.status === "Shift Complete";
+  const isShiftEnded = guard.is_shift_end;
+
+  const handleApprove = async () => {
+    if (!isShiftCompleted || isShiftEnded) return;
+
+    setIsApproving(true);
+    try {
+      await approveEngagement(parseInt(guard.id)).unwrap();
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Failed to approve engagement:", error);
+    } finally {
+      setIsApproving(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -116,8 +138,20 @@ const GuardDetailsModal = ({
 
           {/* Approve Button */}
           <div className="pt-6">
-            <button className="w-full bg-[#6b7c93] hover:bg-[#5a6a7f] text-white py-2.5 rounded-lg font-medium transition-colors">
-              Approve
+            <button
+              onClick={handleApprove}
+              disabled={!isShiftCompleted || isApproving || isShiftEnded}
+              className={`w-full py-2.5 rounded-lg font-medium transition-colors ${
+                isShiftCompleted && !isApproving && !isShiftEnded
+                  ? "bg-black hover:bg-gray-800 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+            >
+              {isShiftEnded
+                ? "Shift ended"
+                : isApproving
+                ? "Approving..."
+                : "Approve"}
             </button>
           </div>
         </div>

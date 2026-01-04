@@ -13,18 +13,25 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { RatingCategory } from "@/types/AllTypes";
 import { Star } from "lucide-react";
 import { Button } from "../ui/button";
+import { useRateOperativeMutation } from "@/redux/freatures/operativesTrackerAPI";
 
 interface RatingModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   operativeName: string;
+  operativeId?: number;
 }
 
 const RatingModal = ({
   open,
   onOpenChange,
   operativeName,
+  operativeId,
 }: RatingModalProps) => {
+  const [rateOperative] = useRateOperativeMutation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [text, setText] = useState("");
+
   const [ratings, setRatings] = useState<RatingCategory[]>([
     { id: "1", category: "Presentation & grooming", rating: 0 },
     { id: "2", category: "Verbal & written communication", rating: 0 },
@@ -39,9 +46,42 @@ const RatingModal = ({
     );
   };
 
-  const handleSubmit = () => {
-    console.log("Ratings submitted:", ratings);
-    onOpenChange(false);
+  const handleSubmit = async () => {
+    if (!operativeId) return;
+
+    setIsSubmitting(true);
+    try {
+      const ratingData = {
+        presentation_grooming:
+          ratings.find((r) => r.category === "Presentation & grooming")
+            ?.rating || 0,
+        communication:
+          ratings.find((r) => r.category === "Verbal & written communication")
+            ?.rating || 0,
+        reports_administration:
+          ratings.find((r) => r.category === "Reports & administration")
+            ?.rating || 0,
+        punctuality_reliability:
+          ratings.find((r) => r.category === "Punctuality & reliability")
+            ?.rating || 0,
+        skills_attributes:
+          ratings.find((r) => r.category === "Skills & attributes")?.rating ||
+          0,
+        text:
+          text ||
+          "The employee consistently demonstrates exceptional professionalism, communication skills, and reliability across all tasks.",
+      };
+
+      await rateOperative({ id: operativeId, data: ratingData }).unwrap();
+      onOpenChange(false);
+      // Reset form
+      setRatings(ratings.map((r) => ({ ...r, rating: 0 })));
+      setText("");
+    } catch (error) {
+      console.error("Failed to submit rating:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleLater = () => {
@@ -93,6 +133,19 @@ const RatingModal = ({
             </div>
           ))}
 
+          {/* Comments Textarea */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Comments
+            </label>
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Add your comments here..."
+              className="w-full min-h-[80px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-200"
+            />
+          </div>
+
           {/* Buttons */}
           <div className="flex items-center gap-3 pt-6">
             <Button
@@ -103,9 +156,10 @@ const RatingModal = ({
             </Button>
             <Button
               onClick={handleSubmit}
-              className="flex-1 bg-[#1e3a5f] hover:bg-[#2d4a6f] text-white py-2.5 rounded-lg font-medium transition-colors"
+              disabled={isSubmitting}
+              className="flex-1 bg-[#1e3a5f] hover:bg-[#2d4a6f] text-white py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50"
             >
-              Submit
+              {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </div>
         </div>

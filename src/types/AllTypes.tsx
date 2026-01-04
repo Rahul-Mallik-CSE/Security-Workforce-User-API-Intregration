@@ -41,6 +41,7 @@ export interface OperativeTrackerData {
   ratePerHour?: string;
   checkIn?: string;
   checkOut?: string;
+  is_shift_end: boolean;
 }
 
 export interface RatingCategory {
@@ -267,4 +268,100 @@ export interface ReferralUsersAPIResponse {
   success: boolean;
   message: string;
   users: ReferralUserAPIResponse[];
+}
+
+// Operatives Tracker API Response Types
+export interface OperativeTrackerAPICandidate {
+  id: number;
+  first_name: string;
+  email: string;
+  is_email_varified: boolean;
+  create_at: string;
+  updated_at: string;
+  image: string | null;
+  last_activity: string;
+  user_type: string;
+  gender: string;
+  is_admin_aproved: boolean;
+  is_admin_rejected: boolean;
+  is_subscribe: boolean;
+  exprience_in_years: number;
+}
+
+export interface OperativeTrackerAPIApplication {
+  id: number;
+  status: string;
+  candidate: OperativeTrackerAPICandidate;
+  currency: string;
+  is_admin_aproved: boolean;
+  avg_rating_main: string;
+  avg_presentation_grooming: string;
+  avg_communication: string;
+  avg_reports_administration: string;
+  avg_punctuality_reliability: string;
+  avg_skills_attributes: string;
+}
+
+export interface OperativeTrackerAPIJobDetails {
+  id: number;
+  job_title: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  job_date: string;
+  start_time: string;
+  end_time: string;
+  job_duration: string;
+  pay_type: string;
+  pay_rate: string;
+  operative_required: number;
+  licence_type_requirements: number;
+  min_rating_requirements: number;
+  accreditations_requirements: number;
+  is_preferred_guard: string;
+  gender_requirements: string;
+  language_requirements: string;
+  status: string;
+  engagement_type: string;
+  provident_fund: number;
+  job_details: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OperativeTrackerAPIItem {
+  id: number;
+  job_details: OperativeTrackerAPIJobDetails;
+  application: OperativeTrackerAPIApplication;
+  operative_trackers: string; // "shift_completed", "on_duty", "notstartyet"
+  contacts_trackers: string;
+  amend_trackers: string;
+  amend_details: string;
+  new_end_time: string | null;
+  total_amount: string;
+  new_job_duration: string;
+  is_shift_end: boolean;
+  is_company_reted: boolean;
+  signature_party_a: string;
+  signature_party_b: string;
+}
+
+export interface OperativeTrackerAPIResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    success: boolean;
+    message: string;
+    operatives: OperativeTrackerAPIItem[];
+  };
+}
+
+export interface RatingData {
+  presentation_grooming: number;
+  communication: number;
+  reports_administration: number;
+  punctuality_reliability: number;
+  skills_attributes: number;
+  text: string;
 }

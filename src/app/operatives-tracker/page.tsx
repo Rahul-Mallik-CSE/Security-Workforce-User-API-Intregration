@@ -5,8 +5,12 @@
 import { useState } from "react";
 import { Search, Star, Eye, MessageSquare } from "lucide-react";
 import CustomTable from "@/components/CommonComponents/CustomTable";
-import { TableColumn, OperativeTrackerData } from "@/types/AllTypes";
-import { operativesTrackerData } from "@/data/OperativesTrackerData";
+import {
+  TableColumn,
+  OperativeTrackerData,
+  OperativeTrackerAPIItem,
+} from "@/types/AllTypes";
+import { useGetOperativeTrackersQuery } from "@/redux/freatures/operativesTrackerAPI";
 import GuardDetailsModal from "@/components/OperativesTrackerComponents/GaurdDetailsModal";
 import RatingModal from "@/components/OperativesTrackerComponents/RatingModal";
 
@@ -20,6 +24,46 @@ const OperativesTrackerPage = () => {
     null
   );
 
+  const { data: apiData, isLoading, error } = useGetOperativeTrackersQuery();
+
+  const transformAPIToComponentData = (
+    apiItem: OperativeTrackerAPIItem
+  ): OperativeTrackerData => {
+    const statusMap: {
+      [key: string]: "Shift Complete" | "On-Duty" | "Not Started";
+    } = {
+      shift_completed: "Shift Complete",
+      on_duty: "On-Duty",
+      notstartyet: "Not Started",
+    };
+
+    return {
+      id: apiItem.id.toString(),
+      jobId: apiItem.job_details.id.toString(),
+      operativeName: apiItem.application.candidate.first_name,
+      jobRole: apiItem.job_details.job_title,
+      jobDate: new Date(apiItem.job_details.job_date).toLocaleDateString(),
+      location: apiItem.job_details.address,
+      status: statusMap[apiItem.operative_trackers] || "Not Started",
+      rating: parseFloat(apiItem.application.avg_rating_main) || null,
+      duration: apiItem.job_details.job_duration,
+      ratePerHour: apiItem.job_details.pay_rate,
+      checkIn: apiItem.job_details.start_time,
+      checkOut: apiItem.new_end_time || apiItem.job_details.end_time,
+      is_shift_end: apiItem.is_shift_end,
+    };
+  };
+
+  const operativesData: OperativeTrackerData[] =
+    apiData?.results?.operatives?.map(transformAPIToComponentData) || [];
+
+  const filteredData = operativesData.filter(
+    (guard) =>
+      guard.jobId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      guard.operativeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      guard.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const columns: TableColumn[] = [
     { key: "jobId", label: "Job Id", width: "10%" },
     { key: "operativeName", label: "Operative Name", width: "13%" },
@@ -30,13 +74,6 @@ const OperativesTrackerPage = () => {
     { key: "rating", label: "Rating", width: "11%" },
     { key: "action", label: "Action", width: "15%" },
   ];
-
-  const filteredData = operativesTrackerData.filter(
-    (guard) =>
-      guard.jobId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      guard.operativeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      guard.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   const handleViewDetails = (guard: OperativeTrackerData) => {
     setSelectedGuard(guard);
@@ -104,6 +141,28 @@ const OperativesTrackerPage = () => {
     return item[columnKey as keyof OperativeTrackerData];
   };
 
+  if (isLoading) {
+    return (
+      <div className="p-6">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg">Loading operatives data...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg text-red-600">
+            Error loading operatives data
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
       {/* Header with Title and Search */}
@@ -142,6 +201,7 @@ const OperativesTrackerPage = () => {
         open={isRatingModalOpen}
         onOpenChange={setIsRatingModalOpen}
         operativeName={guardToRate?.operativeName || ""}
+        operativeId={guardToRate?.id ? parseInt(guardToRate.id) : undefined}
       />
     </div>
   );
