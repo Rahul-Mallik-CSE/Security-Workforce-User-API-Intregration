@@ -20,6 +20,7 @@ interface RatingModalProps {
   onOpenChange: (open: boolean) => void;
   operativeName: string;
   operativeId?: number;
+  status?: string;
 }
 
 const RatingModal = ({
@@ -27,6 +28,7 @@ const RatingModal = ({
   onOpenChange,
   operativeName,
   operativeId,
+  status,
 }: RatingModalProps) => {
   const [rateOperative] = useRateOperativeMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,8 +48,10 @@ const RatingModal = ({
     );
   };
 
+  const isShiftCompleted = status === "Shift Complete";
+
   const handleSubmit = async () => {
-    if (!operativeId) return;
+    if (!operativeId || !isShiftCompleted) return;
 
     setIsSubmitting(true);
     try {
@@ -156,12 +160,17 @@ const RatingModal = ({
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isShiftCompleted}
               className="flex-1 bg-[#1e3a5f] hover:bg-[#2d4a6f] text-white py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50"
             >
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </div>
+          {!isShiftCompleted && (
+            <p className="text-red-500 text-sm text-center mt-2">
+              Wait for completed
+            </p>
+          )}
         </div>
       </DialogContent>
     </Dialog>

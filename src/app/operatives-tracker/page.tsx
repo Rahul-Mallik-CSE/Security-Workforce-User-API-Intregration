@@ -202,6 +202,7 @@ const OperativesTrackerPage = () => {
         onOpenChange={setIsRatingModalOpen}
         operativeName={guardToRate?.operativeName || ""}
         operativeId={guardToRate?.id ? parseInt(guardToRate.id) : undefined}
+        status={guardToRate?.status}
       />
     </div>
   );
