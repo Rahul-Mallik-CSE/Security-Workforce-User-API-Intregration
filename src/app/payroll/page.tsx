@@ -4,13 +4,47 @@
 
 import { useState } from "react";
 import CustomTable from "@/components/CommonComponents/CustomTable";
-import { payrollData } from "@/data/PayrollData";
-import { TableColumn, PayrollData } from "@/types/AllTypes";
-import { Search, Download, Eye } from "lucide-react";
+import { TableColumn, PayrollData, PayrollAPIItem } from "@/types/AllTypes";
+import { Search, Eye, LucideBadgeDollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useGetPayrollsQuery } from "@/redux/freatures/payrollAPI";
+import PayRollDetailsModal from "@/components/PayRollComponents/PayRollDetailsModal";
+import PaidStatusChangeModal from "@/components/PayRollComponents/PaidStatusChangeModal";
 
 const PayrollPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedPayroll, setSelectedPayroll] = useState<PayrollData | null>(
+    null
+  );
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isPaidModalOpen, setIsPaidModalOpen] = useState(false);
+
+  const { data: apiData, isLoading, error } = useGetPayrollsQuery();
+
+  const transformAPIToComponentData = (
+    apiItem: PayrollAPIItem
+  ): PayrollData => {
+    const isPaid = apiItem.contacts_trackers === "not_pay";
+
+    return {
+      id: apiItem.id.toString(),
+      jobId: apiItem.job_details.id.toString(),
+      operativeName: apiItem.application.candidate.first_name,
+      duration: apiItem.job_details.job_duration + " hrs",
+      payRate: "$" + apiItem.total_amount,
+      total: "$" + apiItem.total_amount,
+      date: new Date(apiItem.job_details.job_date).toLocaleDateString(),
+      status: !isPaid ? "Paid" : "Unpaid",
+      isPaid: !isPaid,
+      email: apiItem.application.candidate.email,
+      startTime: apiItem.job_details.start_time,
+      endTime: apiItem.new_end_time || apiItem.job_details.end_time,
+      jobDetails: apiItem.job_details.job_details,
+    };
+  };
+
+  const payrollsData: PayrollData[] =
+    apiData?.results?.pay_roles?.map(transformAPIToComponentData) || [];
 
   // Define table columns
   const columns: TableColumn[] = [
@@ -25,12 +59,22 @@ const PayrollPage = () => {
   ];
 
   // Filter data based on search query
-  const filteredData = payrollData.filter(
+  const filteredData = payrollsData.filter(
     (item) =>
       item.jobId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.operativeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.status.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleViewDetails = (item: PayrollData) => {
+    setSelectedPayroll(item);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleChangePaidStatus = (item: PayrollData) => {
+    setSelectedPayroll(item);
+    setIsPaidModalOpen(true);
+  };
 
   // Custom cell renderer for special columns
   const renderCell = (item: PayrollData, columnKey: string) => {
@@ -50,11 +94,17 @@ const PayrollPage = () => {
       case "action":
         return (
           <div className="flex items-center gap-2">
-            <button className="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+            <button
+              onClick={() => handleViewDetails(item)}
+              className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
+            >
               <Eye className="w-4 h-4 text-gray-600" />
             </button>
-            <Button className="p-0.5 bg-transparent hover:bg-gray-100 rounded-md transition-colors">
-              <Download className="w-4 h-4 text-gray-600" />
+            <Button
+              onClick={() => handleChangePaidStatus(item)}
+              className="p-0.5 bg-transparent hover:bg-gray-100 rounded-md transition-colors"
+            >
+              <LucideBadgeDollarSign className="w-4 h-4 text-gray-600" />
             </Button>
           </div>
         );
@@ -62,6 +112,26 @@ const PayrollPage = () => {
         return String(item[columnKey as keyof PayrollData]);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen p-6">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg">Loading payroll data...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen p-6">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg text-red-600">Error loading payroll data</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-6 ">
@@ -89,6 +159,20 @@ const PayrollPage = () => {
           data={filteredData}
           itemsPerPage={10}
           renderCell={renderCell}
+        />
+
+        {/* Payroll Details Modal */}
+        <PayRollDetailsModal
+          open={isDetailsModalOpen}
+          onOpenChange={setIsDetailsModalOpen}
+          payroll={selectedPayroll}
+        />
+
+        {/* Paid Status Change Modal */}
+        <PaidStatusChangeModal
+          open={isPaidModalOpen}
+          onOpenChange={setIsPaidModalOpen}
+          payroll={selectedPayroll}
         />
       </div>
     </div>

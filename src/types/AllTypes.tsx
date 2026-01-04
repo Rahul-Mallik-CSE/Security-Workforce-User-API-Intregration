@@ -15,6 +15,11 @@ export interface PayrollData {
   total: string;
   date: string;
   status: "Paid" | "Unpaid";
+  isPaid: boolean;
+  email?: string;
+  startTime?: string;
+  endTime?: string;
+  jobDetails?: string;
 }
 
 export interface ReferralUserData {
@@ -364,4 +369,75 @@ export interface RatingData {
   punctuality_reliability: number;
   skills_attributes: number;
   text: string;
+}
+
+// Payroll API Response Types
+export interface PayrollAPIJobDetails {
+  id: number;
+  job_date: string;
+  start_time: string;
+  end_time: string;
+  job_duration: string;
+  provident_fund: number;
+  job_details: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PayrollAPICandidate {
+  id: number;
+  first_name: string;
+  email: string;
+  is_email_varified: boolean;
+  create_at: string;
+  updated_at: string;
+  image: string | null;
+  last_activity: string;
+  user_type: string;
+  gender: string;
+  is_admin_aproved: boolean;
+  is_admin_rejected: boolean;
+  is_subscribe: boolean;
+  exprience_in_years: number;
+}
+
+export interface PayrollAPIApplication {
+  id: number;
+  status: string;
+  candidate: PayrollAPICandidate;
+  currency: string;
+  is_admin_aproved: boolean;
+  avg_rating_main: string;
+  avg_presentation_grooming: string;
+  avg_communication: string;
+  avg_reports_administration: string;
+  avg_punctuality_reliability: string;
+  avg_skills_attributes: string;
+}
+
+export interface PayrollAPIItem {
+  id: number;
+  job_details: PayrollAPIJobDetails;
+  application: PayrollAPIApplication;
+  operative_trackers: string;
+  contacts_trackers: string;
+  amend_trackers: string;
+  amend_details: string;
+  new_end_time: string | null;
+  total_amount: string;
+  new_job_duration: string;
+  signature_party_a: string;
+  signature_party_b: string;
+  paid_a_gaurd?: boolean;
+}
+
+export interface PayrollAPIResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    success: boolean;
+    message: string;
+    pay_roles: PayrollAPIItem[];
+  };
 }
