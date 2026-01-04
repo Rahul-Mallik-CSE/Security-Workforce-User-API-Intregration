@@ -40,10 +40,6 @@ export async function middleware(request: NextRequest) {
   try {
     const decoded: any = jwtDecode(token);
 
-    // Just verify token is valid - remove role check for now
-    // You can add role-based access control later if needed
-    console.log("Token decoded successfully:", decoded);
-
     return NextResponse.next();
   } catch (error) {
     console.error("Invalid token:", error);
