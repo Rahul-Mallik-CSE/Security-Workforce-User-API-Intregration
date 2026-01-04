@@ -8,6 +8,7 @@ import { ApplicantData } from "@/types/AllTypes";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { getFullImageFullUrl } from "@/lib/utils";
+import { useSelectOperativeMutation } from "@/redux/freatures/jobManagementAPI";
 
 interface ApplicantsCardProps {
   applicant: ApplicantData;
@@ -15,6 +16,7 @@ interface ApplicantsCardProps {
   onSelect: (id: string) => void;
   showDelete?: boolean;
   onDelete?: (id: string) => void;
+  jobId: string;
 }
 
 const ApplicantsCard = ({
@@ -23,10 +25,14 @@ const ApplicantsCard = ({
   onSelect,
   showDelete = false,
   onDelete,
+  jobId,
 }: ApplicantsCardProps) => {
   const imageUrl =
     getFullImageFullUrl(applicant.profileImage) || "/profile-img.png";
   const isExternalImage = imageUrl.startsWith("http");
+
+  const [selectOperative, { isLoading: isSelecting }] =
+    useSelectOperativeMutation();
 
   return (
     <div className="border border-gray-200 rounded-lg p-6 flex flex-col overflow-hidden">
@@ -85,14 +91,25 @@ const ApplicantsCard = ({
           </Button>
         ) : (
           <Button
-            onClick={() => onSelect(applicant.id)}
+            onClick={async () => {
+              try {
+                await selectOperative({
+                  jobId: jobId,
+                  applicationId: applicant.id,
+                }).unwrap();
+                onSelect(applicant.id);
+              } catch (error) {
+                console.error("Failed to select operative:", error);
+              }
+            }}
+            disabled={isSelecting}
             className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium transition-colors ${
               isSelected
                 ? "bg-green-500 text-white hover:bg-green-600"
                 : "bg-[#1e3a5f] text-white hover:bg-[#152a47]"
             }`}
           >
-            {isSelected ? "Selected" : "Select"}
+            {isSelecting ? "Selecting..." : isSelected ? "Selected" : "Select"}
           </Button>
         )}
       </div>

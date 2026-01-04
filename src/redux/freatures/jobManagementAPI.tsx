@@ -52,6 +52,24 @@ const jobManagementAPI = baseApi.injectEndpoints({
       }),
       providesTags: ["Job"],
     }),
+
+    // Select an operative for a job
+    selectOperative: builder.mutation({
+      query: ({ jobId, applicationId }) => ({
+        url: `/api/jobs/job-select-an-operative/${jobId}/${applicationId}/`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["Job"],
+    }),
+
+    // Remove an operative from selected list
+    removeOperative: builder.mutation({
+      query: ({ jobId, applicationId }) => ({
+        url: `/api/jobs/job-select-an-operative/${jobId}/${applicationId}/`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Job"],
+    }),
   }),
 });
 
@@ -61,4 +79,6 @@ export const {
   useGetCertificateTypesQuery,
   useCreateJobPostMutation,
   useGetJobDetailsQuery,
+  useSelectOperativeMutation,
+  useRemoveOperativeMutation,
 } = jobManagementAPI;

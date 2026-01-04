@@ -129,13 +129,14 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
             <h2 className="text-2xl text-center font-semibold text-black mb-6">
               Applicants View
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               {applicants.map((applicant) => (
                 <ApplicantsCard
                   key={applicant.id}
                   applicant={applicant}
                   isSelected={selectedApplicants.includes(applicant.id)}
                   onSelect={handleSelect}
+                  jobId={jobId}
                 />
               ))}
             </div>
