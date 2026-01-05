@@ -11,6 +11,7 @@ import {
 import { PayrollData } from "@/types/AllTypes";
 import { Download } from "lucide-react";
 import { jsPDF } from "jspdf";
+import { Button } from "../ui/button";
 
 interface PayRollDetailsModalProps {
   open: boolean;
@@ -251,13 +252,13 @@ const PayRollDetailsModal = ({
 
           {/* Download Button */}
           <div className="pt-6">
-            <button
+            <Button
               onClick={handleDownloadPDF}
               className="w-full py-2.5 bg-[#1e3a5f] hover:bg-[#2d4a6f] text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
             >
               <Download className="w-4 h-4" />
               Download PDF
-            </button>
+            </Button>
           </div>
         </div>
       </DialogContent>

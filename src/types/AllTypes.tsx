@@ -181,8 +181,92 @@ export interface ContractData {
   operativeName: string;
   jobRole: string;
   dateCreated: string;
-  status: "Cancelled" | "Pending" | "Complete" | "Signed";
-  amendRequest: "Pending" | "Accepted" | "Reject";
+  status: "Cancelled" | "Pending" | "Complete" | "Signed" | "Not Pay";
+  amendRequest: "Pending" | "Accepted" | "Reject" | "Not Amend";
+  email?: string;
+  jobDate?: string;
+  startTime?: string;
+  endTime?: string;
+  duration?: string;
+  payRate?: string;
+  totalAmount?: string;
+  jobDetails?: string;
+  address?: string;
+  engagementType?: string;
+}
+
+// Contract API Response Types
+export interface ContractAPICandidate {
+  id: number;
+  first_name: string;
+  email: string;
+  is_email_varified: boolean;
+  create_at: string;
+  updated_at: string;
+  image: string | null;
+  last_activity: string;
+  user_type: string;
+  gender: string;
+  is_admin_aproved: boolean;
+  is_admin_rejected: boolean;
+  is_subscribe: boolean;
+  exprience_in_years: number;
+}
+
+export interface ContractAPIApplication {
+  id: number;
+  status: string;
+  candidate: ContractAPICandidate;
+  currency: string;
+  is_admin_aproved: boolean;
+  avg_rating_main: string;
+  avg_presentation_grooming: string;
+  avg_communication: string;
+  avg_reports_administration: string;
+  avg_punctuality_reliability: string;
+  avg_skills_attributes: string;
+}
+
+export interface ContractAPIJobDetails {
+  id: number;
+  job_title: string;
+  address: string;
+  job_date: string;
+  start_time: string;
+  end_time: string;
+  job_duration: string;
+  pay_type: string;
+  pay_rate: string;
+  engagement_type: string;
+  job_details: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContractAPIEngagement {
+  id: number;
+  job_details: ContractAPIJobDetails;
+  application: ContractAPIApplication;
+  operative_trackers: string;
+  contacts_trackers: string;
+  amend_trackers: string;
+  amend_details: string;
+  new_end_time: string | null;
+  total_amount: string;
+  new_job_duration: string;
+  signature_party_a: string;
+  signature_party_b: string;
+}
+
+export interface ContractsAPIResponse {
+  success: boolean;
+  message: string;
+  engagements: ContractAPIEngagement[];
+}
+
+export interface AmendContractRequest {
+  new_end_time: string;
+  detail_amendment: string;
 }
 
 // Job Details API Response Types

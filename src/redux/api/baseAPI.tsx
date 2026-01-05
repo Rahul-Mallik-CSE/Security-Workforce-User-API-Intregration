@@ -18,7 +18,15 @@ const baseAPI = createApi({
       return headers;
     },
   }),
-  tagTypes: ["User", "Auth", "Job", "Referral", "OperativeTrackers", "Payroll"],
+  tagTypes: [
+    "User",
+    "Auth",
+    "Job",
+    "Referral",
+    "OperativeTrackers",
+    "Payroll",
+    "Contract",
+  ],
   endpoints: () => ({}),
 });
 

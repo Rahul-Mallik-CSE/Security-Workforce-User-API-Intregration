@@ -15,7 +15,7 @@ interface AmendContractModalProps {
   isOpen: boolean;
   onClose: () => void;
   contractId: string;
-  onSubmit: (reason: string) => void;
+  onSubmit: (newEndTime: string, reason: string) => void;
 }
 
 const AmendContractModal: React.FC<AmendContractModalProps> = ({
@@ -25,19 +25,26 @@ const AmendContractModal: React.FC<AmendContractModalProps> = ({
   onSubmit,
 }) => {
   const [reason, setReason] = useState("");
+  const [newEndTime, setNewEndTime] = useState("");
 
   const handleSubmit = () => {
     if (!reason.trim()) {
       alert("Please provide a reason for amending the contract");
       return;
     }
-    onSubmit(reason);
+    if (!newEndTime.trim()) {
+      alert("Please provide a new end time");
+      return;
+    }
+    onSubmit(newEndTime, reason);
     setReason("");
+    setNewEndTime("");
     onClose();
   };
 
   const handleClose = () => {
     setReason("");
+    setNewEndTime("");
     onClose();
   };
 
@@ -61,6 +68,23 @@ const AmendContractModal: React.FC<AmendContractModalProps> = ({
                 {contractId}
               </span>
             </div>
+          </div>
+
+          {/* New End Time Input */}
+          <div>
+            <label
+              htmlFor="newEndTime"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              New End Time <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="newEndTime"
+              type="time"
+              value={newEndTime}
+              onChange={(e) => setNewEndTime(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
           </div>
 
           {/* Reason Textarea */}
@@ -94,7 +118,7 @@ const AmendContractModal: React.FC<AmendContractModalProps> = ({
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={reason.trim().length < 10}
+              disabled={reason.trim().length < 10 || !newEndTime}
               className="px-6 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               Submit Request

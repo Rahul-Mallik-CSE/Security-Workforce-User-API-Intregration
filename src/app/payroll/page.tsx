@@ -94,12 +94,12 @@ const PayrollPage = () => {
       case "action":
         return (
           <div className="flex items-center gap-2">
-            <button
+            <Button
               onClick={() => handleViewDetails(item)}
-              className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-0.5 bg-transparent hover:bg-gray-100 rounded-md transition-colors"
             >
               <Eye className="w-4 h-4 text-gray-600" />
-            </button>
+            </Button>
             <Button
               onClick={() => handleChangePaidStatus(item)}
               className="p-0.5 bg-transparent hover:bg-gray-100 rounded-md transition-colors"
