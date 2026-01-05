@@ -526,3 +526,37 @@ export interface PayrollAPIResponse {
     pay_roles: PayrollAPIItem[];
   };
 }
+
+// Dashboard API Response Types
+export interface DashboardOverview {
+  unticked_jobs: number;
+  jobs_in_progress: number;
+  completed_jobs: number;
+  average_rating: number;
+  industry_rating: number;
+}
+
+export interface DashboardWeeklyActivity {
+  day: string;
+  value: number;
+  date: string;
+}
+
+export interface DashboardRatingPerformance {
+  communication: number;
+  payment_reliability: number;
+  pay_rates: number;
+  Professionalism: number;
+  "Job Support": number;
+}
+
+export interface DashboardData {
+  overview: DashboardOverview;
+  weekly_activity: DashboardWeeklyActivity[];
+  rating_performance: DashboardRatingPerformance;
+}
+
+export interface DashboardAPIResponse {
+  success: boolean;
+  data: DashboardData;
+}

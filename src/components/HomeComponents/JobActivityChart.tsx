@@ -13,8 +13,13 @@ import {
   Cell,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DashboardWeeklyActivity } from "@/types/AllTypes";
 
-const data = [
+interface JobActivityChartProps {
+  weeklyActivity?: DashboardWeeklyActivity[];
+}
+
+const defaultData = [
   { day: "Mon", value: 60 },
   { day: "Tues", value: 80 },
   { day: "Wed", value: 70 },
@@ -24,7 +29,11 @@ const data = [
   { day: "Sun", value: 75 },
 ];
 
-export default function JobActivityPage() {
+export default function JobActivityPage({
+  weeklyActivity,
+}: JobActivityChartProps) {
+  const data = weeklyActivity || defaultData;
+
   return (
     <div className=" bg-white p-8">
       <Card className="w-full border-0 shadow-none">

@@ -4,8 +4,13 @@
 
 import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { DashboardRatingPerformance } from "@/types/AllTypes";
 
-const ratingData = [
+interface CompanyRatingChartProps {
+  ratingPerformance?: DashboardRatingPerformance;
+}
+
+const defaultRatingData = [
   { name: "Communication", value: 2.5, color: "#EF4444", maxValue: 5 },
   { name: "Payment reliability", value: 4.5, color: "#3B82F6", maxValue: 5 },
   { name: "Pay rates", value: 3.0, color: "#10B981", maxValue: 5 },
@@ -22,9 +27,53 @@ const donutData = [
   { value: 1, color: "#EF4444" }, // Red
 ];
 
-const averageRating = 4.5;
+export default function CompanyRatingChart({
+  ratingPerformance,
+}: CompanyRatingChartProps) {
+  // Map API data to chart format
+  const ratingData = ratingPerformance
+    ? [
+        {
+          name: "Communication",
+          value: ratingPerformance.communication,
+          color: "#EF4444",
+          maxValue: 5,
+        },
+        {
+          name: "Payment reliability",
+          value: ratingPerformance.payment_reliability,
+          color: "#3B82F6",
+          maxValue: 5,
+        },
+        {
+          name: "Pay rates",
+          value: ratingPerformance.pay_rates,
+          color: "#10B981",
+          maxValue: 5,
+        },
+        {
+          name: "Professionalism",
+          value: ratingPerformance.Professionalism,
+          color: "#1E293B",
+          maxValue: 5,
+        },
+        {
+          name: "Job Support",
+          value: ratingPerformance["Job Support"],
+          color: "#F59E0B",
+          maxValue: 5,
+        },
+      ]
+    : defaultRatingData;
 
-export default function CompanyRatingChart() {
+  // Calculate average rating from the rating data
+  const averageRating =
+    ratingData.length > 0
+      ? (
+          ratingData.reduce((sum, item) => sum + item.value, 0) /
+          ratingData.length
+        ).toFixed(1)
+      : "0.0";
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
       <h2 className="text-lg font-semibold text-black mb-6">

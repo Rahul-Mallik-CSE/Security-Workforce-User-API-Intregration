@@ -26,6 +26,7 @@ const baseAPI = createApi({
     "OperativeTrackers",
     "Payroll",
     "Contract",
+    "Dashboard",
   ],
   endpoints: () => ({}),
 });
