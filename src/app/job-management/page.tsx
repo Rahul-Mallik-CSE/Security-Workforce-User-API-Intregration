@@ -50,7 +50,7 @@ const JobManagementPage = () => {
     return apiResponse.jobs_posts.map(
       (job: JobPostAPIResponse): JobManagementData => ({
         id: job.id.toString(),
-        jobId: `JOB-${job.id.toString().padStart(4, "0")}`,
+        jobId: job.id.toString(),
         role: job.job_title,
         location: job.address,
         date: job.job_date,

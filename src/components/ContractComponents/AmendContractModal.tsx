@@ -15,6 +15,7 @@ interface AmendContractModalProps {
   isOpen: boolean;
   onClose: () => void;
   contractId: string;
+  amendStatus: string;
   onSubmit: (newEndTime: string, reason: string) => void;
 }
 
@@ -22,6 +23,7 @@ const AmendContractModal: React.FC<AmendContractModalProps> = ({
   isOpen,
   onClose,
   contractId,
+  amendStatus,
   onSubmit,
 }) => {
   const [reason, setReason] = useState("");
@@ -103,7 +105,11 @@ const AmendContractModal: React.FC<AmendContractModalProps> = ({
               rows={6}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p
+              className={`text-xs mt-1 ${
+                reason.trim().length < 10 ? "text-red-500" : "text-emerald-600"
+              }`}
+            >
               Minimum 10 characters required
             </p>
           </div>
@@ -118,7 +124,11 @@ const AmendContractModal: React.FC<AmendContractModalProps> = ({
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={reason.trim().length < 10 || !newEndTime}
+              disabled={
+                reason.trim().length < 10 ||
+                !newEndTime ||
+                amendStatus !== "not_amend"
+              }
               className="px-6 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               Submit Request

@@ -58,7 +58,7 @@ const ContractsPage = () => {
 
       const contract: ContractData = {
         id: engagement.id.toString(),
-        contractId: `CN-${engagement.id.toString().padStart(3, "0")}`,
+        contractId: engagement.id.toString(),
         operativeName: engagement.application.candidate.first_name,
         jobRole: engagement.job_details.job_title,
         dateCreated: new Date(
@@ -70,6 +70,7 @@ const ContractsPage = () => {
         }),
         status: statusMap[engagement.contacts_trackers] || "Pending",
         amendRequest: amendMap[engagement.amend_trackers] || "Not Amend",
+        originalAmendStatus: engagement.amend_trackers,
         email: engagement.application.candidate.email,
         jobDate: engagement.job_details.job_date,
         startTime: engagement.job_details.start_time,
@@ -385,6 +386,7 @@ const ContractsPage = () => {
         isOpen={isAmendModalOpen}
         onClose={() => setIsAmendModalOpen(false)}
         contractId={selectedContract?.contractId || ""}
+        amendStatus={selectedContract?.originalAmendStatus || "not_amend"}
         onSubmit={handleAmendSubmit}
       />
     </div>

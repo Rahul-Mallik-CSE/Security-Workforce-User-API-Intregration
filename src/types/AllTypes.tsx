@@ -183,6 +183,7 @@ export interface ContractData {
   dateCreated: string;
   status: "Cancelled" | "Pending" | "Complete" | "Signed" | "Not Pay";
   amendRequest: "Pending" | "Accepted" | "Reject" | "Not Amend";
+  originalAmendStatus: string;
   email?: string;
   jobDate?: string;
   startTime?: string;
