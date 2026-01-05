@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { PayrollData } from "@/types/AllTypes";
 import { Download } from "lucide-react";
+import { jsPDF } from "jspdf";
 
 interface PayRollDetailsModalProps {
   open: boolean;
@@ -25,9 +26,112 @@ const PayRollDetailsModal = ({
   if (!payroll) return null;
 
   const handleDownloadPDF = () => {
-    // PDF download functionality will be implemented by frontend
-    console.log("Downloading PDF for payroll ID:", payroll.id);
-    // You can implement PDF generation here using libraries like jsPDF or html2pdf
+    const doc = new jsPDF();
+
+    // Set up document styling
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    const lineHeight = 10;
+    let yPosition = 20;
+
+    // Title
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("Payroll Details", pageWidth / 2, yPosition, { align: "center" });
+
+    yPosition += 15;
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 10;
+
+    // Reset font for content
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+
+    // Helper function to add a row
+    const addRow = (label: string, value: string) => {
+      if (yPosition > 270) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      doc.setFont("helvetica", "bold");
+      doc.text(label, margin, yPosition);
+      doc.setFont("helvetica", "normal");
+      doc.text(value, margin + 60, yPosition);
+      yPosition += lineHeight;
+    };
+
+    // Add all payroll details
+    addRow("Job ID:", payroll.jobId);
+    addRow("Operative Name:", payroll.operativeName);
+
+    if (payroll.email) {
+      addRow("Email:", payroll.email);
+    }
+
+    addRow("Date:", payroll.date);
+
+    if (payroll.startTime) {
+      addRow("Start Time:", payroll.startTime);
+    }
+
+    if (payroll.endTime) {
+      addRow("End Time:", payroll.endTime);
+    }
+
+    addRow("Duration:", payroll.duration);
+    addRow("Pay Rate:", payroll.payRate);
+    addRow("Total:", payroll.total);
+    addRow("Status:", payroll.status);
+
+    // Job Details (if exists and needs wrapping)
+    if (payroll.jobDetails) {
+      yPosition += 5;
+      doc.setFont("helvetica", "bold");
+      doc.text("Job Details:", margin, yPosition);
+      yPosition += lineHeight;
+      doc.setFont("helvetica", "normal");
+
+      const splitDetails = doc.splitTextToSize(
+        payroll.jobDetails,
+        pageWidth - 2 * margin
+      );
+
+      splitDetails.forEach((line: string) => {
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = 20;
+        }
+        doc.text(line, margin, yPosition);
+        yPosition += lineHeight;
+      });
+    }
+
+    // Add footer
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(
+        `Generated on ${new Date().toLocaleDateString()}`,
+        margin,
+        doc.internal.pageSize.getHeight() - 10
+      );
+      doc.text(
+        `Page ${i} of ${pageCount}`,
+        pageWidth - margin - 20,
+        doc.internal.pageSize.getHeight() - 10
+      );
+    }
+
+    // Save the PDF
+    doc.save(
+      `Payroll_${payroll.jobId}_${payroll.operativeName.replace(
+        /\s+/g,
+        "_"
+      )}.pdf`
+    );
   };
 
   return (

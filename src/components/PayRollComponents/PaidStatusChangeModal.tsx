@@ -12,6 +12,7 @@ import { PayrollData } from "@/types/AllTypes";
 import { useMarkAsPaidMutation } from "@/redux/freatures/payrollAPI";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
 
 interface PaidStatusChangeModalProps {
   open: boolean;
@@ -36,8 +37,9 @@ const PaidStatusChangeModal = ({
     try {
       await markAsPaid(parseInt(payroll.id)).unwrap();
       onOpenChange(false);
+      toast.success("Marked as paid successfully");
     } catch (error) {
-      console.error("Failed to mark as paid:", error);
+      toast.error("Failed to mark as paid");
     } finally {
       setIsSubmitting(false);
     }
