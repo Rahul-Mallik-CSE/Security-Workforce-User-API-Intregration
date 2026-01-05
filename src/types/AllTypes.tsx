@@ -560,3 +560,161 @@ export interface DashboardAPIResponse {
   success: boolean;
   data: DashboardData;
 }
+
+// Contract Details API Response Types
+export interface ContractDetailsLicenceImage {
+  id: number;
+  file: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContractDetailsLicenceType {
+  id: number;
+  title: string;
+  discription: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContractDetailsLicence {
+  id: number;
+  state_or_territory: string | null;
+  licence_no: string | null;
+  expire_date: string | null;
+  created_at: string;
+  licence_type: ContractDetailsLicenceType | null;
+  licence_images: ContractDetailsLicenceImage[];
+}
+
+export interface ContractDetailsCandidate {
+  id: number;
+  first_name: string;
+  email: string;
+  phone: string | null;
+  is_email_varified: boolean;
+  create_at: string;
+  updated_at: string;
+  image: string | null;
+  last_activity: string;
+  user_type: string;
+  gender: string;
+  is_admin_aproved: boolean;
+  is_admin_rejected: boolean;
+  is_subscribe: boolean;
+  exprience_in_years: number;
+  licences: ContractDetailsLicence[];
+  accreditations: any[];
+  bank_name: string | null;
+  account_holder_name: string | null;
+  account_no: string | null;
+  bank_branch: string | null;
+}
+
+export interface ContractDetailsApplication {
+  id: number;
+  status: string;
+  candidate: ContractDetailsCandidate;
+  currency: string;
+  is_admin_aproved: boolean;
+  avg_rating_main: string;
+  avg_presentation_grooming: string;
+  avg_communication: string;
+  avg_reports_administration: string;
+  avg_punctuality_reliability: string;
+  avg_skills_attributes: string;
+}
+
+export interface ContractDetailsCompany {
+  id: number;
+  first_name: string;
+  email: string;
+  phone: string | null;
+  is_email_varified: boolean;
+  create_at: string;
+  updated_at: string;
+  image: string | null;
+  last_activity: string;
+  user_type: string;
+  gender: string;
+  is_admin_aproved: boolean;
+  is_admin_rejected: boolean;
+  is_subscribe: boolean;
+  exprience_in_years: number;
+  licences: any[];
+  accreditations: any[];
+  bank_name: string | null;
+  account_holder_name: string | null;
+  account_no: string | null;
+  bank_branch: string | null;
+}
+
+export interface ContractDetailsJobProvider {
+  id: number;
+  company: ContractDetailsCompany;
+  company_name: string | null;
+  phone_number: string | null;
+  abn_number: string | null;
+  average_rating_main: string;
+  average_comunication: string;
+  average_reliability: string;
+  average_pay_rate: string;
+  average_professionalism: string;
+  average_job_support: string;
+}
+
+export interface ContractDetailsJobDetails {
+  id: number;
+  applications: any[];
+  job_provider: ContractDetailsJobProvider;
+  selected_list: any[];
+  job_title: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  job_date: string;
+  start_time: string;
+  end_time: string;
+  job_duration: string;
+  pay_type: string;
+  pay_rate: string;
+  operative_required: number;
+  licence_type_requirements: number;
+  min_rating_requirements: number;
+  accreditations_requirements: number;
+  is_preferred_guard: string;
+  gender_requirements: string;
+  language_requirements: string;
+  status: string;
+  engagement_type: string;
+  provident_fund: number;
+  job_details: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContractDetailsEngagement {
+  id: number;
+  job_details: ContractDetailsJobDetails;
+  application: ContractDetailsApplication;
+  operative_trackers: string;
+  contacts_trackers: string;
+  amend_trackers: string;
+  amend_details: string;
+  new_end_time: string | null;
+  total_amount: string;
+  new_job_duration: string;
+  signature_party_a: string | null;
+  signature_party_b: string | null;
+}
+
+export interface ContractDetailsAPIResponse {
+  success: boolean;
+  message: string;
+  engagements: ContractDetailsEngagement;
+}
+
+export interface UpdatePayRateRequest {
+  pay_rate: number;
+}
