@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  useLicenceTypesQuery,
+  useUploadLicenceMutation,
+} from "@/redux/freatures/settingAPI";
+import { toast } from "react-toastify";
 
 interface LicenseUploadModalProps {
   isOpen: boolean;
@@ -23,6 +28,22 @@ const LicenseUploadModal: React.FC<LicenseUploadModalProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [expiryDate, setExpiryDate] = useState("");
   const [licenseType, setLicenseType] = useState("");
+  const [stateTerritory, setStateTerritory] = useState("");
+  const [licenceNo, setLicenceNo] = useState("");
+
+  const { data: licenceTypesData } = useLicenceTypesQuery();
+  const [uploadLicence, { isLoading: isUploading }] =
+    useUploadLicenceMutation();
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedFile(null);
+      setExpiryDate("");
+      setLicenseType("");
+      setStateTerritory("");
+      setLicenceNo("");
+    }
+  }, [isOpen]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -30,12 +51,27 @@ const LicenseUploadModal: React.FC<LicenseUploadModalProps> = ({
     }
   };
 
-  const handleSubmit = () => {
-    // Handle license upload logic here
-    console.log("License Type:", licenseType);
-    console.log("Expiry Date:", expiryDate);
-    console.log("File:", selectedFile);
-    onClose();
+  const handleSubmit = async () => {
+    if (!selectedFile || !licenseType || !expiryDate) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("state_or_territory", stateTerritory);
+      formData.append("licence_type", licenseType);
+      formData.append("licence_no", licenceNo);
+      formData.append("licence_images", selectedFile);
+      formData.append("expire_date", expiryDate);
+
+      await uploadLicence(formData).unwrap();
+      toast.success("Licence uploaded successfully!");
+      onClose();
+    } catch (error) {
+      toast.error("Failed to upload licence. Please try again.");
+      console.error("Upload error:", error);
+    }
   };
 
   const handleRemoveFile = () => {
@@ -63,10 +99,11 @@ const LicenseUploadModal: React.FC<LicenseUploadModalProps> = ({
               className="w-full px-3 py-2 bg-white border border-gray-300 rounded text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select your company licence type</option>
-              <option value="security-operations">Security Operations</option>
-              <option value="crowd-control">Crowd Control</option>
-              <option value="bodyguard">Bodyguard</option>
-              <option value="armed-security">Armed Security</option>
+              {licenceTypesData?.licence_types?.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.title}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -124,18 +161,43 @@ const LicenseUploadModal: React.FC<LicenseUploadModalProps> = ({
             </div>
           </div>
 
+          {/* State/Territory */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              State/Territory
+            </label>
+            <input
+              type="text"
+              placeholder="Enter state or territory"
+              value={stateTerritory}
+              onChange={(e) => setStateTerritory(e.target.value)}
+              className="w-full px-3 py-2 bg-white border border-gray-300 rounded text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Licence Number */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Licence Number
+            </label>
+            <input
+              type="text"
+              placeholder="Enter licence number"
+              value={licenceNo}
+              onChange={(e) => setLicenceNo(e.target.value)}
+              className="w-full px-3 py-2 bg-white border border-gray-300 rounded text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
           {/* License Expiry Date */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               License Expiry Date
             </label>
             <input
-              type="text"
-              placeholder="Enter your licence expiry date"
+              type="date"
               value={expiryDate}
               onChange={(e) => setExpiryDate(e.target.value)}
-              onFocus={(e) => (e.target.type = "date")}
-              onBlur={(e) => !e.target.value && (e.target.type = "text")}
               className="w-full px-3 py-2 bg-white border border-gray-300 rounded text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -145,10 +207,12 @@ const LicenseUploadModal: React.FC<LicenseUploadModalProps> = ({
         <div className="flex justify-center pt-4">
           <Button
             onClick={handleSubmit}
-            className="bg-blue-900 hover:bg-blue-800 text-white px-16 py-2 rounded text-sm"
-            disabled={!licenseType || !expiryDate || !selectedFile}
+            className="bg-blue-900 hover:bg-blue-800 text-white px-16 py-2 rounded text-sm disabled:opacity-50"
+            disabled={
+              !licenseType || !expiryDate || !selectedFile || isUploading
+            }
           >
-            Submit
+            {isUploading ? "Uploading..." : "Submit"}
           </Button>
         </div>
       </DialogContent>
