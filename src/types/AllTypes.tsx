@@ -718,3 +718,113 @@ export interface ContractDetailsAPIResponse {
 export interface UpdatePayRateRequest {
   pay_rate: number;
 }
+
+// Preferred Operatives API Response Types
+export interface PreferredOperativeLicenceImage {
+  id: number;
+  file: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PreferredOperativeLicenceType {
+  id: number;
+  title: string;
+  discription: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PreferredOperativeLicence {
+  id: number;
+  state_or_territory: string | null;
+  licence_no: string | null;
+  expire_date: string | null;
+  created_at: string;
+  licence_type: PreferredOperativeLicenceType;
+  licence_images: PreferredOperativeLicenceImage[];
+}
+
+export interface PreferredOperativeAccreditationType {
+  id: number;
+  title: string;
+  discription: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PreferredOperativeAccreditation {
+  id: number;
+  accreditation: string;
+  expire_date: string | null;
+  created_at: string;
+  updated_at: string;
+  accreditation_type: PreferredOperativeAccreditationType;
+}
+
+export interface PreferredOperativeCandidate {
+  id: number;
+  first_name: string;
+  email: string;
+  phone: string;
+  is_email_varified: boolean;
+  create_at: string;
+  updated_at: string;
+  image: string | null;
+  last_activity: string;
+  user_type: string;
+  gender: string;
+  is_admin_aproved: boolean;
+  is_admin_rejected: boolean;
+  is_subscribe: boolean;
+  exprience_in_years: number;
+  licences: PreferredOperativeLicence[];
+  accreditations: PreferredOperativeAccreditation[];
+  bank_name: string;
+  account_holder_name: string;
+  account_no: string | null;
+  bank_branch: string;
+}
+
+export interface PreferredOperativeApplication {
+  id: number;
+  status: string;
+  candidate: PreferredOperativeCandidate;
+  currency: string;
+  is_admin_aproved: boolean;
+  avg_rating_main: string;
+  avg_presentation_grooming: string;
+  avg_communication: string;
+  avg_reports_administration: string;
+  avg_punctuality_reliability: string;
+  avg_skills_attributes: string;
+}
+
+export interface PreferredOperativeAPIItem {
+  id: number;
+  application: PreferredOperativeApplication;
+  operative_trackers: string;
+  contacts_trackers: string;
+  amend_trackers: string;
+  amend_details: string;
+  job_details: number;
+  new_end_time: string;
+  total_amount: string;
+  new_job_duration: string;
+  signature_party_a: string;
+  signature_party_b: string;
+  note: string;
+}
+
+export interface PreferredOperativesAPIResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    success: boolean;
+    message: string;
+    operatives: PreferredOperativeAPIItem[];
+  };
+}

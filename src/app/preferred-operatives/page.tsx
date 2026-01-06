@@ -5,20 +5,36 @@
 import { useState } from "react";
 import { Search, MessageSquare, Trash2, Star } from "lucide-react";
 import CustomTable from "@/components/CommonComponents/CustomTable";
-import { TableColumn, PreferredOperativeData } from "@/types/AllTypes";
-import { operativesDetailsData } from "@/data/OperativesDetailsData";
+import {
+  TableColumn,
+  PreferredOperativeData,
+  PreferredOperativeAPIItem,
+} from "@/types/AllTypes";
 import OperativesDetailsModal from "@/components/PreferredOperativesComponents/OperativesDetailsModal";
 import DeleteModal from "@/components/CommonComponents/DeleteModal";
 import { Button } from "@/components/ui/button";
+import {
+  useGetPreferredOperativesQuery,
+  useDeletePreferredOperativeMutation,
+} from "@/redux/freatures/preferredOperativesAPI";
+import { toast } from "react-toastify";
 
 const PreferredOperativesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOperative, setSelectedOperative] =
-    useState<PreferredOperativeData | null>(null);
+    useState<PreferredOperativeAPIItem | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [operativeToDelete, setOperativeToDelete] =
-    useState<PreferredOperativeData | null>(null);
+    useState<PreferredOperativeAPIItem | null>(null);
+
+  const {
+    data: apiResponse,
+    isLoading,
+    error,
+  } = useGetPreferredOperativesQuery();
+  const [deleteOperative, { isLoading: isDeleting }] =
+    useDeletePreferredOperativeMutation();
 
   const columns: TableColumn[] = [
     { key: "operativeId", label: "ID No.", width: "8%" },
@@ -30,7 +46,43 @@ const PreferredOperativesPage = () => {
     { key: "action", label: "Action", width: "23%" },
   ];
 
-  const filteredData = operativesDetailsData.filter(
+  // Transform API data to match table structure
+  const operativesData: PreferredOperativeData[] =
+    apiResponse?.results?.operatives?.map((operative) => ({
+      id: String(operative.id),
+      operativeId: `OP-${operative.application.candidate.id}`,
+      operativeName: operative.application.candidate.first_name,
+      licences:
+        operative.application.candidate.licences
+          .map((l) => l.licence_type.title)
+          .join(", ") || "N/A",
+      accreditations:
+        operative.application.candidate.accreditations
+          .map((a) => a.accreditation_type.title)
+          .join(", ") || "N/A",
+      rating: parseFloat(operative.application.avg_rating_main),
+      status: operative.application.is_admin_aproved ? "Hired" : "Interested",
+      profileImage: operative.application.candidate.image || undefined,
+      state:
+        operative.application.candidate.licences[0]?.state_or_territory ||
+        "N/A",
+      jobExperience: `${operative.application.candidate.exprience_in_years} years`,
+      licenceNumber:
+        operative.application.candidate.licences[0]?.licence_no || "N/A",
+      licenceExpiryDate:
+        operative.application.candidate.licences[0]?.expire_date || "N/A",
+      securityOperations:
+        operative.application.candidate.licences.map(
+          (l) => l.licence_type.title
+        ) || [],
+      firearms:
+        operative.application.candidate.accreditations.map(
+          (a) => a.accreditation_type.title
+        ) || [],
+      otherNotes: operative.note || "",
+    })) || [];
+
+  const filteredData = operativesData.filter(
     (operative) =>
       operative.operativeName
         .toLowerCase()
@@ -40,20 +92,37 @@ const PreferredOperativesPage = () => {
   );
 
   const handleViewDetails = (operative: PreferredOperativeData) => {
-    setSelectedOperative(operative);
-    setIsDetailsModalOpen(true);
+    // Find the corresponding API item
+    const apiItem = apiResponse?.results?.operatives?.find(
+      (op) => String(op.id) === operative.id
+    );
+    if (apiItem) {
+      setSelectedOperative(apiItem);
+      setIsDetailsModalOpen(true);
+    }
   };
 
   const handleDelete = (operative: PreferredOperativeData) => {
-    setOperativeToDelete(operative);
-    setIsDeleteModalOpen(true);
+    const apiItem = apiResponse?.results?.operatives?.find(
+      (op) => String(op.id) === operative.id
+    );
+    if (apiItem) {
+      setOperativeToDelete(apiItem);
+      setIsDeleteModalOpen(true);
+    }
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (operativeToDelete) {
-      console.log("Deleting operative:", operativeToDelete.id);
-      // Add actual delete logic here (e.g., API call, state update)
-      setOperativeToDelete(null);
+      try {
+        await deleteOperative(operativeToDelete.id).unwrap();
+        toast.success("Operative deleted successfully!");
+        setOperativeToDelete(null);
+        setIsDeleteModalOpen(false);
+      } catch (error) {
+        toast.error("Failed to delete operative. Please try again.");
+        console.error("Delete error:", error);
+      }
     }
   };
 
@@ -107,6 +176,28 @@ const PreferredOperativesPage = () => {
     return item[columnKey as keyof PreferredOperativeData];
   };
 
+  if (isLoading) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading preferred operatives...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-red-600">Failed to load preferred operatives</p>
+          <p className="text-sm text-gray-500 mt-2">Please try again later</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
       {/* Header with Title and Search */}
@@ -148,7 +239,7 @@ const PreferredOperativesPage = () => {
         onOpenChange={setIsDeleteModalOpen}
         onConfirm={confirmDelete}
         title="Delete Operative"
-        itemName={operativeToDelete?.operativeName}
+        itemName={operativeToDelete?.application?.candidate?.first_name}
       />
     </div>
   );
