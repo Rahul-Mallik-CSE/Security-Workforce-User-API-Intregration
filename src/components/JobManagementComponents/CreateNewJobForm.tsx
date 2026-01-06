@@ -568,7 +568,7 @@ const CreateNewJobForm = () => {
             <SelectContent>
               <SelectItem value="male">Male</SelectItem>
               <SelectItem value="female">Female</SelectItem>
-              <SelectItem value="any">Any</SelectItem>
+              <SelectItem value="other">Any</SelectItem>
             </SelectContent>
           </Select>
         </div>
