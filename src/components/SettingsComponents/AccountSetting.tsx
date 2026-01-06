@@ -102,27 +102,33 @@ const AccountSetting = () => {
   const handleShareLink = async () => {
     try {
       const result = await getReferralCode().unwrap();
-      if (result.referral_code) {
-        const link = `${window.location.origin}/sign-in?refer_token=${result.referral_code}`;
+      if (result.code) {
+        const link = `${window.location.origin}/sign-up?refer_token=${result.code}`;
         setReferralLink(link);
         navigator.clipboard.writeText(link);
         toast.success("Referral link copied to clipboard!");
       }
-    } catch (error) {
-      toast.error("Failed to generate referral link. Please try again.");
-      console.error("Referral code error:", error);
-    }
+    } catch (error) {}
   };
 
-  const handleDownload = (fileUrl: string, fileName: string) => {
-    const fullUrl = getFullImageFullUrl(fileUrl);
-    const link = document.createElement("a");
-    link.href = fullUrl;
-    link.download = fileName;
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async (fileUrl: string, fileName: string) => {
+    try {
+      const fullUrl = getFullImageFullUrl(fileUrl);
+      const response = await fetch(fullUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success("File downloaded successfully!");
+    } catch (error) {
+      toast.error("Failed to download file. Please try again.");
+      console.error("Download error:", error);
+    }
   };
 
   if (isLoading) {
