@@ -50,6 +50,34 @@ interface ReferralCodeResponse {
   referral_code: string;
 }
 
+interface InvoicePlan {
+  id: number;
+  duraton_day: number;
+  price: string;
+  discriptions: string;
+  plan_for: string;
+  benefits: number[];
+}
+
+interface InvoiceItem {
+  id: number;
+  invoice_date: string;
+  price: string;
+  end_date: string;
+  is_finished: boolean;
+  is_earned: boolean;
+  is_deleted: boolean;
+  created_at: string;
+  updated_at: string;
+  plan: InvoicePlan;
+}
+
+interface InvoicesResponse {
+  success: boolean;
+  message: string;
+  data: InvoiceItem[];
+}
+
 const settingAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     profileDetails: builder.query<any, void>({
@@ -88,6 +116,10 @@ const settingAPI = baseAPI.injectEndpoints({
     getReferralCode: builder.query<ReferralCodeResponse, void>({
       query: () => `/api/accounts/user-refarral-code/`,
     }),
+    getInvoices: builder.query<InvoicesResponse, void>({
+      query: () => `/api/accounts/get-invoices/`,
+      providesTags: ["Billing"],
+    }),
   }),
 });
 
@@ -98,4 +130,5 @@ export const {
   useLicenceTypesQuery,
   useUploadLicenceMutation,
   useLazyGetReferralCodeQuery,
+  useGetInvoicesQuery,
 } = settingAPI;
