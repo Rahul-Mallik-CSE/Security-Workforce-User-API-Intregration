@@ -59,7 +59,7 @@ const ContractDetailsPage = () => {
 
   const handleSubmit = async () => {
     if (!uploadedSignature) {
-      alert("Please upload a signature first");
+      toast.error("Please upload a signature first");
       return;
     }
 
@@ -70,7 +70,7 @@ const ContractDetailsPage = () => {
       formData.append("signature_party_a", blob, "signature.png");
 
       await uploadSignature({ id: contractId, signature: formData }).unwrap();
-      alert("Signature uploaded successfully!");
+      toast.success("Signature uploaded successfully!");
       refetch();
     } catch (error) {
       console.error("Failed to upload signature:", error);
