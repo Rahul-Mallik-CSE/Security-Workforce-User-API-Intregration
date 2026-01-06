@@ -14,7 +14,7 @@ const preferredOperativesAPI = baseApi.injectEndpoints({
     saveOperativeNote: builder.mutation<void, { id: number; note: string }>({
       query: ({ id, note }) => ({
         url: `/api/jobs/company-perfromed-operatives/${id}/`,
-        method: "PATCH",
+        method: "PUT",
         body: { note },
       }),
       invalidatesTags: ["PreferredOperatives"],

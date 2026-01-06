@@ -190,7 +190,6 @@ const OperativesDetailsModal = ({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="write a short note"
-              disabled={hasExistingNote}
               className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
@@ -199,14 +198,9 @@ const OperativesDetailsModal = ({
           <div className="pt-4 pb-2">
             <button
               onClick={handleSaveNote}
-              disabled={hasExistingNote || isSaving || !note.trim()}
               className="w-full cursor-pointer bg-[#1e3a5f] hover:bg-[#2d4a6f] text-white py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSaving
-                ? "Saving..."
-                : hasExistingNote
-                ? "Note Already Saved"
-                : "Save"}
+              {isSaving ? "Saving..." : "Save"}
             </button>
           </div>
         </div>
