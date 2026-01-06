@@ -40,6 +40,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/services/authService";
+import { useProfileDetailsQuery } from "@/redux/freatures/settingAPI";
+import { getFullImageFullUrl } from "@/lib/utils";
 
 // import { logout } from "@/service/authService";
 export default function DashboardSidebar() {
@@ -52,6 +54,14 @@ function DashboardSidebarContent() {
   const router = useRouter();
   const pathname = usePathname();
   const { state } = useSidebar();
+  const { data: profileData } = useProfileDetailsQuery();
+
+  const userData = profileData?.data;
+  const userName = userData?.first_name || "User";
+  const userImage = userData?.image
+    ? getFullImageFullUrl(userData.image)
+    : "/logo.png";
+  const userStatus = userData?.is_subscribe ? "Premium" : "General";
 
   const handleLogout = async () => {
     // Perform logout actions here (clear tokens, etc.)
@@ -155,17 +165,20 @@ function DashboardSidebarContent() {
                 <DropdownMenuTrigger asChild>
                   <div className="bg-blue-50 rounded-lg p-1 flex items-center gap-4 cursor-pointer hover:bg-blue-100 transition-colors">
                     <Image
-                      src="/logo.png"
+                      src={userImage}
                       alt="profile"
                       width={34}
                       height={34}
                       className="rounded-full object-cover"
+                      unoptimized
                     />
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-semibold">Jhon Marcel</p>
-                          <p className="text-xs text-gray-400">Premium</p>
+                          <p className="text-sm font-semibold truncate max-w-[120px]">
+                            {userName}
+                          </p>
+                          <p className="text-xs text-gray-400">{userStatus}</p>
                         </div>
                         <div className="text-gray-500">▾</div>
                       </div>

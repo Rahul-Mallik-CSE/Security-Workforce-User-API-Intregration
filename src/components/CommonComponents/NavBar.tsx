@@ -2,25 +2,22 @@
 
 "use client";
 
-import React, { useState } from "react";
 import { Bell } from "lucide-react";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import LogoutModal from "./LogOutModal";
+import { usePathname } from "next/navigation";
+import { useProfileDetailsQuery } from "@/redux/freatures/settingAPI";
+import { getFullImageFullUrl } from "@/lib/utils";
 
 const NavBar = () => {
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const router = useRouter();
   const pathname = usePathname();
+  const { data: profileData } = useProfileDetailsQuery();
 
-  const handleLogout = async () => {
-    // Perform logout actions here (clear tokens, etc.)
-    // Redirect to login page
-    // await logout();
-    // localStorage.removeItem("accessToken");
-    router.push("/sign-in");
-    setIsLogoutModalOpen(false);
-  };
+  const userData = profileData?.data;
+  const userName = userData?.first_name || "User";
+  const userImage = userData?.image
+    ? getFullImageFullUrl(userData.image)
+    : "/logo.png";
+  const firstName = userName.split(" ")[0];
 
   if (
     pathname === "/sign-in" ||
@@ -39,7 +36,7 @@ const NavBar = () => {
         <div className="w-full flex justify-between items-center">
           <div className="flex-1">
             <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">
-              Welcome Back, <span className="text-orange-500">Jhon</span>
+              Welcome Back, <span className="text-orange-500">{firstName}</span>
             </h1>
           </div>
 
@@ -55,29 +52,22 @@ const NavBar = () => {
             <button
               className="flex items-center gap-3 bg-transparent rounded-md p-1 hover:bg-gray-50 transition-colors"
               aria-label="Profile"
-              onClick={() => setIsLogoutModalOpen(true)}
             >
               <Image
-                src="/logo.png"
+                src={userImage}
                 alt="profile"
                 width={36}
                 height={36}
                 className="rounded-full object-cover"
+                unoptimized
               />
-              <span className="text-base md:text-lg text-gray-800 font-medium">
-                Jhon Marcel
+              <span className="text-base md:text-lg text-gray-800 font-medium truncate max-w-[150px]">
+                {userName}
               </span>
             </button>
           </div>
         </div>
       </div>
-
-      {/* Logout Modal */}
-      <LogoutModal
-        isOpen={isLogoutModalOpen}
-        onClose={() => setIsLogoutModalOpen(false)}
-        onConfirm={handleLogout}
-      />
     </>
   );
 };
