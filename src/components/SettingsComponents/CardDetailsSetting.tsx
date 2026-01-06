@@ -2,33 +2,118 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  useGetCardDetailsQuery,
+  useUpdateCardDetailsMutation,
+} from "@/redux/freatures/settingAPI";
+import { toast } from "react-toastify";
 
 const CardDetailsSetting = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    cardholderName: "John Smith",
-    cardNumber: "**** **** **42 4242",
-    expiryDate: "08 / 27",
-    cvv: "***",
-    billingAddress: "123 George Street, Sydney, Australia",
+    cardholderName: "",
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+    billingAddress: "",
   });
+
+  const { data: cardData, isLoading } = useGetCardDetailsQuery();
+  const [updateCardDetails, { isLoading: isUpdating }] =
+    useUpdateCardDetailsMutation();
+
+  useEffect(() => {
+    if (cardData?.card_details) {
+      const card = cardData.card_details;
+      // Format card number with spaces (groups of 4)
+      const cardNumber = String(card.card_number);
+      const formattedCardNumber =
+        cardNumber.match(/.{1,4}/g)?.join(" ") || cardNumber;
+
+      // Format expiry date from YYYY-MM-DD to MM/YY
+      const expiryDate = card.expire_date
+        ? new Date(card.expire_date)
+            .toLocaleDateString("en-US", {
+              month: "2-digit",
+              year: "2-digit",
+            })
+            .replace("/", " / ")
+        : "";
+
+      setFormData({
+        cardholderName: card.card_holder || "",
+        cardNumber: formattedCardNumber,
+        expiryDate: expiryDate,
+        cvv: String(card.cvc),
+        billingAddress: card.billing_address || "",
+      });
+    }
+  }, [cardData]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSaveChanges = () => {
-    // Save logic here
-    console.log("Saving card details:", formData);
-    setIsEditing(false);
+  const handleSaveChanges = async () => {
+    try {
+      // Convert expiry date from MM / YY to YYYY-MM-DD
+      const [month, year] = formData.expiryDate.split(" / ");
+      const fullYear = `20${year}`;
+      const expireDate = `${fullYear}-${month.padStart(2, "0")}-01`;
+
+      await updateCardDetails({
+        card_holder: formData.cardholderName,
+        card_number: formData.cardNumber.replace(/\s/g, ""),
+        expire_date: expireDate,
+        cvc: parseInt(formData.cvv),
+        billing_address: formData.billingAddress,
+      }).unwrap();
+      toast.success("Card details updated successfully!");
+      setIsEditing(false);
+    } catch (error) {
+      toast.error("Failed to update card details. Please try again.");
+      console.error("Update error:", error);
+    }
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    // Reset formData if needed
+    if (cardData?.card_details) {
+      const card = cardData.card_details;
+      const cardNumber = String(card.card_number);
+      const formattedCardNumber =
+        cardNumber.match(/.{1,4}/g)?.join(" ") || cardNumber;
+      const expiryDate = card.expire_date
+        ? new Date(card.expire_date)
+            .toLocaleDateString("en-US", {
+              month: "2-digit",
+              year: "2-digit",
+            })
+            .replace("/", " / ")
+        : "";
+
+      setFormData({
+        cardholderName: card.card_holder || "",
+        cardNumber: formattedCardNumber,
+        expiryDate: expiryDate,
+        cvv: String(card.cvc),
+        billingAddress: card.billing_address || "",
+      });
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="px-8 pb-16 max-w-md flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading card details...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-8 pb-16 max-w-md">
@@ -70,8 +155,14 @@ const CardDetailsSetting = () => {
             <input
               type="text"
               value={formData.cardNumber}
-              onChange={(e) => handleInputChange("cardNumber", e.target.value)}
+              onChange={(e) => {
+                // Allow only numbers and spaces, format as groups of 4
+                const value = e.target.value.replace(/\D/g, "");
+                const formatted = value.match(/.{1,4}/g)?.join(" ") || value;
+                handleInputChange("cardNumber", formatted);
+              }}
               placeholder="**** **** **** ****"
+              maxLength={19}
               className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           ) : (
@@ -93,8 +184,20 @@ const CardDetailsSetting = () => {
             <input
               type="text"
               value={formData.expiryDate}
-              onChange={(e) => handleInputChange("expiryDate", e.target.value)}
+              onChange={(e) => {
+                // Format as MM / YY
+                const value = e.target.value.replace(/\D/g, "");
+                if (value.length <= 2) {
+                  handleInputChange("expiryDate", value);
+                } else {
+                  handleInputChange(
+                    "expiryDate",
+                    `${value.slice(0, 2)} / ${value.slice(2, 4)}`
+                  );
+                }
+              }}
               placeholder="MM / YY"
+              maxLength={7}
               className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           ) : (
@@ -116,7 +219,10 @@ const CardDetailsSetting = () => {
             <input
               type="text"
               value={formData.cvv}
-              onChange={(e) => handleInputChange("cvv", e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "");
+                handleInputChange("cvv", value);
+              }}
               placeholder="***"
               maxLength={3}
               className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -169,9 +275,10 @@ const CardDetailsSetting = () => {
           <div className="flex gap-3 pt-4">
             <Button
               onClick={handleSaveChanges}
-              className="flex-1 bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-lg text-sm font-medium"
+              disabled={isUpdating}
+              className="flex-1 bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-lg text-sm font-medium disabled:opacity-50"
             >
-              Save & Changes
+              {isUpdating ? "Saving..." : "Save & Changes"}
             </Button>
             <Button
               onClick={handleCancel}

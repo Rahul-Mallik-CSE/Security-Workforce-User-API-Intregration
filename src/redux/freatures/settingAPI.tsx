@@ -78,6 +78,29 @@ interface InvoicesResponse {
   data: InvoiceItem[];
 }
 
+interface CardDetails {
+  id: number;
+  card_holder: string;
+  card_number: number;
+  expire_date: string;
+  cvc: number;
+  billing_address: string;
+}
+
+interface CardDetailsResponse {
+  success: boolean;
+  message: string;
+  card_details: CardDetails;
+}
+
+interface UpdateCardDetailsRequest {
+  card_holder: string;
+  card_number: string;
+  expire_date: string;
+  cvc: number;
+  billing_address: string;
+}
+
 const settingAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     profileDetails: builder.query<any, void>({
@@ -120,6 +143,18 @@ const settingAPI = baseAPI.injectEndpoints({
       query: () => `/api/accounts/get-invoices/`,
       providesTags: ["Billing"],
     }),
+    getCardDetails: builder.query<CardDetailsResponse, void>({
+      query: () => `/api/accounts/get-card-info/`,
+      providesTags: ["Billing"],
+    }),
+    updateCardDetails: builder.mutation<void, UpdateCardDetailsRequest>({
+      query: (data) => ({
+        url: `/api/accounts/get-card-info/`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Billing"],
+    }),
   }),
 });
 
@@ -131,4 +166,6 @@ export const {
   useUploadLicenceMutation,
   useLazyGetReferralCodeQuery,
   useGetInvoicesQuery,
+  useGetCardDetailsQuery,
+  useUpdateCardDetailsMutation,
 } = settingAPI;
