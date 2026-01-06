@@ -2,47 +2,73 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useProfileDetailsQuery } from "@/redux/freatures/settingAPI";
+import { useSendSupportMessageMutation } from "@/redux/freatures/supportAPI";
+import { toast } from "react-toastify";
 
 export default function SupportForm() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+
+  // Fetch user profile data
+  const { data: profileData, isLoading: profileLoading } =
+    useProfileDetailsQuery();
+  const [sendSupportMessage, { isLoading: submitting }] =
+    useSendSupportMessageMutation();
+
+  // Pre-fill name and email from user profile
+  useEffect(() => {
+    if (profileData?.data) {
+      const firstName = profileData.data.first_name || "";
+      const lastName = profileData.data.last_name || "";
+      const fullNameFromProfile = `${firstName} ${lastName}`.trim();
+
+      setFullName(fullNameFromProfile);
+      setEmail(profileData.data.email || "");
+    }
+  }, [profileData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!fullName.trim() || !email.trim() || !message.trim()) {
-      alert("Please fill out all fields before submitting.");
+      toast.error("Please fill out all fields before submitting.");
       return;
     }
 
-    setSubmitting(true);
     try {
-      // Simulate API call
-      await new Promise((r) => setTimeout(r, 800));
-      setSuccess(true);
-      setFullName("");
-      setEmail("");
-      setMessage("");
-    } catch (err) {
+      const result = await sendSupportMessage({
+        full_name: fullName,
+        email: email,
+        message: message,
+      }).unwrap();
+
+      toast.success(
+        result.message ||
+          "Your message was sent successfully. We'll get back to you soon."
+      );
+      setMessage(""); // Clear only the message field
+    } catch (err: any) {
       console.error(err);
-      alert("Something went wrong. Please try again later.");
-    } finally {
-      setSubmitting(false);
+      toast.error(
+        err?.data?.message || "Something went wrong. Please try again later."
+      );
     }
   };
+
+  if (profileLoading) {
+    return (
+      <div className="w-full max-w-xl">
+        <div className="text-center py-8 text-gray-500">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit} className="max-w-xl">
-        {success && (
-          <div className="mb-4 rounded-md bg-green-50 border border-green-200 p-3 text-green-800">
-            Your message was sent successfully. We&apos;ll get back to you soon.
-          </div>
-        )}
-
         <div className="mb-4">
           <label className="block text-base font-medium text-gray-700 mb-2">
             Full Name
@@ -52,7 +78,8 @@ export default function SupportForm() {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             placeholder="Enter your full name"
-            className="w-full h-10 px-3 rounded-md bg-white border border-transparent shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
+            disabled={submitting}
+            className="w-full h-10 px-3 rounded-md bg-white border border-transparent shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:opacity-60"
           />
         </div>
 
@@ -65,7 +92,8 @@ export default function SupportForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email address"
-            className="w-full h-10 px-3 rounded-md bg-white border border-transparent shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
+            disabled={submitting}
+            className="w-full h-10 px-3 rounded-md bg-white border border-transparent shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:opacity-60"
           />
         </div>
 
@@ -78,7 +106,8 @@ export default function SupportForm() {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Enter Messages"
             rows={5}
-            className="w-full px-3 py-2 rounded-md bg-white border border-transparent shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
+            disabled={submitting}
+            className="w-full px-3 py-2 rounded-md bg-white border border-transparent shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none disabled:opacity-60"
           />
         </div>
 
