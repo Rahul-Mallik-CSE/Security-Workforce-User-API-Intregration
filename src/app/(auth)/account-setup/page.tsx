@@ -1,15 +1,15 @@
 /** @format */
 
-import React from "react";
-import SignInForm from "@/components/AuthComponents/SignInComponents/SignInForm";
 import RightBanner from "@/components/AuthComponents/RightBanner";
+import AccountSetupSteps from "@/components/AuthComponents/SignInComponents/AccountSetupSteps";
+import React from "react";
 
-const SignInPage = () => {
+const AccountSetupPage = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Sign In Form */}
       <div className="flex-1 flex items-center justify-center p-8 bg-white">
-        <SignInForm />
+        <AccountSetupSteps />
       </div>
 
       {/* Right Side - Banner */}
@@ -20,4 +20,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default AccountSetupPage;
