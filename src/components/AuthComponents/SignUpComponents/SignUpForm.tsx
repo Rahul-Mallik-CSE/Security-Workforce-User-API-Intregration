@@ -7,16 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import CompanyInfoStep from "../SignInComponents/CompanyInfoStep";
-import LicenseUploadStep from "../SignInComponents/LicenseUploadStep";
-import VerificationSuccessStep from "../SignInComponents/VerificationSuccessStep";
-import JoinNowModal from "../SignInComponents/JoinNowModal";
-import ReferralModal from "../SignInComponents/ReferralModal";
+import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
-  const [currentStep, setCurrentStep] = useState(0); // 0 = initial signup, 1-3 = stepper steps
-  const [showJoinModal, setShowJoinModal] = useState(false);
-  const [showReferralModal, setShowReferralModal] = useState(false);
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -51,14 +45,13 @@ const SignUpForm = () => {
       return;
     }
     // Move to stepper flow
-    setCurrentStep(1);
+    router.push("/verify-otp");
   };
 
   const handleGoogleSignUp = () => {
     // Handle Google sign up logic here
     console.log("Sign up with Google");
     // After Google signup, move to stepper
-    setCurrentStep(1);
   };
 
   return (

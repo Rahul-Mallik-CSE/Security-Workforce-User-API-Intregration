@@ -1,9 +1,120 @@
 /** @format */
 
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import CompanyInfoStep from "./CompanyInfoStep";
+import LicenseUploadStep from "./LicenseUploadStep";
+import JoinNowModal from "./JoinNowModal";
+import ReferralModal from "./ReferralModal";
+import VerificationSuccessStep from "./VerificationSuccessStep";
 
 const AccountSetupSteps = () => {
-  return <div>AccountSetupSteps</div>;
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showReferralModal, setShowReferralModal] = useState(false);
+
+  const [formData, setFormData] = useState({
+    // Step 1: Company Info
+    companyName: "",
+    phoneNumber: "",
+    abnAcnNumber: "",
+    profileImage: null as File | null,
+    // Step 2: License Upload
+    stateTerritory: "",
+    licenseType: "",
+    licenseFile: null as File | null,
+    licenseExpiryDate: "",
+  });
+
+  const steps = [
+    { number: 1, label: "Personal Info" },
+    { number: 2, label: "Licence Upload" },
+    { number: 3, label: "Confirmation Screen" },
+  ];
+
+  const handleNextStep = () => {
+    if (currentStep === 3) {
+      setShowJoinModal(true);
+    } else {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handleJoinNow = () => {
+    setShowJoinModal(false);
+    setShowReferralModal(true);
+  };
+
+  const handleDoLater = () => {
+    setShowJoinModal(false);
+    setShowReferralModal(true);
+  };
+
+  const handleCloseReferral = () => {
+    setShowReferralModal(false);
+    // Navigate to dashboard or next page
+    window.location.href = "/chat"; // or use router.push('/chat')
+  };
+
+  const updateFormData = (data: Partial<typeof formData>) => {
+    setFormData({ ...formData, ...data });
+  };
+
+  return (
+    <div className="w-full max-w-md">
+      {/* Stepper */}
+      <div className="mb-8 flex items-center justify-center">
+        {steps.map((step, index) => (
+          <React.Fragment key={step.number}>
+            <div className="flex flex-col items-center">
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
+                  currentStep >= step.number
+                    ? "bg-orange-500 text-white"
+                    : currentStep > step.number
+                    ? "bg-orange-500 text-white"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+              >
+                {step.number}
+              </div>
+            </div>
+            {index < steps.length - 1 && (
+              <div
+                className={`w-20 h-0.5 mx-2 ${
+                  currentStep > step.number ? "bg-orange-500" : "bg-gray-300"
+                }`}
+              />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+
+      {/* Step Content */}
+      {currentStep === 1 && (
+        <CompanyInfoStep
+          formData={formData}
+          updateFormData={updateFormData}
+          onNext={handleNextStep}
+        />
+      )}
+      {currentStep === 2 && (
+        <LicenseUploadStep
+          formData={formData}
+          updateFormData={updateFormData}
+          onNext={handleNextStep}
+        />
+      )}
+      {currentStep === 3 && <VerificationSuccessStep onNext={handleNextStep} />}
+
+      {/* Modals */}
+      {showJoinModal && (
+        <JoinNowModal onSubscribe={handleJoinNow} onDoLater={handleDoLater} />
+      )}
+      {showReferralModal && <ReferralModal onClose={handleCloseReferral} />}
+    </div>
+  );
 };
 
 export default AccountSetupSteps;
