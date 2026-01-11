@@ -8,12 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSignupMutation } from "@/redux/freatures/authAPI";
+import { toast } from "react-toastify";
 
 const SignUpForm = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [signup, { isLoading }] = useSignupMutation();
 
   const [formData, setFormData] = useState({
     // Initial Signup
@@ -37,15 +40,55 @@ const SignUpForm = () => {
   const hasNumber = /\d/.test(formData.password);
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(formData.password);
 
-  const handleInitialSignUp = (e: React.FormEvent) => {
+  const handleInitialSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
-    // Move to stepper flow
-    router.push("/verify-otp");
+
+    // Validate password requirements
+    if (!hasMinLength || !hasNumber || !hasSpecialChar) {
+      toast.error("Password must meet all requirements!");
+      return;
+    }
+
+    try {
+      // Get referral token from URL if exists
+      const urlParams = new URLSearchParams(window.location.search);
+      const referralToken = urlParams.get("referral_token") || "";
+
+      const signupData = {
+        first_name: formData.companyName,
+        email: formData.email,
+        password: formData.password,
+        user_type: "company",
+      };
+
+      const result = await signup({
+        data: signupData,
+        referralToken,
+      }).unwrap();
+
+      toast.success(
+        result.message || "Signup successful! Please verify your email."
+      );
+
+      // Store email for OTP verification
+      sessionStorage.setItem("verification_email", formData.email);
+
+      // Navigate to OTP verification page
+      router.push("/verify-otp");
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      toast.error(
+        error?.data?.message ||
+          error?.data?.email?.[0] ||
+          "Signup failed. Please try again."
+      );
+    }
   };
 
   const handleGoogleSignUp = () => {
@@ -226,10 +269,10 @@ const SignUpForm = () => {
         {/* Sign Up Button */}
         <Button
           type="submit"
-          disabled={!agreedToTerms}
+          disabled={!agreedToTerms || isLoading}
           className="w-full h-12 bg-blue-950 hover:bg-blue-900 text-white rounded-lg font-semibold text-base disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
-          Sign Up
+          {isLoading ? "Signing Up..." : "Sign Up"}
         </Button>
 
         {/* Divider */}

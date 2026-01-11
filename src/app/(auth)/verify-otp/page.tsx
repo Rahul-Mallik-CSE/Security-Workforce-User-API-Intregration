@@ -2,15 +2,42 @@
 
 "use client";
 
-import React, { useState, useRef, KeyboardEvent } from "react";
+import React, { useState, useRef, KeyboardEvent, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useVerifyOtpMutation } from "@/redux/freatures/authAPI";
+import { toast } from "react-toastify";
 
 const VerifyOtpPage = () => {
+  const router = useRouter();
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [error, setError] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
+
+  useEffect(() => {
+    // Get email from session storage
+    const storedEmail = sessionStorage.getItem("verification_email");
+    if (storedEmail) {
+      setEmail(storedEmail);
+    } else {
+      toast.error("Email not found. Please sign up again.");
+      router.push("/sign-up");
+    }
+  }, [router]);
+
+  // Mask email for display
+  const getMaskedEmail = (email: string) => {
+    if (!email) return "";
+    const [localPart, domain] = email.split("@");
+    if (!localPart || !domain) return email;
+    const maskedLocal =
+      localPart.substring(0, 2) + "....." + localPart.slice(-1);
+    return `${maskedLocal}@${domain}`;
+  };
 
   const handleChange = (index: number, value: string) => {
     // Only allow single digit
@@ -59,34 +86,62 @@ const VerifyOtpPage = () => {
     inputRefs.current[focusIndex]?.focus();
   };
 
-  const handleVerify = (e: React.FormEvent) => {
+  const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     const otpCode = otp.join("");
+
     if (otpCode.length !== 6) {
       setError("Please enter complete verification code");
       return;
     }
 
-    // Simulate OTP verification (replace with actual API call)
-    // For demo: any code other than "123456" will fail
-    if (otpCode !== "123456") {
-      setError("Code doesn't match. Please recheck and try again.");
+    if (!email) {
+      setError("Email not found. Please sign up again.");
       return;
     }
 
-    // Handle successful OTP verification
-    console.log("Verifying OTP:", otpCode);
-    setError("");
-    // Navigate to reset password page
-    window.location.href = "/reset-pass";
+    try {
+      const result = await verifyOtp({
+        email,
+        otp: otpCode,
+      }).unwrap();
+
+      toast.success(result.message || "Email verified successfully!");
+      setError("");
+
+      // Clear session storage
+      sessionStorage.removeItem("verification_email");
+
+      // Navigate to account setup steps or sign in
+      router.push("/sign-in");
+    } catch (err: any) {
+      console.error("OTP verification error:", err);
+      setError(
+        err?.data?.message ||
+          err?.data?.otp?.[0] ||
+          "Code doesn't match. Please recheck and try again."
+      );
+      toast.error(
+        err?.data?.message || "Verification failed. Please try again."
+      );
+    }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     // Handle resend code
-    console.log("Resending code");
-    setOtp(["", "", "", "", "", ""]);
-    setError("");
-    inputRefs.current[0]?.focus();
+    try {
+      toast.info("Resending verification code...");
+      setOtp(["", "", "", "", "", ""]);
+      setError("");
+      inputRefs.current[0]?.focus();
+
+      // You might want to call a resend OTP API here
+      // await resendOtp({ email }).unwrap();
+
+      toast.success("Verification code resent to your email!");
+    } catch (error: any) {
+      toast.error("Failed to resend code. Please try again.");
+    }
   };
 
   return (
@@ -98,9 +153,9 @@ const VerifyOtpPage = () => {
             Enter Verification Code
           </h1>
           <p className="text-sm text-gray-600">
-            We&apos;ve sent a reset link to your{" "}
+            We&apos;ve sent a verification code to your{" "}
             <span className="font-semibold text-gray-900">
-              as.....m@gmail.com
+              {getMaskedEmail(email)}
             </span>{" "}
             email. Please check your inbox
           </p>
@@ -145,9 +200,10 @@ const VerifyOtpPage = () => {
           {/* Verify Button */}
           <Button
             type="submit"
-            className="w-full h-12 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-medium text-base"
+            disabled={isLoading}
+            className="w-full h-12 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-medium text-base disabled:opacity-60"
           >
-            Verify
+            {isLoading ? "Verifying..." : "Verify"}
           </Button>
 
           {/* Error Message */}
