@@ -6,17 +6,45 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { useForgetPasswordMutation } from "@/redux/freatures/authAPI";
+import { toast } from "react-toastify";
 
 const ForgetPassPage = () => {
   const router = useRouter();
   const [emailOrPhone, setEmailOrPhone] = useState("");
+  const [forgetPassword, { isLoading }] = useForgetPasswordMutation();
 
-  const handleNext = (e: React.FormEvent) => {
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle find account logic here
-    console.log("Find account for:", emailOrPhone);
-    // Navigate to verification method page
-    router.push("/verify-method");
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailOrPhone)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    try {
+      const result = await forgetPassword({
+        email: emailOrPhone,
+      }).unwrap();
+
+      toast.success(result.message || "Verification code sent to your email!");
+
+      // Store email and set context for forget password flow
+      sessionStorage.setItem("verification_email", emailOrPhone);
+      sessionStorage.setItem("verification_context", "forget_password");
+
+      // Navigate to OTP verification page
+      router.push("/verify-otp");
+    } catch (error: any) {
+      console.error("Forget password error:", error);
+      toast.error(
+        error?.data?.message ||
+          error?.data?.email?.[0] ||
+          "Failed to send verification code. Please try again."
+      );
+    }
   };
 
   return (
@@ -50,9 +78,10 @@ const ForgetPassPage = () => {
           {/* Next Button */}
           <Button
             type="submit"
-            className="w-full h-12 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-medium text-base"
+            disabled={isLoading}
+            className="w-full h-12 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-medium text-base disabled:opacity-60"
           >
-            Next
+            {isLoading ? "Sending..." : "Next"}
           </Button>
         </form>
       </div>

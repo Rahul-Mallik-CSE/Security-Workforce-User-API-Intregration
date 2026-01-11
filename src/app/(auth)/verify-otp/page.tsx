@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useVerifyOtpMutation } from "@/redux/freatures/authAPI";
+import {
+  useVerifyOtpMutation,
+  useVerifyOtpForForgetMutation,
+} from "@/redux/freatures/authAPI";
 import { toast } from "react-toastify";
 
 const VerifyOtpPage = () => {
@@ -15,16 +18,25 @@ const VerifyOtpPage = () => {
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [error, setError] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  const [context, setContext] = useState<string>(""); // 'signup' or 'forget_password'
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
+  const [verifyOtp, { isLoading: isVerifyingSignup }] = useVerifyOtpMutation();
+  const [verifyOtpForForget, { isLoading: isVerifyingForget }] =
+    useVerifyOtpForForgetMutation();
+
+  const isLoading = isVerifyingSignup || isVerifyingForget;
 
   useEffect(() => {
-    // Get email from session storage
+    // Get email and context from session storage
     const storedEmail = sessionStorage.getItem("verification_email");
+    const storedContext =
+      sessionStorage.getItem("verification_context") || "signup";
+
     if (storedEmail) {
       setEmail(storedEmail);
+      setContext(storedContext);
     } else {
-      toast.error("Email not found. Please sign up again.");
+      toast.error("Email not found. Please try again.");
       router.push("/sign-up");
     }
   }, [router]);
@@ -96,24 +108,48 @@ const VerifyOtpPage = () => {
     }
 
     if (!email) {
-      setError("Email not found. Please sign up again.");
+      setError("Email not found. Please try again.");
       return;
     }
 
     try {
-      const result = await verifyOtp({
-        email,
-        otp: otpCode,
-      }).unwrap();
+      if (context === "forget_password") {
+        // Forgot password flow
+        const result = await verifyOtpForForget({
+          email,
+          otp: otpCode,
+        }).unwrap();
 
-      toast.success(result.message || "Email verified successfully!");
-      setError("");
+        toast.success(result.message || "OTP verified successfully!");
+        setError("");
 
-      // Clear session storage
-      sessionStorage.removeItem("verification_email");
+        // Store access token for password reset
+        if (result.access) {
+          sessionStorage.setItem("reset_token", result.access);
+        }
 
-      // Navigate to account setup steps or sign in
-      router.push("/sign-in");
+        // Clear verification context
+        sessionStorage.removeItem("verification_context");
+
+        // Navigate to reset password page
+        router.push("/reset-pass");
+      } else {
+        // Signup flow
+        const result = await verifyOtp({
+          email,
+          otp: otpCode,
+        }).unwrap();
+
+        toast.success(result.message || "Email verified successfully!");
+        setError("");
+
+        // Clear session storage
+        sessionStorage.removeItem("verification_email");
+        sessionStorage.removeItem("verification_context");
+
+        // Navigate to sign in
+        router.push("/sign-in");
+      }
     } catch (err: any) {
       console.error("OTP verification error:", err);
       setError(
@@ -158,6 +194,7 @@ const VerifyOtpPage = () => {
               {getMaskedEmail(email)}
             </span>{" "}
             email. Please check your inbox
+            {context === "forget_password" && " to reset your password"}
           </p>
         </div>
 

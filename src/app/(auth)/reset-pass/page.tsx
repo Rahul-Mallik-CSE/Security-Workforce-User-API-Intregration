@@ -2,11 +2,13 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, KeyRound } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useResetPasswordMutation } from "@/redux/freatures/authAPI";
+import { toast } from "react-toastify";
 
 const ResetPassPage = () => {
   const router = useRouter();
@@ -17,6 +19,19 @@ const ResetPassPage = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
+  const [resetToken, setResetToken] = useState("");
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+
+  useEffect(() => {
+    // Get reset token from session storage
+    const token = sessionStorage.getItem("reset_token");
+    if (token) {
+      setResetToken(token);
+    } else {
+      toast.error("Session expired. Please try again.");
+      router.push("/forget-pass");
+    }
+  }, [router]);
 
   // Password validation checks
   const hasMinLength = formData.newPassword.length >= 8;
@@ -24,7 +39,7 @@ const ResetPassPage = () => {
   const hasNumber = /\d/.test(formData.newPassword);
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(formData.newPassword);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -42,10 +57,37 @@ const ResetPassPage = () => {
       return;
     }
 
-    // Handle password reset
-    console.log("Password reset successful");
-    // Navigate to sign-in page or show success message
-    router.push("/sign-in");
+    if (!resetToken) {
+      setError("Session expired. Please try again.");
+      toast.error("Session expired. Please try again.");
+      router.push("/forget-pass");
+      return;
+    }
+
+    try {
+      const result = await resetPassword({
+        new_password: formData.newPassword,
+        token: resetToken,
+      }).unwrap();
+
+      toast.success(result.message || "Password reset successfully!");
+
+      // Clear session storage
+      sessionStorage.removeItem("reset_token");
+      sessionStorage.removeItem("verification_email");
+
+      // Navigate to sign-in page
+      router.push("/sign-in");
+    } catch (error: any) {
+      console.error("Reset password error:", error);
+      const errorMessage =
+        error?.data?.message ||
+        error?.data?.new_password?.[0] ||
+        "Failed to reset password. Please try again.";
+
+      setError(errorMessage);
+      toast.error(errorMessage);
+    }
   };
 
   return (
@@ -147,9 +189,10 @@ const ResetPassPage = () => {
           {/* Next Button */}
           <Button
             type="submit"
-            className="w-full h-12 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-medium text-base"
+            disabled={isLoading}
+            className="w-full h-12 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-medium text-base disabled:opacity-60"
           >
-            Next
+            {isLoading ? "Resetting..." : "Next"}
           </Button>
 
           {/* Error Message */}
