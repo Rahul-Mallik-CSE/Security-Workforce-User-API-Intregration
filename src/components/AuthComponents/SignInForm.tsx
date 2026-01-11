@@ -94,10 +94,10 @@ const SignInForm = () => {
               Password
             </label>
             <Link
-              href="/forgot-password"
+              href="/forget-pass"
               className="text-base text-orange-500 hover:text-orange-600 font-medium"
             >
-              Forgot Password?
+              Forget Password?
             </Link>
           </div>
           <Input

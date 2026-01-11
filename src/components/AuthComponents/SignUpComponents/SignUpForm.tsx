@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     companyName: "",
     email: "",
@@ -28,6 +30,8 @@ const SignUpForm = () => {
     e.preventDefault();
     // Handle sign up logic here
     console.log("Sign up with:", formData);
+    router.push("/welcome"); // Redirect after successful sign up
+
   };
 
   const handleGoogleSignUp = () => {

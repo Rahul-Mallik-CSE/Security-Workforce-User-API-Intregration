@@ -1,6 +1,6 @@
 /** @format */
 
-import SignUpForm from "@/components/AuthComponents/SignUpForm";
+import SignUpForm from "@/components/AuthComponents/SignUpComponents/SignUpForm";
 import RightBanner from "@/components/AuthComponents/RightBanner";
 
 const SignUpPage = () => {
