@@ -465,6 +465,7 @@ export interface PayrollAPIJobDetails {
   job_duration: string;
   provident_fund: number;
   job_details: string;
+  pay_rate: string;
   created_at: string;
   updated_at: string;
 }

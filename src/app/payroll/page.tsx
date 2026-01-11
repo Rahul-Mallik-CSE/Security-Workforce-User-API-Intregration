@@ -31,7 +31,7 @@ const PayrollPage = () => {
       jobId: apiItem.job_details.id.toString(),
       operativeName: apiItem.application.candidate.first_name,
       duration: apiItem.job_details.job_duration + " hrs",
-      payRate: "$" + apiItem.total_amount,
+      payRate: "$" + apiItem.job_details.pay_rate,
       total: "$" + apiItem.total_amount,
       date: new Date(apiItem.job_details.job_date).toLocaleDateString(),
       status: !isPaid ? "Paid" : "Unpaid",
