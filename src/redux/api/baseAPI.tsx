@@ -29,6 +29,7 @@ const baseAPI = createApi({
     "Dashboard",
     "PreferredOperatives",
     "Billing",
+    "Chat",
   ],
   endpoints: () => ({}),
 });

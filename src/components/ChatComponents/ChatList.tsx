@@ -22,7 +22,7 @@ interface Props {
 }
 
 export default function ChatList({ contacts, activeId, onSelect }: Props) {
-  const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [filter, setFilter] = useState<"all">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filtered = contacts.filter((c) => {
@@ -61,16 +61,6 @@ export default function ChatList({ contacts, activeId, onSelect }: Props) {
         >
           All
         </button>
-        <button
-          onClick={() => setFilter("unread")}
-          className={`text-sm font-medium pb-1 ${
-            filter === "unread"
-              ? "text-blue-600 border-b-2 border-blue-600"
-              : "text-gray-500"
-          }`}
-        >
-          Unread
-        </button>
       </div>
 
       {/* Contact List */}
@@ -92,6 +82,7 @@ export default function ChatList({ contacts, activeId, onSelect }: Props) {
                   width={40}
                   height={40}
                   className="object-cover"
+                  unoptimized
                 />
               </div>
 
