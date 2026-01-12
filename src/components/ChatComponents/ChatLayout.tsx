@@ -3,6 +3,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import ChatList from "./ChatList";
 import ChatWindow from "./ChatWindow";
 import { useGetChatListQuery } from "@/redux/freatures/chatAPI";
@@ -19,6 +20,8 @@ interface Contact {
 export default function ChatLayout() {
   const [active, setActive] = useState<string | null>(null);
   const { data: chatListData, isLoading } = useGetChatListQuery();
+  const searchParams = useSearchParams();
+  const chatIdFromUrl = searchParams.get("chatId");
 
   const contacts: Contact[] = useMemo(
     () =>
@@ -44,10 +47,20 @@ export default function ChatLayout() {
 
   useEffect(() => {
     if (!initialized.current && contacts.length > 0) {
-      setActive(contacts[0].id);
+      // If chatId is provided in URL, select that chat
+      if (chatIdFromUrl) {
+        const chatExists = contacts.find((c) => c.id === chatIdFromUrl);
+        if (chatExists) {
+          setActive(chatIdFromUrl);
+        } else {
+          setActive(contacts[0].id);
+        }
+      } else {
+        setActive(contacts[0].id);
+      }
       initialized.current = true;
     }
-  }, [contacts]);
+  }, [contacts, chatIdFromUrl]);
 
   const activeContact = contacts.find((c) => c.id === active) || contacts[0];
 

@@ -167,6 +167,7 @@ export interface JobDetailsData {
 
 export interface ApplicantData {
   id: string;
+  candidateId?: number;
   operativeName: string;
   jobRole: string;
   rating: number;

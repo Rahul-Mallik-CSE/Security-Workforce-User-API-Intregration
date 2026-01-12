@@ -44,6 +44,7 @@ const SelectedApplicantsPage = ({
 
     return apiResponse.data.selected_list.map((app) => ({
       id: app.id.toString(),
+      candidateId: app.candidate.id,
       operativeName: app.candidate.first_name,
       jobRole: apiResponse.data.job_title, // Using job title as role
       rating: parseFloat(app.avg_rating_main) || 0,

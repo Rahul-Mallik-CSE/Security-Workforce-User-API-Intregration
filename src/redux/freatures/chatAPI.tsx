@@ -30,13 +30,32 @@ interface ChatListResponse {
   data: ChatItem[];
 }
 
+interface CreateChatRequest {
+  user_list: number[];
+  group_name: string;
+}
+
+interface CreateChatResponse {
+  success: boolean;
+  message: string;
+  data: ChatItem;
+}
+
 const chatAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     getChatList: builder.query<ChatListResponse, void>({
       query: () => "/api/chat-note/chat-list/",
       providesTags: ["Chat"],
     }),
+    createChat: builder.mutation<CreateChatResponse, CreateChatRequest>({
+      query: (data) => ({
+        url: "/api/chat-note/chat-list/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Chat"],
+    }),
   }),
 });
 
-export const { useGetChatListQuery } = chatAPI;
+export const { useGetChatListQuery, useCreateChatMutation } = chatAPI;

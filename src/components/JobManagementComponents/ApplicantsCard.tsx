@@ -9,6 +9,8 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import { getFullImageFullUrl } from "@/lib/utils";
 import { useSelectOperativeMutation } from "@/redux/freatures/jobManagementAPI";
+import { useCreateChatMutation } from "@/redux/freatures/chatAPI";
+import { useRouter } from "next/navigation";
 
 interface ApplicantsCardProps {
   applicant: ApplicantData;
@@ -33,6 +35,27 @@ const ApplicantsCard = ({
 
   const [selectOperative, { isLoading: isSelecting }] =
     useSelectOperativeMutation();
+  const [createChat, { isLoading: isCreatingChat }] = useCreateChatMutation();
+  const router = useRouter();
+
+  const handleChatClick = async () => {
+    if (!applicant.candidateId) {
+      console.error("Candidate ID is missing");
+      return;
+    }
+
+    try {
+      const result = await createChat({
+        user_list: [applicant.candidateId],
+        group_name: "Social Network",
+      }).unwrap();
+
+      // Navigate to chat page with the new chat ID
+      router.push(`/chat?chatId=${result.data.id}`);
+    } catch (error) {
+      console.error("Failed to create chat:", error);
+    }
+  };
 
   return (
     <div className="border border-gray-200 rounded-lg p-6 flex flex-col overflow-hidden">
@@ -79,8 +102,12 @@ const ApplicantsCard = ({
 
       {/* Action Buttons */}
       <div className="flex gap-3 w-full mt-auto flex-wrap">
-        <Button className="flex-1 px-4 py-2.5 border bg-transparent border-gray-300 rounded-md flex items-center justify-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-          Chat
+        <Button
+          onClick={handleChatClick}
+          disabled={isCreatingChat}
+          className="flex-1 px-4 py-2.5 border bg-transparent border-gray-300 rounded-md flex items-center justify-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+        >
+          {isCreatingChat ? "Creating..." : "Chat"}
         </Button>
         {showDelete ? (
           <Button
