@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
@@ -32,6 +32,14 @@ export default function ChatWindow({
   participantIds = [],
 }: Props) {
   const [localMessages, setLocalMessages] = useState<Message[]>([]);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(chatId);
+  const wsRef = useRef<WebSocket | null>(null);
+
+  // Clear local messages when chat changes
+  if (currentChatId !== chatId) {
+    setCurrentChatId(chatId);
+    setLocalMessages([]);
+  }
 
   // Fetch messages from API
   const { data: messageData, isLoading } = useGetMessageListQuery(
@@ -40,6 +48,73 @@ export default function ChatWindow({
       skip: !chatId,
     }
   );
+
+  // Setup WebSocket connection
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      console.error("No access token found");
+      return;
+    }
+
+    const wsUrl = `ws://10.10.12.15:8001/ws/asc/update_chat_messages/?token=${token}`;
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log("WebSocket message received:", data);
+
+        // Check if message is for the current chat
+        if (data.chat_id && chatId && data.chat_id.toString() === chatId) {
+          // Check if this is from the current user (echoed back)
+          const isFromMe = !participantIds.includes(data.sender_id);
+
+          // Skip adding if it's our own message (already added optimistically)
+          if (isFromMe) {
+            console.log("Skipping own message echo");
+            return;
+          }
+
+          // Only add messages from other participants
+          const newMessage: Message = {
+            id: `ws-${data.id || Date.now()}`,
+            fromMe: false,
+            text: data.message,
+            time: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            date: "Today",
+          };
+
+          setLocalMessages((prev) => [...prev, newMessage]);
+        }
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket disconnected");
+    };
+
+    wsRef.current = ws;
+
+    return () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, [chatId, participantIds]);
 
   // Transform API messages to local format
   const apiMessages: Message[] = useMemo(() => {
@@ -65,17 +140,40 @@ export default function ChatWindow({
   }, [apiMessages, localMessages]);
 
   const handleSend = (text: string) => {
-    const msg: Message = {
-      id: String(Date.now()),
-      fromMe: true,
-      text,
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      date: "Today",
+    if (
+      !chatId ||
+      !wsRef.current ||
+      wsRef.current.readyState !== WebSocket.OPEN
+    ) {
+      console.error("WebSocket not connected or chat ID missing");
+      return;
+    }
+
+    // Send message via WebSocket
+    const messageData = {
+      message: text,
+      chat_id: parseInt(chatId),
     };
-    setLocalMessages((s) => [...s, msg]);
+
+    try {
+      wsRef.current.send(JSON.stringify(messageData));
+      console.log("Message sent via WebSocket:", messageData);
+
+      // Optimistically add message to UI
+      const msg: Message = {
+        id: String(Date.now()),
+        fromMe: true,
+        text,
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        date: "Today",
+      };
+      setLocalMessages((s) => [...s, msg]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   };
 
   // Group messages by date

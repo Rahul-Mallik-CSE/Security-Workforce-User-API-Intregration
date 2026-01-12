@@ -61,6 +61,22 @@ interface MessageListResponse {
   data: MessageItem[];
 }
 
+interface SendMessageRequest {
+  chat_id: number;
+  message: string;
+}
+
+interface SendMessageResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    chat_id: number;
+    sender_id: number;
+    message: string;
+  };
+}
+
 const chatAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     getChatList: builder.query<ChatListResponse, void>({
@@ -79,6 +95,14 @@ const chatAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["Chat"],
     }),
+    sendMessage: builder.mutation<SendMessageResponse, SendMessageRequest>({
+      query: (data) => ({
+        url: "/api/chat-note/send-message/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Chat"],
+    }),
   }),
 });
 
@@ -86,4 +110,5 @@ export const {
   useGetChatListQuery,
   useGetMessageListQuery,
   useCreateChatMutation,
+  useSendMessageMutation,
 } = chatAPI;
