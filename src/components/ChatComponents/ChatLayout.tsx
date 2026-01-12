@@ -19,31 +19,98 @@ interface Contact {
 
 export default function ChatLayout() {
   const [active, setActive] = useState<string | null>(null);
+  const [lastMessageUpdates, setLastMessageUpdates] = useState<{
+    [chatId: string]: { text: string; time: string };
+  }>({});
   const { data: chatListData, isLoading } = useGetChatListQuery();
   const searchParams = useSearchParams();
   const chatIdFromUrl = searchParams.get("chatId");
+  const wsRef = useRef<WebSocket | null>(null);
 
   const contacts: Contact[] = useMemo(
     () =>
-      chatListData?.data?.map((item) => ({
-        id: item.id.toString(),
-        name: `${item.participants[0]?.first_name} ${item.participants[0]?.last_name}`.trim(),
-        lastMessage: item.last_message?.text || "No messages yet",
-        avatar: getFullImageFullUrl(item.participants[0]?.image) || "/logo.png",
-        time: item.last_message_time
-          ? new Date(item.last_message_time).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : new Date(item.updated_at).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-      })) || [],
-    [chatListData]
+      chatListData?.data?.map((item) => {
+        const chatId = item.id.toString();
+        const realtimeUpdate = lastMessageUpdates[chatId];
+
+        return {
+          id: chatId,
+          name: `${item.participants[0]?.first_name} ${item.participants[0]?.last_name}`.trim(),
+          lastMessage:
+            realtimeUpdate?.text ||
+            item.last_message?.text ||
+            "No messages yet",
+          avatar:
+            getFullImageFullUrl(item.participants[0]?.image) || "/logo.png",
+          time:
+            realtimeUpdate?.time ||
+            (item.last_message_time
+              ? new Date(item.last_message_time).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : new Date(item.updated_at).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })),
+        };
+      }) || [],
+    [chatListData, lastMessageUpdates]
   );
 
   const initialized = useRef(false);
+
+  // Setup WebSocket connection for real-time chat list updates
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
+
+    const wsUrl = `ws://10.10.12.15:8001/ws/asc/update_chat_messages/?token=${token}`;
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log("ChatLayout WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log("ChatLayout WebSocket message:", data);
+
+        if (data.chat_id && data.message) {
+          // Update the last message for this chat
+          setLastMessageUpdates((prev) => ({
+            ...prev,
+            [data.chat_id.toString()]: {
+              text: data.message,
+              time: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            },
+          }));
+        }
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error("ChatLayout WebSocket error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("ChatLayout WebSocket disconnected");
+    };
+
+    wsRef.current = ws;
+
+    return () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!initialized.current && contacts.length > 0) {
