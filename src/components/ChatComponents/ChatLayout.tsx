@@ -25,11 +25,17 @@ export default function ChatLayout() {
       chatListData?.data?.map((item) => ({
         id: item.id.toString(),
         name: `${item.participants[0]?.first_name} ${item.participants[0]?.last_name}`.trim(),
-        lastMessage: item.last_message || "No messages yet",
+        lastMessage: item.last_message?.text || "No messages yet",
         avatar: getFullImageFullUrl(item.participants[0]?.image) || "/logo.png",
         time: item.last_message_time
-          ? new Date(item.last_message_time).toLocaleTimeString()
-          : new Date(item.updated_at).toLocaleTimeString(),
+          ? new Date(item.last_message_time).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : new Date(item.updated_at).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
       })) || [],
     [chatListData]
   );

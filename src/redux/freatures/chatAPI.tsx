@@ -9,10 +9,17 @@ interface Participant {
   image: string | null;
 }
 
+interface LastMessage {
+  id: number;
+  text: string;
+  sender_name: string;
+  created_at: string;
+}
+
 interface ChatItem {
   id: number;
   participants: Participant[];
-  last_message: string | null;
+  last_message: LastMessage | null;
   last_message_time: string | null;
   updated_at: string;
 }
