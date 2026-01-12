@@ -7,6 +7,7 @@ interface Participant {
   first_name: string;
   last_name: string;
   image: string | null;
+  last_activity: string;
 }
 
 interface LastMessage {
@@ -41,10 +42,33 @@ interface CreateChatResponse {
   data: ChatItem;
 }
 
+interface MessageSender {
+  id: number;
+  first_name: string;
+  last_name: string;
+  image: string | null;
+  last_activity: string;
+}
+
+interface MessageItem {
+  text: string;
+  sender: MessageSender;
+}
+
+interface MessageListResponse {
+  success: boolean;
+  message: string;
+  data: MessageItem[];
+}
+
 const chatAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     getChatList: builder.query<ChatListResponse, void>({
       query: () => "/api/chat-note/chat-list/",
+      providesTags: ["Chat"],
+    }),
+    getMessageList: builder.query<MessageListResponse, string>({
+      query: (chatId) => `/api/chat-note/message-list/${chatId}/`,
       providesTags: ["Chat"],
     }),
     createChat: builder.mutation<CreateChatResponse, CreateChatRequest>({
@@ -58,4 +82,8 @@ const chatAPI = baseAPI.injectEndpoints({
   }),
 });
 
-export const { useGetChatListQuery, useCreateChatMutation } = chatAPI;
+export const {
+  useGetChatListQuery,
+  useGetMessageListQuery,
+  useCreateChatMutation,
+} = chatAPI;

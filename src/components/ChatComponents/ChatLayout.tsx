@@ -64,6 +64,15 @@ export default function ChatLayout() {
 
   const activeContact = contacts.find((c) => c.id === active) || contacts[0];
 
+  // Get participant IDs for the active chat
+  const activeParticipantIds = useMemo(() => {
+    if (!active || !chatListData?.data) return [];
+    const activeChatData = chatListData.data.find(
+      (chat) => chat.id.toString() === active
+    );
+    return activeChatData?.participants.map((p) => p.id) || [];
+  }, [active, chatListData]);
+
   if (isLoading) {
     return (
       <div className="flex bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200 min-h-[400px] items-center justify-center">
@@ -83,21 +92,8 @@ export default function ChatLayout() {
         contactName={activeContact?.name || "No chats"}
         contactAvatar={activeContact?.avatar || "/logo.png"}
         lastSeen="Last seen recently"
-        initialMessages={[
-          {
-            id: "m1",
-            text: `You viewed ${activeContact?.name || "chat"}`,
-            time: "12:25",
-            date: "Today",
-          },
-          {
-            id: "m2",
-            fromMe: true,
-            text: "Hey, what's up? How are you doing? I'm looking to make a deal with you.",
-            time: "11:25",
-            date: "Today",
-          },
-        ]}
+        chatId={active}
+        participantIds={activeParticipantIds}
       />
     </div>
   );

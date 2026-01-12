@@ -71,7 +71,7 @@ export default function ChatList({ contacts, activeId, onSelect }: Props) {
             <button
               key={c.id}
               onClick={() => onSelect(c.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors text-left ${
+              className={`w-full cursor-pointer flex items-center gap-3 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors text-left ${
                 active ? "bg-blue-50" : ""
               }`}
             >

@@ -2,10 +2,11 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
+import { useGetMessageListQuery } from "@/redux/freatures/chatAPI";
 
 interface Message {
   id: string;
@@ -19,16 +20,49 @@ interface Props {
   contactName: string;
   contactAvatar?: string;
   lastSeen?: string;
-  initialMessages?: Message[];
+  chatId: string | null;
+  participantIds?: number[];
 }
 
 export default function ChatWindow({
   contactName,
   contactAvatar,
   lastSeen,
-  initialMessages = [],
+  chatId,
+  participantIds = [],
 }: Props) {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [localMessages, setLocalMessages] = useState<Message[]>([]);
+
+  // Fetch messages from API
+  const { data: messageData, isLoading } = useGetMessageListQuery(
+    chatId || "",
+    {
+      skip: !chatId,
+    }
+  );
+
+  // Transform API messages to local format
+  const apiMessages: Message[] = useMemo(() => {
+    if (!messageData?.data) return [];
+
+    return messageData.data.map((msg, index) => ({
+      id: `msg-${index}`,
+      // If sender ID matches any participant ID, message is from them (left side)
+      // Otherwise, message is from me (right side)
+      fromMe: !participantIds.includes(msg.sender.id),
+      text: msg.text,
+      time: new Date(msg.sender.last_activity).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      date: "Today",
+    }));
+  }, [messageData, participantIds]);
+
+  // Combine API messages with local messages
+  const allMessages = useMemo(() => {
+    return [...apiMessages, ...localMessages];
+  }, [apiMessages, localMessages]);
 
   const handleSend = (text: string) => {
     const msg: Message = {
@@ -39,28 +73,15 @@ export default function ChatWindow({
         hour: "2-digit",
         minute: "2-digit",
       }),
+      date: "Today",
     };
-    setMessages((s) => [...s, msg]);
-    // auto-reply simulation
-    setTimeout(() => {
-      setMessages((s) => [
-        ...s,
-        {
-          id: String(Date.now() + 1),
-          text: "Thanks for your message, we'll check and reply soon.",
-          time: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        },
-      ]);
-    }, 800);
+    setLocalMessages((s) => [...s, msg]);
   };
 
   // Group messages by date
   const renderMessages = () => {
     const grouped: { [key: string]: Message[] } = {};
-    messages.forEach((m) => {
+    allMessages.forEach((m) => {
       const dateKey = m.date || "Today";
       if (!grouped[dateKey]) grouped[dateKey] = [];
       grouped[dateKey].push(m);
@@ -96,6 +117,7 @@ export default function ChatWindow({
               width={40}
               height={40}
               className="object-cover"
+              unoptimized
             />
           </div>
           <div>
@@ -110,7 +132,11 @@ export default function ChatWindow({
       </div>
 
       <div className="flex-1 overflow-auto p-6 bg-white">
-        {messages.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center text-gray-400 mt-8">
+            Loading messages...
+          </div>
+        ) : allMessages.length === 0 ? (
           <div className="text-center text-gray-400 mt-8">
             No messages yet. Start the conversation.
           </div>
