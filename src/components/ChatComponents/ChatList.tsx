@@ -34,7 +34,7 @@ export default function ChatList({ contacts, activeId, onSelect }: Props) {
   });
 
   return (
-    <div className="w-80 bg-white border-r border-gray-200 min-h-[calc(80vh-4rem)] flex flex-col">
+    <div className="w-80 bg-white border-r border-gray-200 h-[700px] flex flex-col overflow-y-scroll">
       {/* Search Bar */}
       <div className="p-4 border-b border-gray-200">
         <div className="relative">
