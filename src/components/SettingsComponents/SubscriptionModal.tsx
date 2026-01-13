@@ -56,12 +56,8 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 
       if (result.success && result.payment_url) {
         onClose();
-        // Navigate to payment page with the payment URL
-        router.push(
-          `/settings/payment?paymentUrl=${encodeURIComponent(
-            result.payment_url
-          )}`
-        );
+        // Open payment URL in a new browser tab
+        window.open(result.payment_url, '_blank');
       } else {
         toast.error("Failed to get payment URL. Please try again.");
       }
