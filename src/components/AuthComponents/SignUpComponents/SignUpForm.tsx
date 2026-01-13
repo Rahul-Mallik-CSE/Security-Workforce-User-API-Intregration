@@ -58,7 +58,7 @@ const SignUpForm = () => {
     try {
       // Get referral token from URL if exists
       const urlParams = new URLSearchParams(window.location.search);
-      const referralToken = urlParams.get("referral_token") || "";
+      const referralToken = urlParams.get("refer_token") || "";
 
       const signupData = {
         first_name: formData.companyName,
