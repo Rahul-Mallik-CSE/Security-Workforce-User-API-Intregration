@@ -4,12 +4,13 @@
 
 import { Bell } from "lucide-react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useProfileDetailsQuery } from "@/redux/freatures/settingAPI";
 import { getFullImageFullUrl } from "@/lib/utils";
 
 const NavBar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { data: profileData } = useProfileDetailsQuery();
 
   const userData = profileData?.data;
@@ -29,6 +30,9 @@ const NavBar = () => {
   ) {
     return null;
   }
+  const handleBell = () => {
+    router.push("/notifications");
+  };
 
   return (
     <>
@@ -43,7 +47,8 @@ const NavBar = () => {
           {/* right side of navbar */}
           <div className="flex items-center gap-4">
             <button
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              onClick={handleBell}
+              className="p-2 cursor-pointer hover:bg-gray-100 rounded-lg transition-colors"
               aria-label="Notifications"
             >
               <Bell className="h-6 w-6 text-gray-700" />
