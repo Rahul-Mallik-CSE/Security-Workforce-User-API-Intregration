@@ -12,7 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useGetPaymentPlansQuery } from "@/redux/freatures/settingAPI";
+import {
+  useGetPaymentPlansQuery,
+  useSubscribeMutation,
+} from "@/redux/freatures/settingAPI";
+import { toast } from "react-toastify";
 
 interface SubscriptionModalProps {
   isOpen: boolean;
@@ -25,6 +29,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 }) => {
   const router = useRouter();
   const { data: plansData, isLoading } = useGetPaymentPlansQuery();
+  const [subscribe, { isLoading: isSubscribing }] = useSubscribeMutation();
 
   // Get company plan
   const companyPlan = plansData?.plans?.find(
@@ -40,9 +45,32 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     "Update work instructions with in-app chat",
   ];
 
-  const handleSubscribeNow = () => {
-    onClose();
-    router.push("/settings/payment");
+  const handleSubscribeNow = async () => {
+    if (!companyPlan?.id) {
+      toast.error("Plan not found. Please try again.");
+      return;
+    }
+
+    try {
+      const result = await subscribe(companyPlan.id).unwrap();
+
+      if (result.success && result.payment_url) {
+        onClose();
+        // Navigate to payment page with the payment URL
+        router.push(
+          `/settings/payment?paymentUrl=${encodeURIComponent(
+            result.payment_url
+          )}`
+        );
+      } else {
+        toast.error("Failed to get payment URL. Please try again.");
+      }
+    } catch (error: any) {
+      console.error("Subscribe error:", error);
+      toast.error(
+        error?.data?.message || "Failed to subscribe. Please try again."
+      );
+    }
   };
 
   return (
@@ -96,9 +124,10 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           <div className="pt-4">
             <Button
               onClick={handleSubscribeNow}
-              className="w-full bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-lg text-sm font-medium"
+              disabled={isLoading || isSubscribing}
+              className="w-full bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-lg text-sm font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              Subscribe Now
+              {isSubscribing ? "Processing..." : "Subscribe Now"}
             </Button>
           </div>
         </div>

@@ -116,6 +116,11 @@ interface PaymentPlansResponse {
   plans: PaymentPlan[];
 }
 
+interface SubscribeResponse {
+  success: boolean;
+  payment_url: string;
+}
+
 const settingAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     profileDetails: builder.query<any, void>({
@@ -173,6 +178,13 @@ const settingAPI = baseAPI.injectEndpoints({
     getPaymentPlans: builder.query<PaymentPlansResponse, void>({
       query: () => `/api/get-plans/`,
     }),
+    subscribe: builder.mutation<SubscribeResponse, number>({
+      query: (planId) => ({
+        url: `/api/subscribe/${planId}/`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Billing"],
+    }),
   }),
 });
 
@@ -187,4 +199,5 @@ export const {
   useGetCardDetailsQuery,
   useUpdateCardDetailsMutation,
   useGetPaymentPlansQuery,
+  useSubscribeMutation,
 } = settingAPI;
