@@ -101,6 +101,21 @@ interface UpdateCardDetailsRequest {
   billing_address: string;
 }
 
+interface PaymentPlan {
+  id: number;
+  duraton_day: number;
+  price: string;
+  discriptions: string;
+  plan_for: string;
+  benefits: number[];
+}
+
+interface PaymentPlansResponse {
+  success: boolean;
+  message: string;
+  plans: PaymentPlan[];
+}
+
 const settingAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     profileDetails: builder.query<any, void>({
@@ -155,6 +170,9 @@ const settingAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["Billing"],
     }),
+    getPaymentPlans: builder.query<PaymentPlansResponse, void>({
+      query: () => `/api/get-plans/`,
+    }),
   }),
 });
 
@@ -168,4 +186,5 @@ export const {
   useGetInvoicesQuery,
   useGetCardDetailsQuery,
   useUpdateCardDetailsMutation,
+  useGetPaymentPlansQuery,
 } = settingAPI;

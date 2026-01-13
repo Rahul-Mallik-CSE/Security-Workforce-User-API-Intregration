@@ -15,9 +15,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
+import { useGetPaymentPlansQuery } from "@/redux/freatures/settingAPI";
 
 const PaymentPage = () => {
   const router = useRouter();
+  const { data: plansData, isLoading: plansLoading } =
+    useGetPaymentPlansQuery();
+
+  // Get company plan
+  const companyPlan = plansData?.plans?.find(
+    (plan) => plan.plan_for === "company"
+  );
+
   const [formData, setFormData] = useState({
     email: "name@gmail.com",
     nameOnCard: "",
@@ -72,22 +81,36 @@ const PaymentPage = () => {
 
             {/* Price */}
             <div className=" mb-8">
-              <span className="text-5xl font-bold">$49</span>
-              <span className="text-gray-500 ml-2">/per month</span>
+              {plansLoading ? (
+                <div className="text-2xl text-gray-400">Loading...</div>
+              ) : (
+                <>
+                  <span className="text-5xl font-bold">
+                    ${companyPlan?.price || "49.00"}
+                  </span>
+                  <span className="text-gray-500 ml-2">
+                    /{companyPlan?.duraton_day || 30} days
+                  </span>
+                </>
+              )}
             </div>
 
             {/* Pricing Details */}
             <div className="space-y-4 mb-6">
               <div className="flex justify-between items-center py-2">
                 <span className="text-gray-700">1x Paid User</span>
-                <span className="text-gray-900 font-medium">$49.00</span>
+                <span className="text-gray-900 font-medium">
+                  ${companyPlan?.price || "49.00"}
+                </span>
               </div>
               <div className="border-t pt-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-900 font-semibold">
                     Total due today
                   </span>
-                  <span className="text-gray-900 font-semibold">$49.00</span>
+                  <span className="text-gray-900 font-semibold">
+                    ${companyPlan?.price || "49.00"}
+                  </span>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
                   Taxes included in the subscription price

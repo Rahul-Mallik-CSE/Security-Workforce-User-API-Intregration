@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useGetPaymentPlansQuery } from "@/redux/freatures/settingAPI";
 
 interface SubscriptionModalProps {
   isOpen: boolean;
@@ -23,6 +24,12 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   onClose,
 }) => {
   const router = useRouter();
+  const { data: plansData, isLoading } = useGetPaymentPlansQuery();
+
+  // Get company plan
+  const companyPlan = plansData?.plans?.find(
+    (plan) => plan.plan_for === "company"
+  );
 
   const benefits = [
     "Access to thousands of available guards. Recruit all-stars in minutes, not months.",
@@ -56,8 +63,18 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 
           {/* Price */}
           <div className="text-center">
-            <span className="text-4xl font-bold text-orange-500">$49</span>
-            <span className="text-gray-600">/per month</span>
+            {isLoading ? (
+              <div className="text-2xl text-gray-400">Loading...</div>
+            ) : (
+              <>
+                <span className="text-4xl font-bold text-orange-500">
+                  ${companyPlan?.price || "49.00"}
+                </span>
+                <span className="text-gray-600">
+                  /{companyPlan?.duraton_day || 30} days
+                </span>
+              </>
+            )}
           </div>
 
           {/* Benefits */}
