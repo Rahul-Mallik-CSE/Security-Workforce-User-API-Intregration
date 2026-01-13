@@ -830,3 +830,17 @@ export interface PreferredOperativesAPIResponse {
     operatives: PreferredOperativeAPIItem[];
   };
 }
+
+// Notification API Response Types
+export interface NotificationData {
+  id: number;
+  title: string;
+  content: string;
+  note_type: "normal" | "success";
+}
+
+export interface NotificationsAPIResponse {
+  success: boolean;
+  message: string;
+  data: NotificationData[];
+}
