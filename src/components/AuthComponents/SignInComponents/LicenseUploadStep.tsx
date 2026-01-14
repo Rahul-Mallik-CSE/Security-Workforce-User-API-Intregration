@@ -12,11 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload } from "lucide-react";
 import {
   useGetLicenseTypesQuery,
   useUploadLicenseMutation,
 } from "@/redux/freatures/accountSetupAPI";
+import { useProfileDetailsQuery } from "@/redux/freatures/settingAPI";
 import { toast } from "react-toastify";
 
 interface LicenseUploadStepProps {
@@ -38,12 +38,45 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string>("");
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   // Fetch license types from API
   const { data: licenseTypesData, isLoading: isLoadingTypes } =
     useGetLicenseTypesQuery();
   const [uploadLicense, { isLoading: isUploading }] =
     useUploadLicenseMutation();
+  const { data: profileData } = useProfileDetailsQuery();
+
+  // Populate form data when profile data is loaded
+  useEffect(() => {
+    if (
+      profileData?.data?.licences &&
+      profileData.data.licences.length > 0 &&
+      !isDataLoaded
+    ) {
+      const firstLicense = profileData.data.licences[0];
+
+      // Batch all updates together
+      Promise.resolve().then(() => {
+        updateFormData({
+          stateTerritory: firstLicense.state_or_territory || "",
+          licenseType: firstLicense.licence_type?.toString() || "",
+          licenseNumber: firstLicense.licence_no || "",
+          licenseExpiryDate: firstLicense.expire_date || "",
+        });
+
+        // Set file name if license images exist
+        if (
+          firstLicense.licence_images &&
+          firstLicense.licence_images.length > 0
+        ) {
+          setFileName("Existing license file");
+        }
+
+        setIsDataLoaded(true);
+      });
+    }
+  }, [profileData, updateFormData, isDataLoaded]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -75,9 +108,10 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
         toast.success(response.message || "License uploaded successfully!");
         onNext();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
       const errorMessage =
-        error?.data?.message || "Failed to upload license. Please try again.";
+        err?.data?.message || "Failed to upload license. Please try again.";
       toast.error(errorMessage);
       console.error("License upload error:", error);
     }
@@ -140,11 +174,13 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
               />
             </SelectTrigger>
             <SelectContent>
-              {licenseTypesData?.licence_types?.map((type: any) => (
-                <SelectItem key={type.id} value={type.id.toString()}>
-                  {type.title}
-                </SelectItem>
-              ))}
+              {licenseTypesData?.licence_types?.map(
+                (type: { id: number; title: string }) => (
+                  <SelectItem key={type.id} value={type.id.toString()}>
+                    {type.title}
+                  </SelectItem>
+                )
+              )}
             </SelectContent>
           </Select>
         </div>

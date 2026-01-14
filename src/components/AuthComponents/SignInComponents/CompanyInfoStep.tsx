@@ -2,13 +2,15 @@
 
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Camera } from "lucide-react";
 import { useUpdateUserProfileMutation } from "@/redux/freatures/accountSetupAPI";
+import { useProfileDetailsQuery } from "@/redux/freatures/settingAPI";
 import { toast } from "react-toastify";
+import { getFullImageFullUrl } from "@/lib/utils";
 
 interface CompanyInfoStepProps {
   formData: {
@@ -28,7 +30,32 @@ const CompanyInfoStep: React.FC<CompanyInfoStepProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
+  const { data: profileData } = useProfileDetailsQuery();
+
+  // Populate form data when profile data is loaded
+  useEffect(() => {
+    if (profileData?.data && !isDataLoaded) {
+      const profile = profileData.data;
+
+      // Batch all updates together
+      Promise.resolve().then(() => {
+        // Update form data
+        updateFormData({
+          companyName: profile.first_name || "",
+          phoneNumber: profile.phone || "",
+        });
+
+        // Set image preview if exists
+        if (profile.image) {
+          setImagePreview(getFullImageFullUrl(profile.image));
+        }
+
+        setIsDataLoaded(true);
+      });
+    }
+  }, [profileData, updateFormData, isDataLoaded]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -104,6 +131,7 @@ const CompanyInfoStep: React.FC<CompanyInfoStepProps> = ({
                 width={96}
                 height={96}
                 className="w-full h-full object-cover"
+                unoptimized
               />
             ) : (
               <Camera className="w-8 h-8 text-gray-400" />
