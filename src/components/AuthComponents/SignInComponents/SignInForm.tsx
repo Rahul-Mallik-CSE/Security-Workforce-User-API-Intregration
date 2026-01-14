@@ -26,16 +26,19 @@ const SignInForm = () => {
       const response = await login({ email, password }).unwrap();
 
       if (response.success) {
-        // Save the access token to both cookies and localStorage
-        await saveTokens(response.access);
+        // Save the access token and verified status to both cookies and localStorage
+        await saveTokens(response.access, response.verified);
         localStorage.setItem("accessToken", response.access);
+        localStorage.setItem("verified", response.verified.toString());
+        localStorage.setItem("companyName", response.company_name || "");
 
         // Show success toast
         toast.success(response.message || "Login successful!");
 
         console.log("Login successful:", response);
 
-        // Small delay to ensure token is saved before redirect
+        // Small delay to ensure cookies are saved before redirect
+        // Middleware will handle the redirect based on verified status
         setTimeout(() => {
           router.push("/");
         }, 100);

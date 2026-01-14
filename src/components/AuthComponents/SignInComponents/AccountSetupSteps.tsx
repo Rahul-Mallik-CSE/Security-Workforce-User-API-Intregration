@@ -18,11 +18,11 @@ const AccountSetupSteps = () => {
     // Step 1: Company Info
     companyName: "",
     phoneNumber: "",
-    abnAcnNumber: "",
     profileImage: null as File | null,
     // Step 2: License Upload
     stateTerritory: "",
     licenseType: "",
+    licenseNumber: "",
     licenseFile: null as File | null,
     licenseExpiryDate: "",
   });

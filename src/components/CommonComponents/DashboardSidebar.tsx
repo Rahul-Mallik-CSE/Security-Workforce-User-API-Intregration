@@ -80,7 +80,8 @@ function DashboardSidebarContent() {
     pathname === "/forget-pass" ||
     pathname === "/verify-method" ||
     pathname === "/verify-otp" ||
-    pathname === "/reset-pass"
+    pathname === "/reset-pass" ||
+    pathname === "/account-setup"
   ) {
     return null;
   }

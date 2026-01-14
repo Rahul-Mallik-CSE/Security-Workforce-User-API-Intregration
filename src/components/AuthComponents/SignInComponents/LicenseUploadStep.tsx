@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,11 +13,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Upload } from "lucide-react";
+import {
+  useGetLicenseTypesQuery,
+  useUploadLicenseMutation,
+} from "@/redux/freatures/accountSetupAPI";
+import { toast } from "react-toastify";
 
 interface LicenseUploadStepProps {
   formData: {
     stateTerritory: string;
     licenseType: string;
+    licenseNumber: string;
     licenseFile: File | null;
     licenseExpiryDate: string;
   };
@@ -33,24 +39,11 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string>("");
 
-  const states = [
-    "New South Wales",
-    "Victoria",
-    "Queensland",
-    "South Australia",
-    "Western Australia",
-    "Tasmania",
-    "Northern Territory",
-    "Australian Capital Territory",
-  ];
-
-  const licenseTypes = [
-    "Security Guard License",
-    "Crowd Controller License",
-    "Bodyguard License",
-    "Security Consultant License",
-    "Armed Guard License",
-  ];
+  // Fetch license types from API
+  const { data: licenseTypesData, isLoading: isLoadingTypes } =
+    useGetLicenseTypesQuery();
+  const [uploadLicense, { isLoading: isUploading }] =
+    useUploadLicenseMutation();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -60,9 +53,34 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onNext();
+
+    try {
+      // Create FormData object
+      const formDataToSend = new FormData();
+      formDataToSend.append("state_or_territory", formData.stateTerritory);
+      formDataToSend.append("licence_type", formData.licenseType); // This is the ID
+      formDataToSend.append("licence_no", formData.licenseNumber);
+      formDataToSend.append("expire_date", formData.licenseExpiryDate);
+
+      if (formData.licenseFile) {
+        formDataToSend.append("licence_images", formData.licenseFile);
+      }
+
+      // Call the API
+      const response = await uploadLicense(formDataToSend).unwrap();
+
+      if (response.success) {
+        toast.success(response.message || "License uploaded successfully!");
+        onNext();
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.data?.message || "Failed to upload license. Please try again.";
+      toast.error(errorMessage);
+      console.error("License upload error:", error);
+    }
   };
 
   return (
@@ -87,22 +105,15 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
           >
             State or Territory
           </label>
-          <Select
+          <Input
+            id="stateTerritory"
+            type="text"
             value={formData.stateTerritory}
-            onValueChange={(value) => updateFormData({ stateTerritory: value })}
+            onChange={(e) => updateFormData({ stateTerritory: e.target.value })}
+            placeholder="Enter state or territory"
+            className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
             required
-          >
-            <SelectTrigger className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm">
-              <SelectValue placeholder="Select your State or Territory" />
-            </SelectTrigger>
-            <SelectContent>
-              {states.map((state) => (
-                <SelectItem key={state} value={state}>
-                  {state}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          />
         </div>
 
         {/* License Type */}
@@ -117,18 +128,44 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
             value={formData.licenseType}
             onValueChange={(value) => updateFormData({ licenseType: value })}
             required
+            disabled={isLoadingTypes}
           >
             <SelectTrigger className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm">
-              <SelectValue placeholder="Select your company licence type" />
+              <SelectValue
+                placeholder={
+                  isLoadingTypes
+                    ? "Loading..."
+                    : "Select your company licence type"
+                }
+              />
             </SelectTrigger>
             <SelectContent>
-              {licenseTypes.map((type) => (
-                <SelectItem key={type} value={type}>
-                  {type}
+              {licenseTypesData?.licence_types?.map((type: any) => (
+                <SelectItem key={type.id} value={type.id.toString()}>
+                  {type.title}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        {/* License number */}
+        <div>
+          <label
+            htmlFor="licenseNumber"
+            className="block text-sm font-medium text-gray-900 mb-2"
+          >
+            License Number
+          </label>
+          <Input
+            id="licenseNumber"
+            type="text"
+            value={formData.licenseNumber}
+            onChange={(e) => updateFormData({ licenseNumber: e.target.value })}
+            placeholder="Enter license number"
+            className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
+            required
+          />
         </div>
 
         {/* License Upload */}
@@ -195,9 +232,10 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
         {/* Next Button */}
         <Button
           type="submit"
-          className="w-full h-12 bg-[#0F172A] hover:bg-[#1E293B] text-white rounded-lg font-semibold text-base"
+          disabled={isUploading}
+          className="w-full h-12 bg-[#0F172A] hover:bg-[#1E293B] text-white rounded-lg font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Next
+          {isUploading ? "Uploading..." : "Next"}
         </Button>
       </form>
     </div>
