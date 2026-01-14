@@ -3,7 +3,6 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from "lucide-react";
 
 interface VerificationSuccessStepProps {
@@ -37,12 +36,12 @@ const VerificationSuccessStep: React.FC<VerificationSuccessStepProps> = ({
       </div>
 
       {/* Next Button */}
-      <Button
+      {/* <Button
         onClick={onNext}
         className="w-full h-12 bg-[#0F172A] hover:bg-[#1E293B] text-white rounded-lg font-semibold text-base"
       >
         Next
-      </Button>
+      </Button> */}
     </div>
   );
 };

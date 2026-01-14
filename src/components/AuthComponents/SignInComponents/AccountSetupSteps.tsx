@@ -5,14 +5,12 @@
 import React, { useState } from "react";
 import CompanyInfoStep from "./CompanyInfoStep";
 import LicenseUploadStep from "./LicenseUploadStep";
-import JoinNowModal from "./JoinNowModal";
-import ReferralModal from "./ReferralModal";
 import VerificationSuccessStep from "./VerificationSuccessStep";
+import { useRouter } from "next/navigation";
 
 const AccountSetupSteps = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [showJoinModal, setShowJoinModal] = useState(false);
-  const [showReferralModal, setShowReferralModal] = useState(false);
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     // Step 1: Company Info
@@ -35,26 +33,10 @@ const AccountSetupSteps = () => {
 
   const handleNextStep = () => {
     if (currentStep === 3) {
-      setShowJoinModal(true);
+      setCurrentStep(1);
     } else {
       setCurrentStep(currentStep + 1);
     }
-  };
-
-  const handleJoinNow = () => {
-    setShowJoinModal(false);
-    setShowReferralModal(true);
-  };
-
-  const handleDoLater = () => {
-    setShowJoinModal(false);
-    setShowReferralModal(true);
-  };
-
-  const handleCloseReferral = () => {
-    setShowReferralModal(false);
-    // Navigate to dashboard or next page
-    window.location.href = "/chat"; // or use router.push('/chat')
   };
 
   const updateFormData = (data: Partial<typeof formData>) => {
@@ -107,12 +89,6 @@ const AccountSetupSteps = () => {
         />
       )}
       {currentStep === 3 && <VerificationSuccessStep onNext={handleNextStep} />}
-
-      {/* Modals */}
-      {showJoinModal && (
-        <JoinNowModal onSubscribe={handleJoinNow} onDoLater={handleDoLater} />
-      )}
-      {showReferralModal && <ReferralModal onClose={handleCloseReferral} />}
     </div>
   );
 };
