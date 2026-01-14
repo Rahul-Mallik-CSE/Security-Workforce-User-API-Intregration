@@ -118,7 +118,8 @@ interface PaymentPlansResponse {
 
 interface SubscribeResponse {
   success: boolean;
-  payment_url: string;
+  payment_url?: string;
+  message?: string;
 }
 
 const settingAPI = baseAPI.injectEndpoints({
@@ -185,6 +186,13 @@ const settingAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["Billing"],
     }),
+    subscribeBonusPlan: builder.mutation<SubscribeResponse, void>({
+      query: () => ({
+        url: `/api/subscribe/1/?ref_bonus=true`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Billing"],
+    }),
   }),
 });
 
@@ -200,4 +208,5 @@ export const {
   useUpdateCardDetailsMutation,
   useGetPaymentPlansQuery,
   useSubscribeMutation,
+  useSubscribeBonusPlanMutation,
 } = settingAPI;

@@ -5,11 +5,17 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import SubscriptionModal from "./SubscriptionModal";
-import { useGetInvoicesQuery } from "@/redux/freatures/settingAPI";
+import {
+  useGetInvoicesQuery,
+  useSubscribeBonusPlanMutation,
+} from "@/redux/freatures/settingAPI";
+import { toast } from "react-toastify";
 
 const BillingSetting = () => {
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const { data: invoicesData, isLoading } = useGetInvoicesQuery();
+  const [subscribeBonusPlan, { isLoading: isBonusSubscribing }] =
+    useSubscribeBonusPlanMutation();
 
   const invoices =
     invoicesData?.data?.map((invoice) => ({
@@ -23,6 +29,28 @@ const BillingSetting = () => {
       price: `$${parseFloat(invoice.price).toFixed(2)}`,
     })) || [];
 
+  const handleGetBonus = async () => {
+    try {
+      const result = await subscribeBonusPlan().unwrap();
+
+      if (result.success) {
+        if (result.payment_url) {
+          // Open payment URL in a new browser tab
+          window.open(result.payment_url, "_blank");
+        } else if (result.message) {
+          // Show success message
+          toast.success(result.message);
+        }
+      }
+    } catch (error: any) {
+      console.error("Bonus subscription error:", error);
+      toast.error(
+        error?.data?.message ||
+          "Failed to process bonus subscription. Please try again."
+      );
+    }
+  };
+
   return (
     <div className="px-8 pb-16 ">
       <div className="flex items-center justify-end border-border ">
@@ -32,6 +60,14 @@ const BillingSetting = () => {
           className="bg-blue-900 hover:bg-blue-800 text-white gap-2 rounded-lg flex items-center -mt-10 "
         >
           Pay bill
+        </Button>
+
+        <Button
+          onClick={handleGetBonus}
+          disabled={isBonusSubscribing}
+          className="bg-green-600 hover:bg-green-500 text-white gap-2 rounded-lg flex items-center ml-4 -mt-10 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          {isBonusSubscribing ? "Processing..." : "Get Bonus"}
         </Button>
       </div>
       <h2 className="text-lg font-semibold mb-4">Previous Invoice</h2>
