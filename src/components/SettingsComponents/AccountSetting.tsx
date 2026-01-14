@@ -102,8 +102,8 @@ const AccountSetting = () => {
   const handleShareLink = async () => {
     try {
       const result = await getReferralCode().unwrap();
-      if (result.code) {
-        const link = `${window.location.origin}/sign-up?refer_token=${result.code}`;
+      if (result.referral_code) {
+        const link = `${window.location.origin}/sign-up?refer_token=${result.referral_code}`;
         setReferralLink(link);
         navigator.clipboard.writeText(link);
         toast.success("Referral link copied to clipboard!");
