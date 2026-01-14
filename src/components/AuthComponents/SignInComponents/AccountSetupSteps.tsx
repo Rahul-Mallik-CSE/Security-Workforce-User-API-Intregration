@@ -7,6 +7,7 @@ import CompanyInfoStep from "./CompanyInfoStep";
 import LicenseUploadStep from "./LicenseUploadStep";
 import VerificationSuccessStep from "./VerificationSuccessStep";
 import { useRouter } from "next/navigation";
+import { logout } from "@/services/authService";
 
 const AccountSetupSteps = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -31,9 +32,13 @@ const AccountSetupSteps = () => {
     { number: 3, label: "Confirmation Screen" },
   ];
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (currentStep === 3) {
       setCurrentStep(1);
+      localStorage.removeItem("verified");
+
+      logout();
+      router.push("/sign-in");
     } else {
       setCurrentStep(currentStep + 1);
     }

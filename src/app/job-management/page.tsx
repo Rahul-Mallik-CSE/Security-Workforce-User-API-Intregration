@@ -75,7 +75,7 @@ const JobManagementPage = () => {
 
     const query = searchQuery.toLowerCase();
     return transformedData.filter(
-      (job) =>
+      (job: JobManagementData) =>
         job.jobId.toLowerCase().includes(query) ||
         job.role.toLowerCase().includes(query) ||
         job.location.toLowerCase().includes(query) ||

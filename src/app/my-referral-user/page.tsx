@@ -54,7 +54,7 @@ const MyReferralUserPage = () => {
 
     const query = searchQuery.toLowerCase();
     return transformedData.filter(
-      (user) =>
+      (user: ReferralUserData) =>
         user.userName.toLowerCase().includes(query) ||
         user.email.toLowerCase().includes(query) ||
         user.status.toLowerCase().includes(query)

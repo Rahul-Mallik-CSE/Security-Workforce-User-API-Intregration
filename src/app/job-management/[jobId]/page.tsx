@@ -9,7 +9,11 @@ import JobRequirementsCard from "@/components/JobManagementComponents/JobRequire
 import ApplicantsCard from "@/components/JobManagementComponents/ApplicantsCard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { JobDetailsData, ApplicantData } from "@/types/AllTypes";
+import {
+  JobDetailsData,
+  ApplicantData,
+  JobDetailsAPIApplication,
+} from "@/types/AllTypes";
 
 const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
   const router = useRouter();
@@ -58,16 +62,18 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
   const applicants: ApplicantData[] = useMemo(() => {
     if (!apiResponse?.data?.applications) return [];
 
-    return apiResponse.data.applications.map((app) => ({
-      id: app.id.toString(),
-      candidateId: app.candidate.id,
-      operativeName: app.candidate.first_name,
-      jobRole: apiResponse.data.job_title, // Using job title as role
-      rating: parseFloat(app.avg_rating_main) || 0,
-      jobExperience: `${app.candidate.exprience_in_years} years`,
-      profileImage: app.candidate.image || undefined,
-      status: app.status === "selected" ? "selected" : "pending",
-    }));
+    return apiResponse.data.applications.map(
+      (app: JobDetailsAPIApplication) => ({
+        id: app.id.toString(),
+        candidateId: app.candidate.id,
+        operativeName: app.candidate.first_name,
+        jobRole: apiResponse.data.job_title, // Using job title as role
+        rating: parseFloat(app.avg_rating_main) || 0,
+        jobExperience: `${app.candidate.exprience_in_years} years`,
+        profileImage: app.candidate.image || undefined,
+        status: app.status === "selected" ? "selected" : "pending",
+      })
+    );
   }, [apiResponse]);
 
   const handleSelect = (id: string) => {
