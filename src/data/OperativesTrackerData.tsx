@@ -16,6 +16,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: true,
   },
   {
     id: "2",
@@ -30,6 +31,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: false,
   },
   {
     id: "3",
@@ -44,6 +46,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: true,
   },
   {
     id: "4",
@@ -58,6 +61,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: false,
   },
   {
     id: "5",
@@ -72,6 +76,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: false,
   },
   {
     id: "6",
@@ -86,6 +91,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: false,
   },
   {
     id: "7",
@@ -100,6 +106,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: true,
   },
   {
     id: "8",
@@ -114,6 +121,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: false,
   },
   {
     id: "9",
@@ -128,6 +136,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: true,
   },
   {
     id: "10",
@@ -142,6 +151,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: false,
   },
   {
     id: "11",
@@ -156,6 +166,7 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: true,
   },
   {
     id: "12",
@@ -170,5 +181,6 @@ export const operativesTrackerData: OperativeTrackerData[] = [
     ratePerHour: "$35/hr",
     checkIn: "10:30 AM",
     checkOut: "07:30 PM",
+    is_shift_end: false,
   },
 ];

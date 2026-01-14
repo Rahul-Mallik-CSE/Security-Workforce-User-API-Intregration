@@ -12,6 +12,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "10 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "2",
@@ -22,6 +23,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "---",
     status: "Unpaid",
+    isPaid: false,
   },
   {
     id: "3",
@@ -32,6 +34,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "10 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "4",
@@ -42,6 +45,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "---",
     status: "Unpaid",
+    isPaid: false,
   },
   {
     id: "5",
@@ -52,6 +56,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "10 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "6",
@@ -62,6 +67,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "---",
     status: "Unpaid",
+    isPaid: false,
   },
   {
     id: "7",
@@ -72,6 +78,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "10 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "8",
@@ -82,6 +89,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "---",
     status: "Unpaid",
+    isPaid: false,
   },
   {
     id: "9",
@@ -92,6 +100,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "10 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "10",
@@ -102,6 +111,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "10 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "11",
@@ -112,6 +122,7 @@ export const payrollData: PayrollData[] = [
     total: "$200",
     date: "---",
     status: "Unpaid",
+    isPaid: false,
   },
   {
     id: "12",
@@ -122,6 +133,7 @@ export const payrollData: PayrollData[] = [
     total: "$240",
     date: "11 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "13",
@@ -132,6 +144,7 @@ export const payrollData: PayrollData[] = [
     total: "$300",
     date: "---",
     status: "Unpaid",
+    isPaid: false,
   },
   {
     id: "14",
@@ -142,6 +155,7 @@ export const payrollData: PayrollData[] = [
     total: "$280",
     date: "12 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "15",
@@ -152,6 +166,7 @@ export const payrollData: PayrollData[] = [
     total: "$266",
     date: "---",
     status: "Unpaid",
+    isPaid: false,
   },
   {
     id: "16",
@@ -162,6 +177,7 @@ export const payrollData: PayrollData[] = [
     total: "$288",
     date: "13 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "17",
@@ -172,6 +188,7 @@ export const payrollData: PayrollData[] = [
     total: "$280",
     date: "---",
     status: "Unpaid",
+    isPaid: false,
   },
   {
     id: "18",
@@ -182,6 +199,7 @@ export const payrollData: PayrollData[] = [
     total: "$288",
     date: "14 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "19",
@@ -192,6 +210,7 @@ export const payrollData: PayrollData[] = [
     total: "$264",
     date: "---",
     status: "Unpaid",
+    isPaid: false,
   },
   {
     id: "20",
@@ -202,6 +221,7 @@ export const payrollData: PayrollData[] = [
     total: "$296",
     date: "15 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "21",
@@ -212,6 +232,7 @@ export const payrollData: PayrollData[] = [
     total: "$280",
     date: "16 Oct 2025",
     status: "Paid",
+    isPaid: true,
   },
   {
     id: "22",
@@ -222,5 +243,6 @@ export const payrollData: PayrollData[] = [
     total: "$272",
     date: "---",
     status: "Unpaid",
+    isPaid: false,
   },
 ];

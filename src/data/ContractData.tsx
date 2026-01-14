@@ -11,6 +11,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Cancelled",
     amendRequest: "Pending",
+    originalAmendStatus: "Pending",
   },
   {
     id: "2",
@@ -20,6 +21,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Pending",
     amendRequest: "Accepted",
+    originalAmendStatus: "Accepted",
   },
   {
     id: "3",
@@ -29,6 +31,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Complete",
     amendRequest: "Reject",
+    originalAmendStatus: "Reject",
   },
   {
     id: "4",
@@ -38,6 +41,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Pending",
     amendRequest: "Accepted",
+    originalAmendStatus: "Accepted",
   },
   {
     id: "5",
@@ -47,6 +51,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Signed",
     amendRequest: "Pending",
+    originalAmendStatus: "Pending",
   },
   {
     id: "6",
@@ -56,6 +61,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Signed",
     amendRequest: "Pending",
+    originalAmendStatus: "Pending",
   },
   {
     id: "7",
@@ -65,6 +71,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Complete",
     amendRequest: "Accepted",
+    originalAmendStatus: "Accepted",
   },
   {
     id: "8",
@@ -74,6 +81,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Signed",
     amendRequest: "Pending",
+    originalAmendStatus: "Pending",
   },
   {
     id: "9",
@@ -83,6 +91,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Complete",
     amendRequest: "Accepted",
+    originalAmendStatus: "Accepted",
   },
   {
     id: "10",
@@ -92,6 +101,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Cancelled",
     amendRequest: "Pending",
+    originalAmendStatus: "Pending",
   },
   {
     id: "11",
@@ -101,6 +111,7 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Pending",
     amendRequest: "Accepted",
+    originalAmendStatus: "Accepted",
   },
   {
     id: "12",
@@ -110,5 +121,6 @@ export const contractData: ContractData[] = [
     dateCreated: "10 Oct 2025",
     status: "Cancelled",
     amendRequest: "Pending",
+    originalAmendStatus: "Pending",
   },
 ];
