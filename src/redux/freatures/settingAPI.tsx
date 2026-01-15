@@ -47,7 +47,7 @@ interface LicenceTypesResponse {
 interface ReferralCodeResponse {
   success: boolean;
   message: string;
-  referral_code: string;
+  code: string;
 }
 
 interface InvoicePlan {
