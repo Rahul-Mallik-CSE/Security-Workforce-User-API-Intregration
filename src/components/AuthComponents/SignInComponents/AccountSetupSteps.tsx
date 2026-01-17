@@ -7,7 +7,6 @@ import CompanyInfoStep from "./CompanyInfoStep";
 import LicenseUploadStep from "./LicenseUploadStep";
 import VerificationSuccessStep from "./VerificationSuccessStep";
 import { useRouter } from "next/navigation";
-import { logout } from "@/services/authService";
 
 const AccountSetupSteps = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -35,10 +34,9 @@ const AccountSetupSteps = () => {
   const handleNextStep = async () => {
     if (currentStep === 3) {
       setCurrentStep(1);
-      localStorage.removeItem("verified");
+      // localStorage.removeItem("verified");
 
-      logout();
-      router.push("/sign-in");
+      router.push("/");
     } else {
       setCurrentStep(currentStep + 1);
     }
@@ -60,8 +58,8 @@ const AccountSetupSteps = () => {
                   currentStep >= step.number
                     ? "bg-orange-500 text-white"
                     : currentStep > step.number
-                    ? "bg-orange-500 text-white"
-                    : "bg-gray-200 text-gray-600"
+                      ? "bg-orange-500 text-white"
+                      : "bg-gray-200 text-gray-600"
                 }`}
               >
                 {step.number}

@@ -123,7 +123,7 @@ const CreateNewJobForm = () => {
       if (url.includes("goo.gl") || url.includes("maps.app.goo.gl")) {
         toast.warning(
           "Shortened link detected! Please: 1) Open the link, 2) Right-click on the map, 3) Click the coordinates to copy, 4) Or use 'Share' → 'Copy link' for the full URL",
-          { autoClose: 8000 }
+          { autoClose: 8000 },
         );
         return null;
       }
@@ -131,7 +131,7 @@ const CreateNewJobForm = () => {
       // For other URLs without coordinates
       toast.warning(
         "No coordinates found. Please drop a pin on the map and copy the URL with coordinates",
-        { autoClose: 5000 }
+        { autoClose: 5000 },
       );
       return null;
     } catch (error) {
@@ -206,7 +206,9 @@ const CreateNewJobForm = () => {
       toast.success("Job posted successfully!");
       router.push("/job-management");
     } catch (error: any) {
-      const errorMessage = error?.data?.message || "Failed to create job post";
+      const errorMessage =
+        error?.data?.message ||
+        "You need the Subscription and admin verification to create a job.";
       toast.error(errorMessage);
       console.error("Error creating job:", error);
     }
@@ -523,7 +525,7 @@ const CreateNewJobForm = () => {
                   <SelectItem key={cert.id} value={cert.id.toString()}>
                     {cert.title}
                   </SelectItem>
-                )
+                ),
               )}
             </SelectContent>
           </Select>

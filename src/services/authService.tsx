@@ -7,7 +7,7 @@ import { cookies } from "next/headers";
 // Define a function to save the token in cookies
 export const saveTokens = async (
   token: string,
-  verified?: boolean
+  verified?: boolean,
 ): Promise<void> => {
   (await cookies()).set("token", token);
   if (verified !== undefined) {
@@ -22,10 +22,10 @@ export const getCurrentUser = async (): Promise<string | undefined> => {
 };
 
 // Define a function to get verified status from cookies
-export const getVerifiedStatus = async (): Promise<boolean> => {
-  const verified = (await cookies()).get("verified")?.value;
-  return verified === "true";
-};
+// export const getVerifiedStatus = async (): Promise<boolean> => {
+//   const verified = (await cookies()).get("verified")?.value;
+//   return verified === "true";
+// };
 
 // Define a function to logout by deleting the token from cookies
 export const logout = async (): Promise<void> => {

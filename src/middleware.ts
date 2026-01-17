@@ -3,7 +3,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
-import { getCurrentUser, getVerifiedStatus } from "./services/authService";
+import { getCurrentUser } from "./services/authService";
 
 const SIGN_IN_URL = "/sign-in";
 
@@ -19,8 +19,8 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/verify-method") ||
     request.nextUrl.pathname.startsWith("/verify-otp");
 
-  const isAccountSetupPage =
-    request.nextUrl.pathname.startsWith("/account-setup");
+  // const isAccountSetupPage =
+  //   request.nextUrl.pathname.startsWith("/account-setup");
 
   if (isAuthPage) {
     // If user is already logged in and tries to access auth pages, redirect to home
@@ -40,25 +40,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(SIGN_IN_URL, request.url));
   }
 
-  try {
-    const decoded: any = jwtDecode(token);
-    const isVerified = await getVerifiedStatus();
+  // try {
+  //   const decoded: any = jwtDecode(token);
+  //   const isVerified = await getVerifiedStatus();
 
-    // If user is not verified and not on account-setup page, redirect to account-setup
-    if (!isVerified && !isAccountSetupPage) {
-      return NextResponse.redirect(new URL("/account-setup", request.url));
-    }
+  //   // If user is not verified and not on account-setup page, redirect to account-setup
+  //   if (!isVerified && !isAccountSetupPage) {
+  //     return NextResponse.redirect(new URL("/account-setup", request.url));
+  //   }
 
-    // If user is verified and on account-setup page, redirect to dashboard
-    if (isVerified && isAccountSetupPage) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
+  //   // If user is verified and on account-setup page, redirect to dashboard
+  //   if (isVerified && isAccountSetupPage) {
+  //     return NextResponse.redirect(new URL("/", request.url));
+  //   }
 
-    return NextResponse.next();
-  } catch (error) {
-    console.error("Invalid token:", error);
-    return NextResponse.redirect(new URL(SIGN_IN_URL, request.url));
-  }
+  //   return NextResponse.next();
+  // } catch (error) {
+  //   console.error("Invalid token:", error);
+  //   return NextResponse.redirect(new URL(SIGN_IN_URL, request.url));
+  // }
 }
 
 export const config = {
