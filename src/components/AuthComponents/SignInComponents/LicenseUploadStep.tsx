@@ -111,7 +111,7 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
       newErrors.licenseNumber = "Licence Number is required";
     }
 
-    if (!formData.licenseFile && !fileName) {
+    if (!formData.licenseFile) {
       newErrors.licenseFile = "Licence Upload is required";
     }
 
@@ -193,7 +193,6 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
             }}
             placeholder="Enter state or territory"
             className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
-            required
           />
           {errors.stateTerritory && (
             <p className="text-red-600 text-xs mt-1">{errors.stateTerritory}</p>
@@ -202,13 +201,20 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
 
         {/* License Type */}
         <div>
-          <label{
+          <label
+            htmlFor="licenseType"
+            className="block text-sm font-medium text-gray-900 mb-2"
+          >
+            Licence Type(s)
+          </label>
+          <Select
+            value={formData.licenseType}
+            onValueChange={(value) => {
               updateFormData({ licenseType: value });
               if (errors.licenseType) {
                 setErrors({ ...errors, licenseType: undefined });
               }
             }}
-            required
             disabled={isLoadingTypes}
           >
             <SelectTrigger className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm">
@@ -232,26 +238,10 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
           </Select>
           {errors.licenseType && (
             <p className="text-red-600 text-xs mt-1">{errors.licenseType}</p>
-          )}nseTypesData?.licence_types?.map(
-                (type: { id: number; title: string }) => (
-                  <SelectItem key={type.id} value={type.id.toString()}>
-                    {type.title}
-                  </SelectItem>
-                ),
-              )}
-            </SelectContent>{
-              updateFormData({ licenseNumber: e.target.value });
-              if (errors.licenseNumber) {
-                setErrors({ ...errors, licenseNumber: undefined });
-              }
-            }}
-            placeholder="Enter licence number"
-            className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
-            required
-          />
-          {errors.licenseNumber && (
-            <p className="text-red-600 text-xs mt-1">{errors.licenseNumber}</p>
-          )}License number */}
+          )}
+        </div>
+
+        {/* License number */}
         <div>
           <label
             htmlFor="licenseNumber"
@@ -263,11 +253,18 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
             id="licenseNumber"
             type="text"
             value={formData.licenseNumber}
-            onChange={(e) => updateFormData({ licenseNumber: e.target.value })}
+            onChange={(e) => {
+              updateFormData({ licenseNumber: e.target.value });
+              if (errors.licenseNumber) {
+                setErrors({ ...errors, licenseNumber: undefined });
+              }
+            }}
             placeholder="Enter licence number"
             className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
-            required
           />
+          {errors.licenseNumber && (
+            <p className="text-red-600 text-xs mt-1">{errors.licenseNumber}</p>
+          )}
         </div>
 
         {/* License Upload */}
@@ -284,14 +281,10 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
             accept=".pdf,.jpg,.jpeg,.png"
             onChange={handleFileUpload}
             className="hidden"
-            required
           />
           <div className="relative">
             <div
               onClick={() => fileInputRef.current?.click()}
-          {errors.licenseFile && (
-            <p className="text-red-600 text-xs mt-1">{errors.licenseFile}</p>
-          )}
               className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
             >
               <span className={fileName ? "text-gray-900" : "text-gray-400"}>
@@ -311,19 +304,16 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
           <p className="text-xs text-gray-500 mt-1">
             Accepted formats: PDF, JPG, PNG
           </p>
-        </div> {
-              updateFormData({ licenseExpiryDate: e.target.value });
-              if (errors.licenseExpiryDate) {
-                setErrors({ ...errors, licenseExpiryDate: undefined });
-              }
-            }}
-            placeholder="Enter your licence expiry date"
-            className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
-            required
-          />
-          {errors.licenseExpiryDate && (
-            <p className="text-red-600 text-xs mt-1">{errors.licenseExpiryDate}</p>
-          )}className="block text-sm font-medium text-gray-900 mb-2"
+          {errors.licenseFile && (
+            <p className="text-red-600 text-xs mt-1">{errors.licenseFile}</p>
+          )}
+        </div>
+
+        {/* Licence Expiry Date */}
+        <div>
+          <label
+            htmlFor="licenseExpiryDate"
+            className="block text-sm font-medium text-gray-900 mb-2"
           >
             Licence Expiry Date
           </label>
@@ -331,13 +321,20 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
             id="licenseExpiryDate"
             type="date"
             value={formData.licenseExpiryDate}
-            onChange={(e) =>
-              updateFormData({ licenseExpiryDate: e.target.value })
-            }
+            onChange={(e) => {
+              updateFormData({ licenseExpiryDate: e.target.value });
+              if (errors.licenseExpiryDate) {
+                setErrors({ ...errors, licenseExpiryDate: undefined });
+              }
+            }}
             placeholder="Enter your licence expiry date"
             className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
-            required
           />
+          {errors.licenseExpiryDate && (
+            <p className="text-red-600 text-xs mt-1">
+              {errors.licenseExpiryDate}
+            </p>
+          )}
         </div>
 
         {/* Next Button */}
