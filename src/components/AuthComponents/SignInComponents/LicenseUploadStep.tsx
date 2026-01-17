@@ -39,6 +39,13 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string>("");
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [errors, setErrors] = useState<{
+    stateTerritory?: string;
+    licenseType?: string;
+    licenseNumber?: string;
+    licenseFile?: string;
+    licenseExpiryDate?: string;
+  }>({});
 
   // Fetch license types from API
   const { data: licenseTypesData, isLoading: isLoadingTypes } =
@@ -83,11 +90,46 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
     if (file) {
       updateFormData({ licenseFile: file });
       setFileName(file.name);
+      if (errors.licenseFile) {
+        setErrors({ ...errors, licenseFile: undefined });
+      }
     }
+  };
+
+  const validateForm = () => {
+    const newErrors: typeof errors = {};
+
+    if (!formData.stateTerritory.trim()) {
+      newErrors.stateTerritory = "State or Territory is required";
+    }
+
+    if (!formData.licenseType) {
+      newErrors.licenseType = "Licence Type is required";
+    }
+
+    if (!formData.licenseNumber.trim()) {
+      newErrors.licenseNumber = "Licence Number is required";
+    }
+
+    if (!formData.licenseFile && !fileName) {
+      newErrors.licenseFile = "Licence Upload is required";
+    }
+
+    if (!formData.licenseExpiryDate) {
+      newErrors.licenseExpiryDate = "Licence Expiry Date is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       // Create FormData object
@@ -113,7 +155,7 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
       const errorMessage =
         err?.data?.message || "Failed to upload license. Please try again.";
       toast.error(errorMessage);
-      console.error("License upload error:", error);
+      console.error("Licence upload error:", error);
     }
   };
 
@@ -125,7 +167,7 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
           Upload Your Company Licence
         </h1>
         <p className="text-sm text-gray-600">
-          Upload your Company Security Licenses and Expiry Dates for
+          Upload your Company Security Licences and Expiry Dates for
           verification
         </p>
       </div>
@@ -143,24 +185,29 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
             id="stateTerritory"
             type="text"
             value={formData.stateTerritory}
-            onChange={(e) => updateFormData({ stateTerritory: e.target.value })}
+            onChange={(e) => {
+              updateFormData({ stateTerritory: e.target.value });
+              if (errors.stateTerritory) {
+                setErrors({ ...errors, stateTerritory: undefined });
+              }
+            }}
             placeholder="Enter state or territory"
             className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
             required
           />
+          {errors.stateTerritory && (
+            <p className="text-red-600 text-xs mt-1">{errors.stateTerritory}</p>
+          )}
         </div>
 
         {/* License Type */}
         <div>
-          <label
-            htmlFor="licenseType"
-            className="block text-sm font-medium text-gray-900 mb-2"
-          >
-            License Type(s)
-          </label>
-          <Select
-            value={formData.licenseType}
-            onValueChange={(value) => updateFormData({ licenseType: value })}
+          <label{
+              updateFormData({ licenseType: value });
+              if (errors.licenseType) {
+                setErrors({ ...errors, licenseType: undefined });
+              }
+            }}
             required
             disabled={isLoadingTypes}
           >
@@ -179,26 +226,45 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
                   <SelectItem key={type.id} value={type.id.toString()}>
                     {type.title}
                   </SelectItem>
-                )
+                ),
               )}
             </SelectContent>
           </Select>
-        </div>
-
-        {/* License number */}
+          {errors.licenseType && (
+            <p className="text-red-600 text-xs mt-1">{errors.licenseType}</p>
+          )}nseTypesData?.licence_types?.map(
+                (type: { id: number; title: string }) => (
+                  <SelectItem key={type.id} value={type.id.toString()}>
+                    {type.title}
+                  </SelectItem>
+                ),
+              )}
+            </SelectContent>{
+              updateFormData({ licenseNumber: e.target.value });
+              if (errors.licenseNumber) {
+                setErrors({ ...errors, licenseNumber: undefined });
+              }
+            }}
+            placeholder="Enter licence number"
+            className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
+            required
+          />
+          {errors.licenseNumber && (
+            <p className="text-red-600 text-xs mt-1">{errors.licenseNumber}</p>
+          )}License number */}
         <div>
           <label
             htmlFor="licenseNumber"
             className="block text-sm font-medium text-gray-900 mb-2"
           >
-            License Number
+            Licence Number
           </label>
           <Input
             id="licenseNumber"
             type="text"
             value={formData.licenseNumber}
             onChange={(e) => updateFormData({ licenseNumber: e.target.value })}
-            placeholder="Enter license number"
+            placeholder="Enter licence number"
             className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
             required
           />
@@ -223,6 +289,9 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
           <div className="relative">
             <div
               onClick={() => fileInputRef.current?.click()}
+          {errors.licenseFile && (
+            <p className="text-red-600 text-xs mt-1">{errors.licenseFile}</p>
+          )}
               className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
             >
               <span className={fileName ? "text-gray-900" : "text-gray-400"}>
@@ -242,13 +311,19 @@ const LicenseUploadStep: React.FC<LicenseUploadStepProps> = ({
           <p className="text-xs text-gray-500 mt-1">
             Accepted formats: PDF, JPG, PNG
           </p>
-        </div>
-
-        {/* Licence Expiry Date */}
-        <div>
-          <label
-            htmlFor="licenseExpiryDate"
-            className="block text-sm font-medium text-gray-900 mb-2"
+        </div> {
+              updateFormData({ licenseExpiryDate: e.target.value });
+              if (errors.licenseExpiryDate) {
+                setErrors({ ...errors, licenseExpiryDate: undefined });
+              }
+            }}
+            placeholder="Enter your licence expiry date"
+            className="w-full h-12 px-4 border border-gray-300 rounded-lg text-sm"
+            required
+          />
+          {errors.licenseExpiryDate && (
+            <p className="text-red-600 text-xs mt-1">{errors.licenseExpiryDate}</p>
+          )}className="block text-sm font-medium text-gray-900 mb-2"
           >
             Licence Expiry Date
           </label>

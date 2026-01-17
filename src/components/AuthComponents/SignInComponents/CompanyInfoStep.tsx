@@ -86,7 +86,6 @@ const CompanyInfoStep: React.FC<CompanyInfoStepProps> = ({
       const response = await updateUserProfile(formDataToSend).unwrap();
 
       if (response.success) {
-        toast.success(response.message || "Profile updated successfully!");
         onNext();
       }
     } catch (error: unknown) {

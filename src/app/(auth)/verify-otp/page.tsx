@@ -155,10 +155,10 @@ const VerifyOtpPage = () => {
       setError(
         err?.data?.message ||
           err?.data?.otp?.[0] ||
-          "Code doesn't match. Please recheck and try again."
+          "Code doesn't match. Please recheck and try again.",
       );
       toast.error(
-        err?.data?.message || "Verification failed. Please try again."
+        err?.data?.message || "Verification failed. Please try again.",
       );
     }
   };
@@ -222,9 +222,7 @@ const VerifyOtpPage = () => {
 
           {/* Resend Link */}
           <div className="text-center text-sm">
-            <span className="text-gray-600">
-              Don&apos;t received the code?{" "}
-            </span>
+            <span className="text-gray-600">Didn’t receive the code? </span>
             <button
               type="button"
               onClick={handleResend}
