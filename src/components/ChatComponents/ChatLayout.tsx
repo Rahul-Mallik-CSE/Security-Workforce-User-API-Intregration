@@ -55,7 +55,7 @@ export default function ChatLayout() {
                 })),
         };
       }) || [],
-    [chatListData, lastMessageUpdates]
+    [chatListData, lastMessageUpdates],
   );
 
   const initialized = useRef(false);
@@ -65,7 +65,7 @@ export default function ChatLayout() {
     const token = localStorage.getItem("accessToken");
     if (!token) return;
 
-    const wsUrl = `ws://10.10.12.15:8001/ws/asc/update_chat_messages/?token=${token}`;
+    const wsUrl = `ws://148.230.92.132:8001/ws/asc/update_chat_messages/?token=${token}`;
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
@@ -135,7 +135,7 @@ export default function ChatLayout() {
   const activeParticipantIds = useMemo(() => {
     if (!active || !chatListData?.data) return [];
     const activeChatData = chatListData.data.find(
-      (chat) => chat.id.toString() === active
+      (chat) => chat.id.toString() === active,
     );
     return activeChatData?.participants.map((p) => p.id) || [];
   }, [active, chatListData]);
