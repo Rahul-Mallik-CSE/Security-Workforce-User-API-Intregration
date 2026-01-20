@@ -10,6 +10,15 @@ const SIGN_IN_URL = "/sign-in";
 export async function middleware(request: NextRequest) {
   const token = await getCurrentUser();
 
+  // Allow requests for static assets (images, css, js) to pass through
+  const pathname = request.nextUrl.pathname || "";
+  if (pathname.startsWith("/_next/") || pathname.startsWith("/api/") || pathname === "/favicon.ico") {
+    return NextResponse.next();
+  }
+  if (pathname.match(/\.(png|jpg|jpeg|svg|webp|ico|css|js)$/)) {
+    return NextResponse.next();
+  }
+
   // Allow access to auth pages without token
   const isAuthPage =
     request.nextUrl.pathname.startsWith("/sign-in") ||
