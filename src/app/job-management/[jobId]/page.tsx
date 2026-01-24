@@ -38,8 +38,8 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
       data.status === "published"
         ? "In Progress"
         : data.applications?.length > 0
-        ? "Tasked"
-        : "Untasked";
+          ? "Tasked"
+          : "Untasked";
 
     return {
       id: data.id.toString(),
@@ -72,13 +72,13 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
         jobExperience: `${app.candidate.exprience_in_years} years`,
         profileImage: app.candidate.image || undefined,
         status: app.status === "selected" ? "selected" : "pending",
-      })
+      }),
     );
   }, [apiResponse]);
 
   const handleSelect = (id: string) => {
     setSelectedApplicants((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 

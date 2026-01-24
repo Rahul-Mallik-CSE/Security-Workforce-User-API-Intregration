@@ -22,7 +22,7 @@ const SelectedApplicantsPage = ({
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
-    null
+    null,
   );
 
   // Unwrap params promise
@@ -52,7 +52,7 @@ const SelectedApplicantsPage = ({
         jobExperience: `${app.candidate.exprience_in_years} years`,
         profileImage: app.candidate.image || undefined,
         status: "selected",
-      })
+      }),
     );
   }, [apiResponse]);
 
