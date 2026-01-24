@@ -63,9 +63,9 @@ const JobManagementPage = () => {
           job.status === "published"
             ? "In Progress"
             : job.applications?.length > 0
-            ? "Tasked"
-            : "Untasked",
-      })
+              ? "Tasked"
+              : "Untasked",
+      }),
     );
   }, [apiResponse]);
 
@@ -79,7 +79,7 @@ const JobManagementPage = () => {
         job.jobId.toLowerCase().includes(query) ||
         job.role.toLowerCase().includes(query) ||
         job.location.toLowerCase().includes(query) ||
-        job.status.toLowerCase().includes(query)
+        job.status.toLowerCase().includes(query),
     );
   }, [transformedData, searchQuery]);
 
@@ -180,6 +180,17 @@ const JobManagementPage = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 flex-wrap">
         <h1 className="text-3xl font-semibold">Job Management</h1>
 
+        <div>
+          {/* Create New Job Button */}
+          <Button
+            onClick={handleCreateNewJob}
+            className="flex items-center gap-2 px-4 py-1 bg-orange-500 text-white rounded-lg  hover:bg-orange-600 transition-colors whitespace-nowrap"
+          >
+            <span className="text-2xl">+</span>
+            <span className="text-2xl font-medium">Post a Job</span>
+          </Button>
+        </div>
+
         <div className="flex flex-col md:flex-row gap-3 items-start md:items-center">
           {/* Search Bar */}
           <div className="relative w-full md:w-80">
@@ -192,15 +203,6 @@ const JobManagementPage = () => {
               className="w-full h-10 pl-9 pr-4 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
             />
           </div>
-
-          {/* Create New Job Button */}
-          <Button
-            onClick={handleCreateNewJob}
-            className="flex items-center gap-2 px-4 py-1 bg-orange-500 text-white rounded-lg  hover:bg-orange-600 transition-colors whitespace-nowrap"
-          >
-            <span className="text-lg">+</span>
-            <span className="text-sm font-medium">Create New Job</span>
-          </Button>
         </div>
       </div>
 

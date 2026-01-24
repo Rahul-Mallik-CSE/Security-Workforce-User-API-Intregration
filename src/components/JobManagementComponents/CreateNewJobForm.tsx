@@ -224,11 +224,11 @@ const CreateNewJobForm = () => {
         {/* Job Title/Role */}
         <div>
           <label className="block text-sm font-semibold text-black mb-2">
-            Job Title/Role
+            Job Title
           </label>
           <input
             type="text"
-            placeholder="Enter job title/role"
+            placeholder="Enter job title"
             value={formData.jobTitle}
             onChange={(e) =>
               setFormData({ ...formData, jobTitle: e.target.value })
@@ -534,7 +534,7 @@ const CreateNewJobForm = () => {
         {/* Use Preferred Guards List */}
         <div>
           <label className="block text-sm font-semibold text-black mb-2">
-            Use Preferred Guards List
+            Use Preferred Operatives List
           </label>
           <Select
             value={formData.usePreferredGuards}
@@ -592,7 +592,14 @@ const CreateNewJobForm = () => {
             <SelectContent>
               <SelectItem value="english">English</SelectItem>
               <SelectItem value="spanish">Spanish</SelectItem>
-              <SelectItem value="mandarin">Mandarin</SelectItem>
+              <SelectItem value="mandarin">Mandarin Chinese</SelectItem>
+              <SelectItem value="hindi">Hindi</SelectItem>
+              <SelectItem value="arabic">Arabic</SelectItem>
+              <SelectItem value="french">French</SelectItem>
+              <SelectItem value="portuguese">Portuguese</SelectItem>
+              <SelectItem value="russian">Russian</SelectItem>
+              <SelectItem value="bangali">Bangali</SelectItem>
+              <SelectItem value="japanese">Japanese</SelectItem>
             </SelectContent>
           </Select>
         </div>
