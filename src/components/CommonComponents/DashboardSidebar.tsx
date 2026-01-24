@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   IoDocumentTextOutline,
   IoChatbubblesOutline,
@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/services/authService";
 import { useProfileDetailsQuery } from "@/redux/freatures/settingAPI";
+import { useGetUnreadMessagesCountQuery } from "@/redux/freatures/chatAPI";
 import { getFullImageFullUrl } from "@/lib/utils";
 
 // import { logout } from "@/service/authService";
@@ -50,11 +51,13 @@ export default function DashboardSidebar() {
 
 function DashboardSidebarContent() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const router = useRouter();
   const pathname = usePathname();
   const { state } = useSidebar();
   const { data: profileData } = useProfileDetailsQuery();
+  const { data: unreadData } = useGetUnreadMessagesCountQuery();
 
   const userData = profileData?.data;
   const userName = userData?.first_name || "User";
@@ -62,6 +65,23 @@ function DashboardSidebarContent() {
     ? getFullImageFullUrl(userData.image)
     : "/logo.png";
   const userStatus = userData?.is_subscribe ? "Premium" : "General";
+
+  // Update unread count from API and listen to WebSocket increments
+  useEffect(() => {
+    if (unreadData?.total_unread_inboxes !== undefined) {
+      setUnreadCount(unreadData.total_unread_inboxes);
+    }
+  }, [unreadData]);
+
+  useEffect(() => {
+    const handleIncrement = () => {
+      setUnreadCount((prev) => prev + 1);
+    };
+    window.addEventListener("unreadCountIncrement", handleIncrement);
+    return () => {
+      window.removeEventListener("unreadCountIncrement", handleIncrement);
+    };
+  }, []);
 
   const handleLogout = async () => {
     // Perform logout actions here (clear tokens, etc.)
@@ -155,6 +175,7 @@ function DashboardSidebarContent() {
                   pathname === item.href || pathname.startsWith(item.href + "/")
                 }
                 collapsed={isCollapsed}
+                badge={item.label === "Chat" ? unreadCount : undefined}
               />
             ))}
           </SidebarMenu>
@@ -243,6 +264,7 @@ interface NavItemProps {
   label: string;
   active: boolean;
   collapsed?: boolean;
+  badge?: number;
 }
 
 function NavItem({
@@ -251,6 +273,7 @@ function NavItem({
   label,
   active,
   collapsed = false,
+  badge,
 }: NavItemProps) {
   return (
     <SidebarMenuItem>
@@ -259,19 +282,29 @@ function NavItem({
         className={cn(
           active
             ? "bg-orange-500 text-white hover:text-white hover:bg-orange-500 focus:bg-orange-600 font-medium"
-            : "bg-transparent text-gray-700 hover:bg-orange-50 hover:text-orange-500 font-medium"
+            : "bg-transparent text-gray-700 hover:bg-orange-50 hover:text-orange-500 font-medium",
         )}
       >
         <Link
           href={href}
           className={cn(
             collapsed
-              ? "flex items-center justify-center px-2 py-3 transition-colors rounded-full w-12 h-12 mx-auto"
-              : "flex items-center gap-3 px-4 py-3 transition-colors rounded-md"
+              ? "flex items-center justify-center px-2 py-3 transition-colors rounded-full w-12 h-12 mx-auto relative"
+              : "flex items-center gap-3 px-4 py-3 transition-colors rounded-md",
           )}
         >
           <Icon size={collapsed ? 20 : 18} />
-          {!collapsed && <span className="text-sm">{label}</span>}
+
+          {!collapsed && (
+            <>
+              <span className="text-sm">{label}</span>
+              {badge && badge > 0 && (
+                <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full ml-auto">
+                  ({badge})
+                </span>
+              )}
+            </>
+          )}
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>

@@ -15,6 +15,7 @@ interface LastMessage {
   text: string;
   sender_name: string;
   created_at: string;
+  is_readed: boolean;
 }
 
 interface ChatItem {
@@ -77,6 +78,12 @@ interface SendMessageResponse {
   };
 }
 
+interface UnreadMessagesCountResponse {
+  success: boolean;
+  message: string;
+  total_unread_inboxes: number;
+}
+
 const chatAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     getChatList: builder.query<ChatListResponse, void>({
@@ -103,6 +110,10 @@ const chatAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["Chat"],
     }),
+    getUnreadMessagesCount: builder.query<UnreadMessagesCountResponse, void>({
+      query: () => "/api/chat-note/unread-messages-count/",
+      providesTags: ["Chat"],
+    }),
   }),
 });
 
@@ -111,4 +122,5 @@ export const {
   useGetMessageListQuery,
   useCreateChatMutation,
   useSendMessageMutation,
+  useGetUnreadMessagesCountQuery,
 } = chatAPI;

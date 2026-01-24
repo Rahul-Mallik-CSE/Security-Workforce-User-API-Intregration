@@ -13,6 +13,7 @@ interface Contact {
   avatar?: string;
   unread?: number;
   time?: string;
+  isRead?: boolean;
 }
 
 interface Props {
@@ -72,7 +73,7 @@ export default function ChatList({ contacts, activeId, onSelect }: Props) {
               key={c.id}
               onClick={() => onSelect(c.id)}
               className={`w-full cursor-pointer flex items-center gap-3 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors text-left ${
-                active ? "bg-blue-50" : ""
+                active ? "bg-blue-50" : c.isRead === false ? "bg-gray-200" : ""
               }`}
             >
               <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center shrink-0">

@@ -15,12 +15,13 @@ interface Contact {
   lastMessage: string;
   avatar?: string;
   time?: string;
+  isRead?: boolean;
 }
 
 export default function ChatLayout() {
   const [active, setActive] = useState<string | null>(null);
   const [lastMessageUpdates, setLastMessageUpdates] = useState<{
-    [chatId: string]: { text: string; time: string };
+    [chatId: string]: { text: string; time: string; isRead: boolean };
   }>({});
   const { data: chatListData, isLoading } = useGetChatListQuery();
   const searchParams = useSearchParams();
@@ -53,12 +54,23 @@ export default function ChatLayout() {
                   hour: "2-digit",
                   minute: "2-digit",
                 })),
+          isRead: item.last_message?.is_readed ?? true,
         };
       }) || [],
     [chatListData, lastMessageUpdates],
   );
 
   const initialized = useRef(false);
+
+  // Get all participant IDs for unread count logic
+  const allParticipantIds = useMemo(() => {
+    if (!chatListData?.data) return [];
+    const allIds = new Set<number>();
+    chatListData.data.forEach((chat) => {
+      chat.participants.forEach((p) => allIds.add(p.id));
+    });
+    return Array.from(allIds);
+  }, [chatListData]);
 
   // Setup WebSocket connection for real-time chat list updates
   useEffect(() => {
@@ -78,6 +90,10 @@ export default function ChatLayout() {
         console.log("ChatLayout WebSocket message:", data);
 
         if (data.chat_id && data.message) {
+          // Check if message is from another user (not current user)
+          const isFromOtherUser =
+            data.sender_id && allParticipantIds.includes(data.sender_id);
+
           // Update the last message for this chat
           setLastMessageUpdates((prev) => ({
             ...prev,
@@ -87,8 +103,14 @@ export default function ChatLayout() {
                 hour: "2-digit",
                 minute: "2-digit",
               }),
+              isRead: false,
             },
           }));
+
+          // Only increment unread count if message is from another user
+          if (isFromOtherUser) {
+            window.dispatchEvent(new CustomEvent("unreadCountIncrement"));
+          }
         }
       } catch (error) {
         console.error("Error parsing WebSocket message:", error);
@@ -110,7 +132,7 @@ export default function ChatLayout() {
         ws.close();
       }
     };
-  }, []);
+  }, [allParticipantIds]);
 
   useEffect(() => {
     if (!initialized.current && contacts.length > 0) {
