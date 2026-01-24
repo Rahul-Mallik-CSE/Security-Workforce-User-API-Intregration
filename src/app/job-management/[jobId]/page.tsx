@@ -4,9 +4,13 @@
 
 import React, { useState, useMemo, use } from "react";
 import { useRouter } from "next/navigation";
-import { useGetJobDetailsQuery } from "@/redux/freatures/jobManagementAPI";
+import {
+  useGetJobDetailsQuery,
+  useRemoveOperativeMutation,
+} from "@/redux/freatures/jobManagementAPI";
 import JobRequirementsCard from "@/components/JobManagementComponents/JobRequirementsCard";
 import ApplicantsCard from "@/components/JobManagementComponents/ApplicantsCard";
+import DeleteModal from "@/components/CommonComponents/DeleteModal";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -18,6 +22,10 @@ import {
 const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
   const router = useRouter();
   const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
+    null,
+  );
 
   // Unwrap params promise
   const { jobId } = use(params);
@@ -28,6 +36,9 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
     isLoading,
     isError,
   } = useGetJobDetailsQuery(jobId);
+
+  const [removeOperative, { isLoading: isRemoving }] =
+    useRemoveOperativeMutation();
 
   // Transform API data for JobRequirementsCard
   const jobDetails: JobDetailsData | null = useMemo(() => {
@@ -58,7 +69,7 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
     };
   }, [apiResponse]);
 
-  // Transform API data for ApplicantsCard
+  // Transform API data for ApplicantsCard (regular applications)
   const applicants: ApplicantData[] = useMemo(() => {
     if (!apiResponse?.data?.applications) return [];
 
@@ -67,11 +78,29 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
         id: app.id.toString(),
         candidateId: app.candidate.id,
         operativeName: app.candidate.first_name,
-        jobRole: apiResponse.data.job_title, // Using job title as role
+        jobRole: apiResponse.data.job_title,
         rating: parseFloat(app.avg_rating_main) || 0,
         jobExperience: `${app.candidate.exprience_in_years} years`,
         profileImage: app.candidate.image || undefined,
         status: app.status === "selected" ? "selected" : "pending",
+      }),
+    );
+  }, [apiResponse]);
+
+  // Transform selected_list data for ApplicantsCard
+  const selectedApplicantsData: ApplicantData[] = useMemo(() => {
+    if (!apiResponse?.data?.selected_list) return [];
+
+    return apiResponse.data.selected_list.map(
+      (app: JobDetailsAPIApplication) => ({
+        id: app.id.toString(),
+        candidateId: app.candidate.id,
+        operativeName: app.candidate.first_name,
+        jobRole: apiResponse.data.job_title,
+        rating: parseFloat(app.avg_rating_main) || 0,
+        jobExperience: `${app.candidate.exprience_in_years} years`,
+        profileImage: app.candidate.image || undefined,
+        status: "selected",
       }),
     );
   }, [apiResponse]);
@@ -82,8 +111,25 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
     );
   };
 
-  const handleViewSelected = () => {
-    router.push(`/job-management/${jobId}/selected-applicants`);
+  const handleDeleteClick = (id: string) => {
+    setSelectedApplicantId(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedApplicantId) return;
+
+    try {
+      await removeOperative({
+        jobId: jobId,
+        applicationId: selectedApplicantId,
+      }).unwrap();
+
+      setShowDeleteModal(false);
+      setSelectedApplicantId(null);
+    } catch (error) {
+      console.error("Failed to remove operative:", error);
+    }
   };
 
   const handleBack = () => {
@@ -126,12 +172,6 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
           </Button>
           <h1 className="text-3xl font-semibold text-black">Job Details</h1>
         </div>
-        <Button
-          onClick={handleViewSelected}
-          className="px-6 py-2 bg-[#f97316] text-white rounded-md hover:bg-[#ea580c] transition-colors"
-        >
-          View Selected Applicants
-        </Button>
       </div>
       <div className="bg-white mx-auto p-6 rounded-xl">
         {/* Main Content Grid */}
@@ -155,9 +195,42 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
                 />
               ))}
             </div>
+            {/* Selected Applicants Section */}
+            {selectedApplicantsData.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-xl font-semibold text-black mb-4">
+                  Selected Candidates
+                </h2>
+                <div className="bg-white  ">
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    {selectedApplicantsData.map((applicant) => (
+                      <ApplicantsCard
+                        key={applicant.id}
+                        applicant={applicant}
+                        isSelected={true}
+                        onSelect={handleSelect}
+                        showDelete={true}
+                        onDelete={handleDeleteClick}
+                        jobId={jobId}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Delete Modal */}
+      <DeleteModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        onConfirm={handleDeleteConfirm}
+        title="Remove Applicant"
+        description="Are you sure you want to remove this applicant from the selected list?"
+        itemName="This applicant"
+      />
     </div>
   );
 };
