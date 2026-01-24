@@ -57,6 +57,7 @@ const CreateNewJobForm = () => {
     providentFund: "0",
     jobDescription: "",
   });
+  const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
 
   // Fetch license and certificate types
   const { data: licenseData } = useGetLicenseTypesQuery({});
@@ -144,6 +145,7 @@ const CreateNewJobForm = () => {
   const handleMapLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const link = e.target.value;
     setFormData({ ...formData, mapLink: link });
+    if (errors.mapLink) setErrors({ ...errors, mapLink: false });
 
     if (link) {
       const coordinates = extractCoordinatesFromMapLink(link);
@@ -167,7 +169,41 @@ const CreateNewJobForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
+    // Validation for required fields
+    const newErrors: { [key: string]: boolean } = {};
+    if (!formData.jobTitle.trim()) newErrors.jobTitle = true;
+    if (!formData.jobRole.trim()) newErrors.jobRole = true;
+    if (!formData.location.trim()) newErrors.location = true;
+    if (!formData.mapLink.trim()) newErrors.mapLink = true;
+    if (!formData.date) newErrors.date = true;
+    if (!formData.jobExpire) newErrors.jobExpire = true;
+    if (!formData.duration.trim()) newErrors.duration = true;
+    if (!formData.startTime) newErrors.startTime = true;
+    if (!formData.endTime) newErrors.endTime = true;
+    if (!formData.payType) newErrors.payType = true;
+    if (!formData.payRate.trim()) newErrors.payRate = true;
+    if (!formData.operativesRequired.trim())
+      newErrors.operativesRequired = true;
+    if (!formData.licenseRequirements) newErrors.licenseRequirements = true;
+    if (!formData.minimumRating) newErrors.minimumRating = true;
+    if (!formData.accreditationRequirements)
+      newErrors.accreditationRequirements = true;
+    if (!formData.usePreferredGuards) newErrors.usePreferredGuards = true;
+    if (!formData.genderRequirement) newErrors.genderRequirement = true;
+    if (!formData.languageRequired) newErrors.languageRequired = true;
+    if (!formData.engagementType) newErrors.engagementType = true;
+    if (!formData.jobDescription.trim()) newErrors.jobDescription = true;
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    // Clear errors if validation passes
+    setErrors({});
+
+    // Existing validation
     if (!formData.latitude || !formData.longitude) {
       toast.error("Please provide a valid Google Maps link with coordinates");
       return;
@@ -204,6 +240,7 @@ const CreateNewJobForm = () => {
     try {
       const response = await createJobPost(jobPostData).unwrap();
       toast.success("Job posted successfully!");
+      setErrors({});
       router.push("/job-management");
     } catch (error: any) {
       const errorMessage =
@@ -230,10 +267,14 @@ const CreateNewJobForm = () => {
             type="text"
             placeholder="Enter job title"
             value={formData.jobTitle}
-            onChange={(e) =>
-              setFormData({ ...formData, jobTitle: e.target.value })
-            }
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => {
+              setFormData({ ...formData, jobTitle: e.target.value });
+              if (errors.jobTitle) setErrors({ ...errors, jobTitle: false });
+            }}
+            className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.jobTitle ? "border-red-500" : "border-gray-300"
+            }`}
+            required
           />
         </div>
 
@@ -246,10 +287,14 @@ const CreateNewJobForm = () => {
             type="text"
             placeholder="Enter job role"
             value={formData.jobRole}
-            onChange={(e) =>
-              setFormData({ ...formData, jobRole: e.target.value })
-            }
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => {
+              setFormData({ ...formData, jobRole: e.target.value });
+              if (errors.jobRole) setErrors({ ...errors, jobRole: false });
+            }}
+            className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.jobRole ? "border-red-500" : "border-gray-300"
+            }`}
+            required
           />
         </div>
 
@@ -262,10 +307,14 @@ const CreateNewJobForm = () => {
             type="text"
             placeholder="Enter workplace location address"
             value={formData.location}
-            onChange={(e) =>
-              setFormData({ ...formData, location: e.target.value })
-            }
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => {
+              setFormData({ ...formData, location: e.target.value });
+              if (errors.location) setErrors({ ...errors, location: false });
+            }}
+            className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.location ? "border-red-500" : "border-gray-300"
+            }`}
+            required
           />
         </div>
 
@@ -280,7 +329,10 @@ const CreateNewJobForm = () => {
               placeholder="Paste Google Maps link here"
               value={formData.mapLink}
               onChange={handleMapLinkChange}
-              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`flex-1 px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.mapLink ? "border-red-500" : "border-gray-300"
+              }`}
+              required
             />
             <Button
               type="button"
@@ -308,10 +360,13 @@ const CreateNewJobForm = () => {
               <input
                 type="date"
                 value={formData.date}
-                onChange={(e) =>
-                  setFormData({ ...formData, date: e.target.value })
-                }
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => {
+                  setFormData({ ...formData, date: e.target.value });
+                  if (errors.date) setErrors({ ...errors, date: false });
+                }}
+                className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.date ? "border-red-500" : "border-gray-300"
+                }`}
                 required
               />
             </div>
@@ -324,10 +379,14 @@ const CreateNewJobForm = () => {
               <input
                 type="date"
                 value={formData.jobExpire}
-                onChange={(e) =>
-                  setFormData({ ...formData, jobExpire: e.target.value })
-                }
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => {
+                  setFormData({ ...formData, jobExpire: e.target.value });
+                  if (errors.jobExpire)
+                    setErrors({ ...errors, jobExpire: false });
+                }}
+                className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.jobExpire ? "border-red-500" : "border-gray-300"
+                }`}
                 required
               />
             </div>
@@ -343,10 +402,13 @@ const CreateNewJobForm = () => {
             type="number"
             placeholder="Enter duration in hours"
             value={formData.duration}
-            onChange={(e) =>
-              setFormData({ ...formData, duration: e.target.value })
-            }
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => {
+              setFormData({ ...formData, duration: e.target.value });
+              if (errors.duration) setErrors({ ...errors, duration: false });
+            }}
+            className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.duration ? "border-red-500" : "border-gray-300"
+            }`}
             required
           />
         </div>
@@ -361,10 +423,14 @@ const CreateNewJobForm = () => {
               <input
                 type="time"
                 value={formData.startTime}
-                onChange={(e) =>
-                  setFormData({ ...formData, startTime: e.target.value })
-                }
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => {
+                  setFormData({ ...formData, startTime: e.target.value });
+                  if (errors.startTime)
+                    setErrors({ ...errors, startTime: false });
+                }}
+                className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.startTime ? "border-red-500" : "border-gray-300"
+                }`}
                 required
               />
             </div>
@@ -377,10 +443,13 @@ const CreateNewJobForm = () => {
               <input
                 type="time"
                 value={formData.endTime}
-                onChange={(e) =>
-                  setFormData({ ...formData, endTime: e.target.value })
-                }
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => {
+                  setFormData({ ...formData, endTime: e.target.value });
+                  if (errors.endTime) setErrors({ ...errors, endTime: false });
+                }}
+                className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.endTime ? "border-red-500" : "border-gray-300"
+                }`}
                 required
               />
             </div>
@@ -395,11 +464,16 @@ const CreateNewJobForm = () => {
             </label>
             <Select
               value={formData.payType}
-              onValueChange={(value) =>
-                setFormData({ ...formData, payType: value })
-              }
+              onValueChange={(value) => {
+                setFormData({ ...formData, payType: value });
+                if (errors.payType) setErrors({ ...errors, payType: false });
+              }}
             >
-              <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <SelectTrigger
+                className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.payType ? "border-red-500" : "border-gray-300"
+                }`}
+              >
                 <SelectValue placeholder="Select rate amount type" />
               </SelectTrigger>
               <SelectContent>
@@ -425,10 +499,13 @@ const CreateNewJobForm = () => {
                 step="0.01"
                 placeholder="25.00"
                 value={formData.payRate}
-                onChange={(e) =>
-                  setFormData({ ...formData, payRate: e.target.value })
-                }
-                className="w-full pl-7 pr-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => {
+                  setFormData({ ...formData, payRate: e.target.value });
+                  if (errors.payRate) setErrors({ ...errors, payRate: false });
+                }}
+                className={`w-full pl-7 pr-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.payRate ? "border-red-500" : "border-gray-300"
+                }`}
                 required
               />
             </div>
@@ -445,10 +522,14 @@ const CreateNewJobForm = () => {
             min="1"
             placeholder="Enter number of operatives required"
             value={formData.operativesRequired}
-            onChange={(e) =>
-              setFormData({ ...formData, operativesRequired: e.target.value })
-            }
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => {
+              setFormData({ ...formData, operativesRequired: e.target.value });
+              if (errors.operativesRequired)
+                setErrors({ ...errors, operativesRequired: false });
+            }}
+            className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.operativesRequired ? "border-red-500" : "border-gray-300"
+            }`}
             required
           />
         </div>
@@ -460,11 +541,19 @@ const CreateNewJobForm = () => {
           </label>
           <Select
             value={formData.licenseRequirements}
-            onValueChange={(value) =>
-              setFormData({ ...formData, licenseRequirements: value })
-            }
+            onValueChange={(value) => {
+              setFormData({ ...formData, licenseRequirements: value });
+              if (errors.licenseRequirements)
+                setErrors({ ...errors, licenseRequirements: false });
+            }}
           >
-            <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-400">
+            <SelectTrigger
+              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
+                errors.licenseRequirements
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
+            >
               <SelectValue placeholder="Select Licence Requirements" />
             </SelectTrigger>
             <SelectContent>
@@ -484,11 +573,17 @@ const CreateNewJobForm = () => {
           </label>
           <Select
             value={formData.minimumRating}
-            onValueChange={(value) =>
-              setFormData({ ...formData, minimumRating: value })
-            }
+            onValueChange={(value) => {
+              setFormData({ ...formData, minimumRating: value });
+              if (errors.minimumRating)
+                setErrors({ ...errors, minimumRating: false });
+            }}
           >
-            <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-400">
+            <SelectTrigger
+              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
+                errors.minimumRating ? "border-red-500" : "border-gray-300"
+              }`}
+            >
               <SelectValue placeholder="Select minimum rating" />
             </SelectTrigger>
             <SelectContent>
@@ -509,14 +604,22 @@ const CreateNewJobForm = () => {
           </label>
           <Select
             value={formData.accreditationRequirements}
-            onValueChange={(value) =>
+            onValueChange={(value) => {
               setFormData({
                 ...formData,
                 accreditationRequirements: value,
-              })
-            }
+              });
+              if (errors.accreditationRequirements)
+                setErrors({ ...errors, accreditationRequirements: false });
+            }}
           >
-            <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-400">
+            <SelectTrigger
+              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
+                errors.accreditationRequirements
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
+            >
               <SelectValue placeholder="Select Accreditation requirements" />
             </SelectTrigger>
             <SelectContent>
@@ -538,11 +641,17 @@ const CreateNewJobForm = () => {
           </label>
           <Select
             value={formData.usePreferredGuards}
-            onValueChange={(value) =>
-              setFormData({ ...formData, usePreferredGuards: value })
-            }
+            onValueChange={(value) => {
+              setFormData({ ...formData, usePreferredGuards: value });
+              if (errors.usePreferredGuards)
+                setErrors({ ...errors, usePreferredGuards: false });
+            }}
           >
-            <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-400">
+            <SelectTrigger
+              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
+                errors.usePreferredGuards ? "border-red-500" : "border-gray-300"
+              }`}
+            >
               <SelectValue placeholder="Select preferred guards list or no" />
             </SelectTrigger>
             <SelectContent>
@@ -560,11 +669,17 @@ const CreateNewJobForm = () => {
           </label>
           <Select
             value={formData.genderRequirement}
-            onValueChange={(value) =>
-              setFormData({ ...formData, genderRequirement: value })
-            }
+            onValueChange={(value) => {
+              setFormData({ ...formData, genderRequirement: value });
+              if (errors.genderRequirement)
+                setErrors({ ...errors, genderRequirement: false });
+            }}
           >
-            <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-400">
+            <SelectTrigger
+              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
+                errors.genderRequirement ? "border-red-500" : "border-gray-300"
+              }`}
+            >
               <SelectValue placeholder="Select required gender" />
             </SelectTrigger>
             <SelectContent>
@@ -582,11 +697,17 @@ const CreateNewJobForm = () => {
           </label>
           <Select
             value={formData.languageRequired}
-            onValueChange={(value) =>
-              setFormData({ ...formData, languageRequired: value })
-            }
+            onValueChange={(value) => {
+              setFormData({ ...formData, languageRequired: value });
+              if (errors.languageRequired)
+                setErrors({ ...errors, languageRequired: false });
+            }}
           >
-            <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-400">
+            <SelectTrigger
+              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
+                errors.languageRequired ? "border-red-500" : "border-gray-300"
+              }`}
+            >
               <SelectValue placeholder="Select required language" />
             </SelectTrigger>
             <SelectContent>
@@ -611,11 +732,17 @@ const CreateNewJobForm = () => {
           </label>
           <Select
             value={formData.engagementType}
-            onValueChange={(value) =>
-              setFormData({ ...formData, engagementType: value })
-            }
+            onValueChange={(value) => {
+              setFormData({ ...formData, engagementType: value });
+              if (errors.engagementType)
+                setErrors({ ...errors, engagementType: false });
+            }}
           >
-            <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-400">
+            <SelectTrigger
+              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
+                errors.engagementType ? "border-red-500" : "border-gray-300"
+              }`}
+            >
               <SelectValue placeholder="Select engagement type" />
             </SelectTrigger>
             <SelectContent>
@@ -634,11 +761,16 @@ const CreateNewJobForm = () => {
           <textarea
             placeholder="enter Job description"
             value={formData.jobDescription}
-            onChange={(e) =>
-              setFormData({ ...formData, jobDescription: e.target.value })
-            }
+            onChange={(e) => {
+              setFormData({ ...formData, jobDescription: e.target.value });
+              if (errors.jobDescription)
+                setErrors({ ...errors, jobDescription: false });
+            }}
             rows={5}
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
+              errors.jobDescription ? "border-red-500" : "border-gray-300"
+            }`}
+            required
           />
         </div>
 

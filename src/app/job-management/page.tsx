@@ -184,7 +184,7 @@ const JobManagementPage = () => {
           {/* Create New Job Button */}
           <Button
             onClick={handleCreateNewJob}
-            className="flex items-center gap-2 px-4 py-1 bg-orange-500 text-white rounded-lg  hover:bg-orange-600 transition-colors whitespace-nowrap"
+            className="flex items-center h-12 gap-2 px-4 py-1 bg-orange-500 text-white rounded-lg  hover:bg-orange-600 transition-colors whitespace-nowrap"
           >
             <span className="text-2xl">+</span>
             <span className="text-2xl font-medium">Post a Job</span>
