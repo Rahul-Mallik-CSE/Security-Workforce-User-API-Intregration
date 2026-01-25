@@ -17,7 +17,7 @@ import { useGetReferralUsersQuery } from "@/redux/freatures/myReferralUserAPI";
 const MyReferralUserPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState<ReferralUserData | null>(
-    null
+    null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -44,7 +44,7 @@ const MyReferralUserPage = () => {
         purchaseDate: user.is_subscribe
           ? new Date(user.create_at).toLocaleDateString()
           : undefined,
-      })
+      }),
     );
   }, [apiResponse]);
 
@@ -57,7 +57,7 @@ const MyReferralUserPage = () => {
       (user: ReferralUserData) =>
         user.userName.toLowerCase().includes(query) ||
         user.email.toLowerCase().includes(query) ||
-        user.status.toLowerCase().includes(query)
+        user.status.toLowerCase().includes(query),
     );
   }, [transformedData, searchQuery]);
 
@@ -138,9 +138,7 @@ const MyReferralUserPage = () => {
       <div className="max-w-[2000px] mx-auto">
         {/* Header with Title and Search */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <h1 className="text-2xl md:text-3xl font-semibold">
-            My Referral User
-          </h1>
+          <h1 className="text-2xl md:text-3xl font-semibold">Referrals</h1>
 
           {/* Search Bar */}
           <div className="relative w-full md:w-96">

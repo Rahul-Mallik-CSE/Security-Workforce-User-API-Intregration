@@ -64,6 +64,25 @@ const CreateNewJobForm = () => {
   const { data: certificateData } = useGetCertificateTypesQuery({});
   const [createJobPost, { isLoading }] = useCreateJobPostMutation();
 
+  // Auto-calculate duration when start and end times change
+  useEffect(() => {
+    if (formData.startTime && formData.endTime) {
+      const [startHour, startMin] = formData.startTime.split(":").map(Number);
+      const [endHour, endMin] = formData.endTime.split(":").map(Number);
+
+      let durationInMinutes =
+        endHour * 60 + endMin - (startHour * 60 + startMin);
+
+      // If end time is before start time, assume it's the next day
+      if (durationInMinutes < 0) {
+        durationInMinutes += 24 * 60;
+      }
+
+      const durationInHours = (durationInMinutes / 60).toFixed(2);
+      setFormData((prev) => ({ ...prev, duration: durationInHours }));
+    }
+  }, [formData.startTime, formData.endTime]);
+
   // Extract latitude and longitude from Google Maps URL
   const extractCoordinatesFromMapLink = (url: string) => {
     try {
@@ -172,7 +191,7 @@ const CreateNewJobForm = () => {
     // Validation for required fields
     const newErrors: { [key: string]: boolean } = {};
     if (!formData.jobTitle.trim()) newErrors.jobTitle = true;
-    if (!formData.jobRole.trim()) newErrors.jobRole = true;
+
     if (!formData.location.trim()) newErrors.location = true;
     if (!formData.mapLink.trim()) newErrors.mapLink = true;
     if (!formData.date) newErrors.date = true;
@@ -212,7 +231,7 @@ const CreateNewJobForm = () => {
     // Prepare data for API
     const jobPostData = {
       job_title: formData.jobTitle,
-      job_role: formData.jobRole || formData.jobTitle,
+      job_role: formData.jobTitle,
       latitude: parseFloat(formData.latitude),
       longitude: parseFloat(formData.longitude),
       address: formData.location,
@@ -273,26 +292,6 @@ const CreateNewJobForm = () => {
             }}
             className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
               errors.jobTitle ? "border-red-500" : "border-gray-300"
-            }`}
-            required
-          />
-        </div>
-
-        {/* Job Role */}
-        <div>
-          <label className="block text-sm font-semibold text-black mb-2">
-            Job Role
-          </label>
-          <input
-            type="text"
-            placeholder="Enter job role"
-            value={formData.jobRole}
-            onChange={(e) => {
-              setFormData({ ...formData, jobRole: e.target.value });
-              if (errors.jobRole) setErrors({ ...errors, jobRole: false });
-            }}
-            className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.jobRole ? "border-red-500" : "border-gray-300"
             }`}
             required
           />
