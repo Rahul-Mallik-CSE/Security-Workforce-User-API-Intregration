@@ -8,8 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSignupMutation } from "@/redux/freatures/authAPI";
+import {
+  useSignupMutation,
+  useGoogleAuthMutation,
+} from "@/redux/freatures/authAPI";
 import { toast } from "react-toastify";
+import { useGoogleLogin } from "@react-oauth/google";
+import { saveTokens } from "@/services/authService";
 
 const SignUpForm = () => {
   const router = useRouter();
@@ -17,6 +22,7 @@ const SignUpForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [signup, { isLoading }] = useSignupMutation();
+  const [googleAuth, { isLoading: isGoogleLoading }] = useGoogleAuthMutation();
 
   const [formData, setFormData] = useState({
     // Initial Signup
@@ -73,7 +79,7 @@ const SignUpForm = () => {
       }).unwrap();
 
       toast.success(
-        result.message || "Signup successful! Please verify your email."
+        result.message || "Signup successful! Please verify your email.",
       );
 
       // Store email for OTP verification
@@ -86,16 +92,49 @@ const SignUpForm = () => {
       toast.error(
         error?.data?.message ||
           error?.data?.email?.[0] ||
-          "Signup failed. Please try again."
+          "Signup failed. Please try again.",
       );
     }
   };
+  const handleGoogleSignUp = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        // Get referral token from URL if exists
+        const urlParams = new URLSearchParams(window.location.search);
+        const referralToken = urlParams.get("refer_token") || "";
 
-  const handleGoogleSignUp = () => {
-    // Handle Google sign up logic here
-    console.log("Sign up with Google");
-    // After Google signup, move to stepper
-  };
+        // Call your backend API with the access token
+        const response = await googleAuth({
+          id_token: tokenResponse.access_token,
+          user_type: "company",
+        }).unwrap();
+
+        if (response.success) {
+          // Save the access token and verified status
+          await saveTokens(response.access, response.verified);
+          localStorage.setItem("accessToken", response.access);
+          localStorage.setItem("verified", response.verified.toString());
+          localStorage.setItem("companyName", response.company_name || "");
+
+          toast.success(response.message || "Google sign up successful!");
+
+          // Redirect to home or account setup based on verified status
+          setTimeout(() => {
+            router.push("/");
+          }, 100);
+        }
+      } catch (error: any) {
+        console.error("Google sign up error:", error);
+        const errorMessage =
+          error?.data?.message || "Google sign up failed. Please try again.";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      console.error("Google Sign Up Failed:", error);
+      toast.error("Google sign up failed. Please try again.");
+    },
+  });
 
   return (
     <div className="w-full max-w-md">
@@ -288,7 +327,7 @@ const SignUpForm = () => {
         {/* Google Sign Up Button */}
         <Button
           type="button"
-          onClick={handleGoogleSignUp}
+          onClick={() => handleGoogleSignUp()}
           className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg font-medium text-sm flex items-center justify-center gap-3"
         >
           <svg
@@ -313,7 +352,7 @@ const SignUpForm = () => {
               fill="#EA4335"
             />
           </svg>
-          Sign Up with Google
+          {isGoogleLoading ? "Signing up..." : "Sign Up with Google"}
         </Button>
       </form>
 

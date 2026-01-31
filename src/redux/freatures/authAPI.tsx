@@ -93,6 +93,13 @@ const authAPI = baseApi.injectEndpoints({
         body: { new_password },
       }),
     }),
+    googleAuth: builder.mutation<any, { id_token: string; user_type: string }>({
+      query: ({ id_token, user_type }) => ({
+        url: `/api/auth/google/`,
+        method: "POST",
+        body: { id_token, user_type },
+      }),
+    }),
   }),
 });
 
@@ -107,4 +114,5 @@ export const {
   useForgetPasswordMutation,
   useVerifyOtpForForgetMutation,
   useResetPasswordMutation,
+  useGoogleAuthMutation,
 } = authAPI;

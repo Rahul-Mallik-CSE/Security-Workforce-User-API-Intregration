@@ -7,10 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useLoginMutation } from "@/redux/freatures/authAPI";
+import {
+  useLoginMutation,
+  useGoogleAuthMutation,
+} from "@/redux/freatures/authAPI";
 import { saveTokens } from "@/services/authService";
 import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const SignInForm = () => {
   const router = useRouter();
@@ -18,6 +22,7 @@ const SignInForm = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading }] = useLoginMutation();
+  const [googleAuth, { isLoading: isGoogleLoading }] = useGoogleAuthMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,11 +55,41 @@ const SignInForm = () => {
       toast.error(errorMessage);
     }
   };
+  const handleGoogleSignIn = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        // Call your backend API with the access token
+        const response = await googleAuth({
+          id_token: tokenResponse.access_token,
+          user_type: "company",
+        }).unwrap();
 
-  const handleGoogleSignIn = () => {
-    // Handle Google sign in logic here
-    console.log("Sign in with Google");
-  };
+        if (response.success) {
+          // Save the access token and verified status
+          await saveTokens(response.access, response.verified);
+          localStorage.setItem("accessToken", response.access);
+          localStorage.setItem("verified", response.verified.toString());
+          localStorage.setItem("companyName", response.company_name || "");
+
+          toast.success(response.message || "Google sign in successful!");
+
+          // Redirect to home
+          setTimeout(() => {
+            router.push("/");
+          }, 100);
+        }
+      } catch (error: any) {
+        console.error("Google sign in error:", error);
+        const errorMessage =
+          error?.data?.message || "Google sign in failed. Please try again.";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      console.error("Google Login Failed:", error);
+      toast.error("Google sign in failed. Please try again.");
+    },
+  });
 
   return (
     <div className="w-full max-w-lg">
@@ -147,7 +182,7 @@ const SignInForm = () => {
         {/* Google Sign In Button */}
         <Button
           type="button"
-          onClick={handleGoogleSignIn}
+          onClick={() => handleGoogleSignIn()}
           className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg font-medium text-sm flex items-center justify-center gap-3"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -168,7 +203,7 @@ const SignInForm = () => {
               fill="#EA4335"
             />
           </svg>
-          Log in with Google
+          {isGoogleLoading ? "Signing in..." : "Log in with Google"}
         </Button>
       </form>
 

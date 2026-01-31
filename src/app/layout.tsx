@@ -9,6 +9,7 @@ import DashboardSidebar from "@/components/CommonComponents/DashboardSidebar";
 import NavBar from "@/components/CommonComponents/NavBar";
 import Providers from "@/redux/Providers";
 import { Bounce, ToastContainer } from "react-toastify";
+import GoogleOAuthProvider from "@/components/AuthComponents/GoogleOAuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,17 +50,19 @@ export default function RootLayout({
           theme="light"
           transition={Bounce}
         />
-        <Providers>
-          <SidebarProvider>
-            <DashboardSidebar />
-            <SidebarInset className="overflow-x-hidden">
-              <div className="min-h-screen w-full bg-[#F2F7FF]  ">
-                <NavBar />
-                {children}
-              </div>
-            </SidebarInset>
-          </SidebarProvider>
-        </Providers>
+        <GoogleOAuthProvider>
+          <Providers>
+            <SidebarProvider>
+              <DashboardSidebar />
+              <SidebarInset className="overflow-x-hidden">
+                <div className="min-h-screen w-full bg-[#F2F7FF]  ">
+                  <NavBar />
+                  {children}
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
+          </Providers>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
