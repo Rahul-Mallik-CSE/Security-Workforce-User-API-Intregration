@@ -99,7 +99,7 @@ const SignInForm = () => {
           Welcome Back
         </h1>
         <p className="text-base text-gray-600">
-          Sign in to your Account. If you. Facilitate, in your terms
+          Sign in to your Account
         </p>
       </div>
 

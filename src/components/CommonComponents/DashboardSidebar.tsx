@@ -126,7 +126,7 @@ function DashboardSidebarContent() {
     { href: "/payroll", label: "Payroll", icon: AiOutlineDollarCircle },
     { href: "/settings", label: "Settings", icon: FiSettings },
     { href: "/support", label: "Support", icon: BiSupport },
-    { href: "/my-referral-user", label: "Referrals", icon: BiUserPlus },
+    { href: "/my-referral-user", label: "My Referrals User", icon: BiUserPlus },
   ];
 
   return (

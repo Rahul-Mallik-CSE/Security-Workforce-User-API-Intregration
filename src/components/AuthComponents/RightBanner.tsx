@@ -7,13 +7,16 @@ const RightBanner = () => {
   return (
     <div className="relative w-full h-full bg-orange-400 flex flex-col items-center justify-center p-12">
       {/* Header Text */}
-      <div className="absolute top-8 left-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Securiverse</h2>
-        <p className="text-sm text-white/90">Opportunity. On demand</p>
-      </div>
+  
+        
+  
 
       {/* Logo Container */}
-      <div className="flex items-center justify-center">
+      <div className="flex items-center flex-col justify-center gap-4">
+        <div>
+          <h2 className="text-4xl font-bold text-white mb-2 text-center">Securiverse</h2>
+          <p className="text-[18px] text-white/90 tracking-[5px]">Opportunity. On demand</p>
+        </div>
         <div className="">
           <Image
             src="/logo.png"
