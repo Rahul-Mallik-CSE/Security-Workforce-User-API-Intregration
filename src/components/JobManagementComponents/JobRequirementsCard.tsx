@@ -150,7 +150,7 @@ const JobRequirementsCard = ({
       <div className="pt-6 flex justify-center">
         <Button
           onClick={handleSelectionComplete}
-          disabled={isCompleting || jobDetails.status === "Untasked"}
+          disabled={isCompleting || jobDetails.status === "In Progress"}
           className=" py-2.5 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isCompleting ? "Completing..." : "Selection Complete"}
