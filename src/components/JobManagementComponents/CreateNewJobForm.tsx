@@ -252,7 +252,7 @@ const CreateNewJobForm = () => {
       is_preferred_guard: formData.usePreferredGuards,
       gender_requirements: formData.genderRequirement,
       language_requirements: formData.languageRequired,
-      status: "published",
+      status: "untasked",
       engagement_type: formData.engagementType,
       provident_fund: parseInt(formData.providentFund) || 0,
       job_details: formData.jobDescription,
