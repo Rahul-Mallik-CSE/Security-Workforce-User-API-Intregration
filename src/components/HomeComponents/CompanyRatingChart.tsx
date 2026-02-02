@@ -76,7 +76,7 @@ export default function CompanyRatingChart({
       : "0.0";
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-      <h2 className="text-lg font-semibold text-black mb-6">
+      <h2 className="text-lg font-semibold text-black mb-6 text-center">
         Company Performance Rating
       </h2>
 

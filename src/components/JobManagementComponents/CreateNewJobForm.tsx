@@ -392,25 +392,7 @@ const CreateNewJobForm = () => {
           </div>
         </div>
 
-        {/* Duration (in hours) */}
-        <div>
-          <label className="block text-sm font-semibold text-black mb-2">
-            Duration (in hours)
-          </label>
-          <input
-            type="number"
-            placeholder="Enter duration in hours"
-            value={formData.duration}
-            onChange={(e) => {
-              setFormData({ ...formData, duration: e.target.value });
-              if (errors.duration) setErrors({ ...errors, duration: false });
-            }}
-            className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.duration ? "border-red-500" : "border-gray-300"
-            }`}
-            required
-          />
-        </div>
+        
 
         {/* Start Time and End Time */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -489,6 +471,26 @@ const CreateNewJobForm = () => {
               </svg>
             </div>
           </div>
+        </div>
+
+        {/* Duration (in hours) */}
+        <div>
+          <label className="block text-sm font-semibold text-black mb-2">
+            Duration (in hours)
+          </label>
+          <input
+            type="number"
+            placeholder="Enter duration in hours"
+            value={formData.duration}
+            onChange={(e) => {
+              setFormData({ ...formData, duration: e.target.value });
+              if (errors.duration) setErrors({ ...errors, duration: false });
+            }}
+            className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.duration ? "border-red-500" : "border-gray-300"
+            }`}
+            required
+          />
         </div>
 
         {/* Pay Type and Pay Rate */}
