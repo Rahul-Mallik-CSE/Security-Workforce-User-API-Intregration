@@ -47,7 +47,7 @@ const CreateNewJobForm = () => {
     payType: "",
     payRate: "",
     operativesRequired: "",
-    licenseRequirements: "",
+    licenseRequirements: [] as number[],
     minimumRating: "",
     accreditationRequirements: "",
     usePreferredGuards: "",
@@ -204,7 +204,8 @@ const CreateNewJobForm = () => {
     if (!formData.payRate.trim()) newErrors.payRate = true;
     if (!formData.operativesRequired.trim())
       newErrors.operativesRequired = true;
-    if (!formData.licenseRequirements) newErrors.licenseRequirements = true;
+    if (formData.licenseRequirements.length === 0)
+      newErrors.licenseRequirements = true;
     if (!formData.minimumRating) newErrors.minimumRating = true;
     if (!formData.accreditationRequirements)
       newErrors.accreditationRequirements = true;
@@ -244,7 +245,7 @@ const CreateNewJobForm = () => {
       pay_type: formData.payType,
       pay_rate: formData.payRate,
       operative_required: parseInt(formData.operativesRequired) || 0,
-      licence_type_requirements: parseInt(formData.licenseRequirements) || 0,
+      licence_type_requirements_ss: formData.licenseRequirements,
       min_rating_requirements: parseInt(formData.minimumRating) || 0,
       accreditations_requirements:
         parseInt(formData.accreditationRequirements) || 0,
@@ -600,31 +601,84 @@ const CreateNewJobForm = () => {
         {/* Licence Requirements */}
         <div>
           <label className="block text-sm font-semibold text-black mb-2">
-            Licence Requirements
+            Licence Requirements{" "}
+            <span className="text-gray-400 font-normal text-xs">
+              (Multiple)
+            </span>
           </label>
+          <div
+            className={`w-full px-4 py-2.5 border rounded-md text-sm min-h-[42px] ${
+              errors.licenseRequirements ? "border-red-500" : "border-gray-300"
+            }`}
+          >
+            {formData.licenseRequirements.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {formData.licenseRequirements.map((licenseId) => {
+                  const license = licenseData?.licence_types?.find(
+                    (l: LicenseType) => l.id === licenseId,
+                  );
+                  return (
+                    <div
+                      key={licenseId}
+                      className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs"
+                    >
+                      <span>{license?.title}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData({
+                            ...formData,
+                            licenseRequirements:
+                              formData.licenseRequirements.filter(
+                                (id) => id !== licenseId,
+                              ),
+                          });
+                        }}
+                        className="hover:text-blue-900"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <span className="text-gray-400 text-sm">
+                Select Licence Requirements
+              </span>
+            )}
+          </div>
           <Select
-            value={formData.licenseRequirements}
+            value=""
             onValueChange={(value) => {
-              setFormData({ ...formData, licenseRequirements: value });
-              if (errors.licenseRequirements)
-                setErrors({ ...errors, licenseRequirements: false });
+              const licenseId = parseInt(value);
+              if (!formData.licenseRequirements.includes(licenseId)) {
+                setFormData({
+                  ...formData,
+                  licenseRequirements: [
+                    ...formData.licenseRequirements,
+                    licenseId,
+                  ],
+                });
+                if (errors.licenseRequirements)
+                  setErrors({ ...errors, licenseRequirements: false });
+              }
             }}
           >
-            <SelectTrigger
-              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
-                errors.licenseRequirements
-                  ? "border-red-500"
-                  : "border-gray-300"
-              }`}
-            >
-              <SelectValue placeholder="Select Licence Requirements" />
+            <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 mt-2">
+              <SelectValue placeholder="Add a licence" />
             </SelectTrigger>
             <SelectContent>
-              {licenseData?.licence_types?.map((license: LicenseType) => (
-                <SelectItem key={license.id} value={license.id.toString()}>
-                  {license.title}
-                </SelectItem>
-              ))}
+              {licenseData?.licence_types
+                ?.filter(
+                  (license: LicenseType) =>
+                    !formData.licenseRequirements.includes(license.id),
+                )
+                .map((license: LicenseType) => (
+                  <SelectItem key={license.id} value={license.id.toString()}>
+                    {license.title}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         </div>
