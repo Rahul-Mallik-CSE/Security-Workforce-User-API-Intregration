@@ -137,7 +137,7 @@ const SignInForm = () => {
               href="/forget-pass"
               className="text-base text-orange-500 hover:text-orange-600 font-medium"
             >
-              Forget Password?
+              Forgot Password?
             </Link>
           </div>
           <div className="relative">

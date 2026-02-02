@@ -77,7 +77,7 @@ export default function CompanyRatingChart({
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
       <h2 className="text-lg font-semibold text-black mb-6">
-        Company Rating Performance
+        Company Performance Rating
       </h2>
 
       {/* Circular Rating Chart */}

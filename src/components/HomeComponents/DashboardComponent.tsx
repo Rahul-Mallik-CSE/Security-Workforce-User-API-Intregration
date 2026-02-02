@@ -41,25 +41,25 @@ const DashboardComponent = () => {
   const ratingPerformance = dashboardResponse?.data?.rating_performance;
 
   const statCards = [
-    { label: "Unticked Jobs", value: overview?.unticked_jobs || 0 },
+    { label: "Untasked Jobs", value: overview?.unticked_jobs || 0 },
     { label: "Job in Progress", value: overview?.jobs_in_progress || 0 },
     { label: "Completed Jobs", value: overview?.completed_jobs || 0 },
     {
-      label: "Average Rating",
+      label: "Industry Performance Rating",
       value: overview?.average_rating || 0,
       icon: <Star className="w-6 h-6 fill-yellow-500" />,
     },
-    {
-      label: "Industry Rating",
-      value: overview?.industry_rating || 0,
-      icon: <Star className="w-6 h-6 fill-yellow-500" />,
-    },
+    // {
+    //   label: "Industry Performance Rating",
+    //   value: overview?.industry_rating || 0,
+    //   icon: <Star className="w-6 h-6 fill-yellow-500" />,
+    // },
   ];
 
   return (
     <div>
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
         {statCards.map((stat, index) => (
           <StatCard
             key={index}

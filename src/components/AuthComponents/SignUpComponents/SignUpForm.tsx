@@ -300,7 +300,7 @@ const SignUpForm = () => {
               href="/terms"
               className="text-blue-900 hover:underline font-medium"
             >
-              Terms & Privacy
+              Terms & Conditions
             </Link>
           </label>
         </div>

@@ -13,9 +13,9 @@ const RightBanner = () => {
 
       {/* Logo Container */}
       <div className="flex items-center flex-col justify-center gap-4">
-        <div>
-          <h2 className="text-4xl font-bold text-white mb-2 text-center">Securiverse</h2>
-          <p className="text-[18px] text-white/90 tracking-[5px]">Opportunity. On demand</p>
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-white mb-2 ">Securiverse</h2>
+          <p className="text-3xl text-white/90">Opportunity. On demand</p>
         </div>
         <div className="">
           <Image

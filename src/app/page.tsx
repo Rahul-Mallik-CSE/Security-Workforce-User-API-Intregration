@@ -18,7 +18,7 @@ export default function Home() {
           {/* Create New Job Button */}
           <Button
             onClick={handleCreateNewJob}
-            className="flex items-center h-12 gap-2 px-8 py-1 bg-orange-500 text-white rounded-lg  hover:bg-orange-600 transition-colors whitespace-nowrap"
+            className="flex items-center gap-2 px-10 py-8 bg-orange-500 text-white rounded-lg  hover:bg-orange-600 transition-colors whitespace-nowrap"
           >
             <span className="text-2xl ">+</span>
             <span className="text-2xl font-bold">Post a Job</span>

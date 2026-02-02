@@ -14,11 +14,12 @@ const NavBar = () => {
   const { data: profileData } = useProfileDetailsQuery();
 
   const userData = profileData?.data;
-  const userName = userData?.first_name || "User";
+  const userName = userData?.first_name || "Noel";
+  // console.log(userName)
   const userImage = userData?.image
     ? getFullImageFullUrl(userData.image)
     : "/logo.png";
-  const firstName = userName.split(" ")[0];
+  // const firstName = userName.split(" ")[0];
 
   if (
     pathname === "/sign-in" ||
@@ -41,7 +42,7 @@ const NavBar = () => {
         <div className="w-full flex justify-between items-center">
           <div className="flex-1">
             <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">
-              Welcome Back, <span className="text-orange-500">{firstName}</span>
+              Welcome Back, <span className="text-orange-500">{userName}</span>
             </h1>
           </div>
 

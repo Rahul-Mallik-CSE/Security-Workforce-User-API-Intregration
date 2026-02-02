@@ -304,7 +304,7 @@ const CreateNewJobForm = () => {
           </label>
           <input
             type="text"
-            placeholder="Enter workplace location address"
+            placeholder="Enter Job location address"
             value={formData.location}
             onChange={(e) => {
               setFormData({ ...formData, location: e.target.value });
@@ -502,7 +502,7 @@ const CreateNewJobForm = () => {
                   setFormData({ ...formData, payRate: e.target.value });
                   if (errors.payRate) setErrors({ ...errors, payRate: false });
                 }}
-                className={`w-full pl-7 pr-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full appearance-none pl-7 pr-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.payRate ? "border-red-500" : "border-gray-300"
                 }`}
                 required
