@@ -109,6 +109,22 @@ const JobManagementPage = () => {
   };
 
   const renderCell = (item: JobManagementData, columnKey: string) => {
+    if (columnKey === "date") {
+      // Format date to DD-MM-YYYY
+      const formatDate = (dateString: string) => {
+        try {
+          const date = new Date(dateString);
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = date.getFullYear();
+          return `${day}-${month}-${year}`;
+        } catch {
+          return dateString;
+        }
+      };
+      return formatDate(item.date);
+    }
+
     if (columnKey === "status") {
       let statusColor = "";
       if (item.status === "Tasked") {
@@ -184,7 +200,7 @@ const JobManagementPage = () => {
           {/* Create New Job Button */}
           <Button
             onClick={handleCreateNewJob}
-            className="flex items-center h-12 gap-2 px-4 py-1 bg-orange-500 text-white rounded-lg  hover:bg-orange-600 transition-colors whitespace-nowrap"
+            className="flex items-center gap-2 px-10 py-8 bg-orange-500 text-white rounded-lg  hover:bg-orange-600 transition-colors whitespace-nowrap"
           >
             <span className="text-2xl">+</span>
             <span className="text-2xl font-medium">Post a Job</span>

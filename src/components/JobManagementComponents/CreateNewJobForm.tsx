@@ -168,6 +168,7 @@ const CreateNewJobForm = () => {
 
     if (link) {
       const coordinates = extractCoordinatesFromMapLink(link);
+      // console.log(coordinates);
       if (coordinates) {
         setFormData({
           ...formData,
@@ -419,19 +420,37 @@ const CreateNewJobForm = () => {
               Start Time
             </label>
             <div className="relative">
-              <input
-                type="time"
+              <select
                 value={formData.startTime}
                 onChange={(e) => {
                   setFormData({ ...formData, startTime: e.target.value });
                   if (errors.startTime)
                     setErrors({ ...errors, startTime: false });
                 }}
-                className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-2.5 pr-10 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none ${
                   errors.startTime ? "border-red-500" : "border-gray-300"
                 }`}
                 required
-              />
+              >
+                <option value="">Select time</option>
+                {Array.from({ length: 24 }, (_, i) => {
+                  const hour = i.toString().padStart(2, "0");
+                  return (
+                    <option key={i} value={`${hour}:00`}>
+                      {hour}:00
+                    </option>
+                  );
+                })}
+              </select>
+              <svg
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700 pointer-events-none"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                <path d="M12 6v6l4 2" strokeWidth="2" strokeLinecap="round" />
+              </svg>
             </div>
           </div>
           <div>
@@ -439,18 +458,36 @@ const CreateNewJobForm = () => {
               End Time
             </label>
             <div className="relative">
-              <input
-                type="time"
+              <select
                 value={formData.endTime}
                 onChange={(e) => {
                   setFormData({ ...formData, endTime: e.target.value });
                   if (errors.endTime) setErrors({ ...errors, endTime: false });
                 }}
-                className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-2.5 pr-10 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none ${
                   errors.endTime ? "border-red-500" : "border-gray-300"
                 }`}
                 required
-              />
+              >
+                <option value="">Select time</option>
+                {Array.from({ length: 24 }, (_, i) => {
+                  const hour = i.toString().padStart(2, "0");
+                  return (
+                    <option key={i} value={`${hour}:00`}>
+                      {hour}:00
+                    </option>
+                  );
+                })}
+              </select>
+              <svg
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700 pointer-events-none"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                <path d="M12 6v6l4 2" strokeWidth="2" strokeLinecap="round" />
+              </svg>
             </div>
           </div>
         </div>
@@ -502,7 +539,7 @@ const CreateNewJobForm = () => {
                   setFormData({ ...formData, payRate: e.target.value });
                   if (errors.payRate) setErrors({ ...errors, payRate: false });
                 }}
-                className={`w-full appearance-none pl-7 pr-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none pl-7 pr-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.payRate ? "border-red-500" : "border-gray-300"
                 }`}
                 required
@@ -531,6 +568,33 @@ const CreateNewJobForm = () => {
             }`}
             required
           />
+        </div>
+
+        {/* Use Preferred Guards List */}
+        <div>
+          <label className="block text-sm font-semibold text-black mb-2">
+            Use Preferred Operatives List
+          </label>
+          <Select
+            value={formData.usePreferredGuards}
+            onValueChange={(value) => {
+              setFormData({ ...formData, usePreferredGuards: value });
+              if (errors.usePreferredGuards)
+                setErrors({ ...errors, usePreferredGuards: false });
+            }}
+          >
+            <SelectTrigger
+              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
+                errors.usePreferredGuards ? "border-red-500" : "border-gray-300"
+              }`}
+            >
+              <SelectValue placeholder="Select preferred guards list or no" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="yes">Yes</SelectItem>
+              <SelectItem value="no">No</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Licence Requirements */}
@@ -629,33 +693,6 @@ const CreateNewJobForm = () => {
                   </SelectItem>
                 ),
               )}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Use Preferred Guards List */}
-        <div>
-          <label className="block text-sm font-semibold text-black mb-2">
-            Use Preferred Operatives List
-          </label>
-          <Select
-            value={formData.usePreferredGuards}
-            onValueChange={(value) => {
-              setFormData({ ...formData, usePreferredGuards: value });
-              if (errors.usePreferredGuards)
-                setErrors({ ...errors, usePreferredGuards: false });
-            }}
-          >
-            <SelectTrigger
-              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
-                errors.usePreferredGuards ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-              <SelectValue placeholder="Select preferred guards list or no" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="yes">Yes</SelectItem>
-              <SelectItem value="no">No</SelectItem>
             </SelectContent>
           </Select>
         </div>
