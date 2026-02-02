@@ -15,7 +15,7 @@ const RightBanner = () => {
       <div className="flex items-center flex-col justify-center gap-4">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-white mb-2 ">Securiverse</h2>
-          <p className="text-3xl text-white/90">Opportunity. On demand</p>
+          <p className="text-3xl text-white/90">Opportunity. On demand.</p>
         </div>
         <div className="">
           <Image

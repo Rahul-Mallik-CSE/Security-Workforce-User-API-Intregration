@@ -58,6 +58,7 @@ const CreateNewJobForm = () => {
     jobDescription: "",
   });
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
+  const [showShortenedLinkModal, setShowShortenedLinkModal] = useState(false);
 
   // Fetch license and certificate types
   const { data: licenseData } = useGetLicenseTypesQuery({});
@@ -141,10 +142,7 @@ const CreateNewJobForm = () => {
 
       // If it's a shortened URL (goo.gl or maps.app.goo.gl), show specific instruction
       if (url.includes("goo.gl") || url.includes("maps.app.goo.gl")) {
-        toast.warning(
-          "Shortened link detected! Please: 1) Open the link, 2) Right-click on the map, 3) Click the coordinates to copy, 4) Or use 'Share' → 'Copy link' for the full URL",
-          { autoClose: 8000 },
-        );
+        setShowShortenedLinkModal(true);
         return null;
       }
 
@@ -729,6 +727,7 @@ const CreateNewJobForm = () => {
               if (errors.accreditationRequirements)
                 setErrors({ ...errors, accreditationRequirements: false });
             }}
+            required
           >
             <SelectTrigger
               className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
@@ -754,8 +753,7 @@ const CreateNewJobForm = () => {
         {/* Gender Requirement */}
         <div>
           <label className="block text-sm font-semibold text-black mb-2">
-            Gender Requirement{" "}
-            <span className="text-gray-400 font-normal">(Optional)</span>
+            Gender Requirement
           </label>
           <Select
             value={formData.genderRequirement}
@@ -764,6 +762,7 @@ const CreateNewJobForm = () => {
               if (errors.genderRequirement)
                 setErrors({ ...errors, genderRequirement: false });
             }}
+            required
           >
             <SelectTrigger
               className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
@@ -882,6 +881,65 @@ const CreateNewJobForm = () => {
           </Button>
         </div>
       </form>
+
+      {/* Shortened Link Modal */}
+      {showShortenedLinkModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl border border-orange-600">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-orange-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Shortened Link Detected!
+              </h3>
+            </div>
+            <div className="mb-6">
+              <p className="text-sm text-gray-600 mb-4">
+                To get the coordinates from a shortened Google Maps link, please
+                follow these steps:
+              </p>
+              <ol className="space-y-2 text-sm text-gray-700">
+                <li className="flex gap-2">
+                  <span className="font-semibold text-orange-600">1.</span>
+                  <span>Click the "Open Map" button</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="font-semibold text-orange-600">2.</span>
+                  <span>Search and select your location on the map</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="font-semibold text-orange-600">3.</span>
+                  <span>Copy the full URL from your browser's address bar</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="font-semibold text-orange-600">4.</span>
+                  <span>Paste the full URL back into this field</span>
+                </li>
+              </ol>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                onClick={() => {
+                  setShowShortenedLinkModal(false);
+                  handleOpenMap();
+                }}
+                className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors text-sm font-medium"
+              >
+                Open Map
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setShowShortenedLinkModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
+              >
+                Got It
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
