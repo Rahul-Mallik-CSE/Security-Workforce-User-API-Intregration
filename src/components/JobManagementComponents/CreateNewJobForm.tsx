@@ -545,7 +545,7 @@ const CreateNewJobForm = () => {
         {/* State Selection for Licence Requirements */}
         <div>
           <label className="block text-sm font-semibold text-black mb-2">
-            State for Licence Requirements
+            State or Territory
           </label>
           <Select
             value={formData.selectedState}
