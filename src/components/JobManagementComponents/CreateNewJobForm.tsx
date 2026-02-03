@@ -399,37 +399,19 @@ const CreateNewJobForm = () => {
               Start Time
             </label>
             <div className="relative">
-              <select
+              <input
+                type="time"
                 value={formData.startTime}
                 onChange={(e) => {
                   setFormData({ ...formData, startTime: e.target.value });
                   if (errors.startTime)
                     setErrors({ ...errors, startTime: false });
                 }}
-                className={`w-full px-4 py-2.5 pr-10 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none ${
+                className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.startTime ? "border-red-500" : "border-gray-300"
                 }`}
                 required
-              >
-                <option value="">Select time</option>
-                {Array.from({ length: 24 }, (_, i) => {
-                  const hour = i.toString().padStart(2, "0");
-                  return (
-                    <option key={i} value={`${hour}:00`}>
-                      {hour}:00
-                    </option>
-                  );
-                })}
-              </select>
-              <svg
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700 pointer-events-none"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                <path d="M12 6v6l4 2" strokeWidth="2" strokeLinecap="round" />
-              </svg>
+              />
             </div>
           </div>
           <div>
@@ -437,36 +419,18 @@ const CreateNewJobForm = () => {
               End Time
             </label>
             <div className="relative">
-              <select
+              <input
+                type="time"
                 value={formData.endTime}
                 onChange={(e) => {
                   setFormData({ ...formData, endTime: e.target.value });
                   if (errors.endTime) setErrors({ ...errors, endTime: false });
                 }}
-                className={`w-full px-4 py-2.5 pr-10 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none ${
+                className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.endTime ? "border-red-500" : "border-gray-300"
                 }`}
                 required
-              >
-                <option value="">Select time</option>
-                {Array.from({ length: 24 }, (_, i) => {
-                  const hour = i.toString().padStart(2, "0");
-                  return (
-                    <option key={i} value={`${hour}:00`}>
-                      {hour}:00
-                    </option>
-                  );
-                })}
-              </select>
-              <svg
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700 pointer-events-none"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                <path d="M12 6v6l4 2" strokeWidth="2" strokeLinecap="round" />
-              </svg>
+              />
             </div>
           </div>
         </div>
