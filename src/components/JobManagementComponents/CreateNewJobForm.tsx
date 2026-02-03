@@ -585,7 +585,7 @@ const CreateNewJobForm = () => {
                 errors.usePreferredGuards ? "border-red-500" : "border-gray-300"
               }`}
             >
-              <SelectValue placeholder="Select preferred guards list or no" />
+              <SelectValue placeholder="Yes or No" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="yes">Yes</SelectItem>
