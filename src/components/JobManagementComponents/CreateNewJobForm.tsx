@@ -205,10 +205,7 @@ const CreateNewJobForm = () => {
     if (formData.licenseRequirements.length === 0)
       newErrors.licenseRequirements = true;
     if (!formData.minimumRating) newErrors.minimumRating = true;
-    if (!formData.accreditationRequirements)
-      newErrors.accreditationRequirements = true;
     if (!formData.usePreferredGuards) newErrors.usePreferredGuards = true;
-    if (!formData.genderRequirement) newErrors.genderRequirement = true;
     if (!formData.languageRequired) newErrors.languageRequired = true;
     if (!formData.engagementType) newErrors.engagementType = true;
     if (!formData.jobDescription.trim()) newErrors.jobDescription = true;
@@ -245,10 +242,11 @@ const CreateNewJobForm = () => {
       operative_required: parseInt(formData.operativesRequired) || 0,
       licence_type_requirements_ss: formData.licenseRequirements,
       min_rating_requirements: parseInt(formData.minimumRating) || 0,
-      accreditations_requirements:
-        parseInt(formData.accreditationRequirements) || 0,
+      accreditations_requirements: formData.accreditationRequirements
+        ? parseInt(formData.accreditationRequirements)
+        : null,
       is_preferred_guard: formData.usePreferredGuards,
-      gender_requirements: formData.genderRequirement,
+      gender_requirements: formData.genderRequirement || null,
       language_requirements: formData.languageRequired,
       status: "untasked",
       engagement_type: formData.engagementType,
@@ -391,8 +389,6 @@ const CreateNewJobForm = () => {
             </div>
           </div>
         </div>
-
-        
 
         {/* Start Time and End Time */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
