@@ -49,7 +49,7 @@ const CreateNewJobForm = () => {
     operativesRequired: "",
     licenseRequirements: [] as number[],
     minimumRating: "",
-    accreditationRequirements: "",
+    accreditationRequirements: [] as number[],
     usePreferredGuards: "",
     genderRequirement: "",
     languageRequired: "",
@@ -226,7 +226,7 @@ const CreateNewJobForm = () => {
     }
 
     // Prepare data for API
-    const jobPostData = {
+    const jobPostData: any = {
       job_title: formData.jobTitle,
       job_role: formData.jobTitle,
       latitude: parseFloat(formData.latitude),
@@ -242,9 +242,6 @@ const CreateNewJobForm = () => {
       operative_required: parseInt(formData.operativesRequired) || 0,
       licence_type_requirements_ss: formData.licenseRequirements,
       min_rating_requirements: parseInt(formData.minimumRating) || 0,
-      accreditations_requirements: formData.accreditationRequirements
-        ? parseInt(formData.accreditationRequirements)
-        : null,
       is_preferred_guard: formData.usePreferredGuards,
       gender_requirements: formData.genderRequirement || null,
       language_requirements: formData.languageRequired,
@@ -253,6 +250,12 @@ const CreateNewJobForm = () => {
       provident_fund: parseInt(formData.providentFund) || 0,
       job_details: formData.jobDescription,
     };
+
+    // Only include accreditations_requirements_ss if there are selected accreditations
+    if (formData.accreditationRequirements.length > 0) {
+      jobPostData.accreditations_requirements_ss =
+        formData.accreditationRequirements;
+    }
 
     try {
       const response = await createJobPost(jobPostData).unwrap();
@@ -713,37 +716,86 @@ const CreateNewJobForm = () => {
         {/* Accreditation Requirements */}
         <div>
           <label className="block text-sm font-semibold text-black mb-2">
-            Accreditation Requirements
+            Accreditation Requirements{" "}
+            <span className="text-gray-400 font-normal text-xs">
+              (Multiple)
+            </span>
           </label>
-          <Select
-            value={formData.accreditationRequirements}
-            onValueChange={(value) => {
-              setFormData({
-                ...formData,
-                accreditationRequirements: value,
-              });
-              if (errors.accreditationRequirements)
-                setErrors({ ...errors, accreditationRequirements: false });
-            }}
-            required
+          <div
+            className={`w-full px-4 py-2.5 border rounded-md text-sm min-h-[42px] ${
+              errors.accreditationRequirements
+                ? "border-red-500"
+                : "border-gray-300"
+            }`}
           >
-            <SelectTrigger
-              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
-                errors.accreditationRequirements
-                  ? "border-red-500"
-                  : "border-gray-300"
-              }`}
-            >
-              <SelectValue placeholder="Select Accreditation requirements" />
+            {formData.accreditationRequirements.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {formData.accreditationRequirements.map((certId) => {
+                  const cert = certificateData?.certificate_types?.find(
+                    (c: CertificateType) => c.id === certId,
+                  );
+                  return (
+                    <div
+                      key={certId}
+                      className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs"
+                    >
+                      <span>{cert?.title}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData({
+                            ...formData,
+                            accreditationRequirements:
+                              formData.accreditationRequirements.filter(
+                                (id) => id !== certId,
+                              ),
+                          });
+                        }}
+                        className="hover:text-blue-900"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <span className="text-gray-400 text-sm">
+                Select Accreditation Requirements
+              </span>
+            )}
+          </div>
+          <Select
+            value=""
+            onValueChange={(value) => {
+              const certId = parseInt(value);
+              if (!formData.accreditationRequirements.includes(certId)) {
+                setFormData({
+                  ...formData,
+                  accreditationRequirements: [
+                    ...formData.accreditationRequirements,
+                    certId,
+                  ],
+                });
+                if (errors.accreditationRequirements)
+                  setErrors({ ...errors, accreditationRequirements: false });
+              }
+            }}
+          >
+            <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 mt-2">
+              <SelectValue placeholder="Add an accreditation" />
             </SelectTrigger>
             <SelectContent>
-              {certificateData?.certificate_types?.map(
-                (cert: CertificateType) => (
+              {certificateData?.certificate_types
+                ?.filter(
+                  (cert: CertificateType) =>
+                    !formData.accreditationRequirements.includes(cert.id),
+                )
+                .map((cert: CertificateType) => (
                   <SelectItem key={cert.id} value={cert.id.toString()}>
                     {cert.title}
                   </SelectItem>
-                ),
-              )}
+                ))}
             </SelectContent>
           </Select>
         </div>
