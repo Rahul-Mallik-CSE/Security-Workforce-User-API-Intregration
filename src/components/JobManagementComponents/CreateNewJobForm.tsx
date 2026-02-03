@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 interface LicenseType {
   id: number;
   title: string;
+  state_or_territory: string;
 }
 
 interface CertificateType {
@@ -47,6 +48,7 @@ const CreateNewJobForm = () => {
     payType: "",
     payRate: "",
     operativesRequired: "",
+    selectedState: "",
     licenseRequirements: [] as number[],
     minimumRating: "",
     accreditationRequirements: [] as number[],
@@ -540,10 +542,52 @@ const CreateNewJobForm = () => {
           </Select>
         </div>
 
+        {/* State Selection for Licence Requirements */}
+        <div>
+          <label className="block text-sm font-semibold text-black mb-2">
+            State for Licence Requirements
+          </label>
+          <Select
+            value={formData.selectedState}
+            onValueChange={(value) => {
+              setFormData({
+                ...formData,
+                selectedState: value,
+                licenseRequirements: [], // Clear licences when state changes
+              });
+              if (errors.licenseRequirements)
+                setErrors({ ...errors, licenseRequirements: false });
+            }}
+          >
+            <SelectTrigger
+              className={`w-full px-4 py-2.5 border rounded-md text-sm text-gray-400 ${
+                errors.selectedState ? "border-red-500" : "border-gray-300"
+              }`}
+            >
+              <SelectValue placeholder="Select a state" />
+            </SelectTrigger>
+            <SelectContent>
+              {(
+                Array.from(
+                  new Set(
+                    licenseData?.licence_types?.map(
+                      (l: LicenseType) => l.state_or_territory,
+                    ),
+                  ),
+                ) as string[]
+              ).map((state) => (
+                <SelectItem key={state} value={state}>
+                  {state}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* Licence Requirements */}
         <div>
           <label className="block text-sm font-semibold text-black mb-2">
-            Licence Requirements{" "}
+            Security Guard Licence Types{" "}
             <span className="text-gray-400 font-normal text-xs">
               (Multiple)
             </span>
@@ -592,6 +636,7 @@ const CreateNewJobForm = () => {
           </div>
           <Select
             value=""
+            disabled={!formData.selectedState}
             onValueChange={(value) => {
               const licenseId = parseInt(value);
               if (!formData.licenseRequirements.includes(licenseId)) {
@@ -607,14 +652,23 @@ const CreateNewJobForm = () => {
               }
             }}
           >
-            <SelectTrigger className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 mt-2">
-              <SelectValue placeholder="Add a licence" />
+            <SelectTrigger
+              className={`w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 mt-2 ${!formData.selectedState ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              <SelectValue
+                placeholder={
+                  formData.selectedState
+                    ? "Add a licence"
+                    : "Select a state first"
+                }
+              />
             </SelectTrigger>
             <SelectContent>
               {licenseData?.licence_types
                 ?.filter(
                   (license: LicenseType) =>
-                    !formData.licenseRequirements.includes(license.id),
+                    !formData.licenseRequirements.includes(license.id) &&
+                    license.state_or_territory === formData.selectedState,
                 )
                 .map((license: LicenseType) => (
                   <SelectItem key={license.id} value={license.id.toString()}>
