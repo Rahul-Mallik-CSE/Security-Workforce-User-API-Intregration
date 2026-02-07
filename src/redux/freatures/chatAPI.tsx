@@ -54,6 +54,7 @@ interface MessageSender {
 interface MessageItem {
   text: string;
   sender: MessageSender;
+  created_at: string;
 }
 
 interface MessageListResponse {

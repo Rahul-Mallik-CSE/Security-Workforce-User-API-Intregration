@@ -46,7 +46,7 @@ export default function ChatWindow({
     chatId || "",
     {
       skip: !chatId,
-    }
+    },
   );
 
   // Setup WebSocket connection
@@ -126,7 +126,7 @@ export default function ChatWindow({
       // Otherwise, message is from me (right side)
       fromMe: !participantIds.includes(msg.sender.id),
       text: msg.text,
-      time: new Date(msg.sender.last_activity).toLocaleTimeString([], {
+      time: new Date(msg.created_at).toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       }),
@@ -222,9 +222,7 @@ export default function ChatWindow({
             <div className="text-base font-semibold text-gray-900">
               {contactName}
             </div>
-            <div className="text-xs text-gray-500">
-              {lastSeen || "Last seen 7h ago"}
-            </div>
+            <div className="text-xs text-gray-500">{lastSeen}</div>
           </div>
         </div>
       </div>
