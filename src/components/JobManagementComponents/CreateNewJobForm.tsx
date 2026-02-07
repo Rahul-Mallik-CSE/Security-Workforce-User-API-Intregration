@@ -437,6 +437,20 @@ const CreateNewJobForm = () => {
           </div>
         </div>
 
+        {/* Duration (Auto-calculated) */}
+        <div>
+          <label className="block text-sm font-semibold text-black mb-2">
+            Duration (in hours)
+          </label>
+          <input
+            type="text"
+            placeholder="Select start and end time to auto-calculate"
+            value={formData.duration}
+            disabled
+            className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 placeholder:text-gray-400 bg-gray-50 cursor-not-allowed"
+          />
+        </div>
+
         {/* Pay Type and Pay Rate */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
