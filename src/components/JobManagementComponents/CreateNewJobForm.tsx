@@ -374,7 +374,7 @@ const CreateNewJobForm = () => {
           </div>
           <div>
             <label className="block text-sm font-semibold text-black mb-2">
-              Job Expiry Date
+              Job End Date
             </label>
             <div className="relative">
               <input
