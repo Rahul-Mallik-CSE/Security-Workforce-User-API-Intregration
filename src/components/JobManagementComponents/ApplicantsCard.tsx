@@ -2,7 +2,7 @@
 
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Star } from "lucide-react";
 import { ApplicantData } from "@/types/AllTypes";
 import { Button } from "../ui/button";
@@ -37,6 +37,14 @@ const ApplicantsCard = ({
     useSelectOperativeMutation();
   const [createChat, { isLoading: isCreatingChat }] = useCreateChatMutation();
   const router = useRouter();
+
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const truncateText = (text: string, wordLimit: number) => {
+    const words = text.split(" ");
+    if (words.length <= wordLimit) return text;
+    return words.slice(0, wordLimit).join(" ") + "...";
+  };
 
   const handleChatClick = async () => {
     if (!applicant.candidateId) {
@@ -98,6 +106,28 @@ const ApplicantsCard = ({
         <span className="text-sm text-gray-600 text-right">
           {applicant.jobExperience}
         </span>
+      </div>
+
+      {/* Experience Summary */}
+      <div className="flex justify-between items-start mb-6 flex-wrap">
+        <span className="text-sm font-semibold text-black">
+          Experience Summary :
+        </span>
+        <div className="text-sm text-gray-600 text-right flex-1">
+          <span>
+            {isExpanded
+              ? applicant.experienceSummary
+              : truncateText(applicant.experienceSummary, 2)}
+          </span>
+          {applicant.experienceSummary.split(" ").length > 2 && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-blue-500 ml-1 hover:underline"
+            >
+              {isExpanded ? "read less" : "read more"}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Action Buttons */}

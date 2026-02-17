@@ -190,6 +190,8 @@ export const applicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Experienced security professional with over 5 years in the field, specializing in crowd control and emergency response.",
     status: "pending",
   },
   {
@@ -198,6 +200,8 @@ export const applicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.0,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Skilled security guard with expertise in surveillance systems and access control management.",
     status: "pending",
   },
   {
@@ -206,6 +210,8 @@ export const applicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Professional security operative with strong background in risk assessment and incident reporting.",
     status: "pending",
   },
   {
@@ -214,6 +220,8 @@ export const applicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.0,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Dedicated security personnel with experience in patrolling and maintaining security protocols.",
     status: "pending",
   },
   {
@@ -222,6 +230,8 @@ export const applicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Veteran security guard with comprehensive training in emergency procedures and client protection.",
     status: "pending",
   },
   {
@@ -230,6 +240,8 @@ export const applicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.0,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Reliable security professional with proven track record in high-security environments.",
     status: "pending",
   },
 ];
@@ -242,6 +254,8 @@ export const selectedApplicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Experienced security professional with over 5 years in the field, specializing in crowd control and emergency response.",
     status: "selected",
   },
   {
@@ -250,6 +264,8 @@ export const selectedApplicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Skilled security guard with expertise in surveillance systems and access control management.",
     status: "selected",
   },
   {
@@ -258,6 +274,8 @@ export const selectedApplicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Professional security operative with strong background in risk assessment and incident reporting.",
     status: "selected",
   },
   {
@@ -266,6 +284,8 @@ export const selectedApplicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Dedicated security personnel with experience in patrolling and maintaining security protocols.",
     status: "selected",
   },
   {
@@ -274,6 +294,8 @@ export const selectedApplicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Veteran security guard with comprehensive training in emergency procedures and client protection.",
     status: "selected",
   },
   {
@@ -282,6 +304,8 @@ export const selectedApplicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Reliable security professional with proven track record in high-security environments.",
     status: "selected",
   },
   {
@@ -290,6 +314,8 @@ export const selectedApplicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Expert security guard with advanced training in threat detection and response strategies.",
     status: "selected",
   },
   {
@@ -298,6 +324,8 @@ export const selectedApplicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Professional security operative specializing in VIP protection and event security.",
     status: "selected",
   },
   {
@@ -306,6 +334,8 @@ export const selectedApplicantsData: ApplicantData[] = [
     jobRole: "Security Guard",
     rating: 4.7,
     jobExperience: "5+ year",
+    experienceSummary:
+      "Highly trained security personnel with experience in corporate and residential security.",
     status: "selected",
   },
 ];

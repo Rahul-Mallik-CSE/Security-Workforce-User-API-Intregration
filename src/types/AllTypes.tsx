@@ -172,6 +172,7 @@ export interface ApplicantData {
   jobRole: string;
   rating: number;
   jobExperience: string;
+  experienceSummary: string;
   profileImage?: string;
   status?: "selected" | "pending";
 }
@@ -287,12 +288,14 @@ export interface JobDetailsAPICandidate {
   is_admin_rejected: boolean;
   is_subscribe: boolean;
   exprience_in_years: number;
+  exprience_summary: string;
 }
 
 export interface JobDetailsAPIApplication {
   id: number;
   status: string;
   candidate: JobDetailsAPICandidate;
+
   currency: string;
   is_admin_aproved: boolean;
   avg_rating_main: string;
