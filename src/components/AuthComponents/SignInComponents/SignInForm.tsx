@@ -50,9 +50,23 @@ const SignInForm = () => {
       }
     } catch (error: any) {
       // Handle error response
-      const errorMessage =
-        error?.data?.message || "Login failed. Please try again.";
-      toast.error(errorMessage);
+      if (
+        error?.data?.message ===
+        "OTP sent to your email. Please verify before logging."
+      ) {
+        // Handle OTP verification required
+        sessionStorage.setItem("verification_email", email);
+        sessionStorage.setItem("verification_context", "login_verification");
+
+        toast.info("OTP sent to your email. Please verify to continue.");
+
+        // Navigate to verify OTP page
+        router.push("/verify-otp");
+      } else {
+        const errorMessage =
+          error?.data?.message || "Login failed. Please try again.";
+        toast.error(errorMessage);
+      }
     }
   };
   const handleGoogleSignIn = useGoogleLogin({
@@ -98,9 +112,7 @@ const SignInForm = () => {
         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
           Welcome Back
         </h1>
-        <p className="text-base text-gray-600">
-          Sign in to your Account
-        </p>
+        <p className="text-base text-gray-600">Sign in to your Account</p>
       </div>
 
       {/* Form */}

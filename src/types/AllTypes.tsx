@@ -183,7 +183,7 @@ export interface ContractData {
   operativeName: string;
   jobRole: string;
   dateCreated: string;
-  status: "Cancelled" | "Pending" | "Complete" | "Signed" | "Not Pay";
+  status: "Cancelled" | "Pending" | "Complete" | "Signed" | "Not Paid";
   amendRequest: "Pending" | "Accepted" | "Reject" | "Not Amend";
   originalAmendStatus: string;
   email?: string;

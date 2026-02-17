@@ -151,6 +151,19 @@ const VerifyOtpPage = () => {
         router.push("/sign-in");
       }
     } catch (err: any) {
+      if (
+        err?.data?.message ===
+        "OTP sent to your email. Please verify before logging."
+      ) {
+        // Handle OTP verification required
+        sessionStorage.setItem("verification_email", email);
+        sessionStorage.setItem("verification_context", "login_verification");
+
+        toast.info("OTP sent to your email. Please verify to continue.");
+
+        // Navigate to verify OTP page
+        router.push("/verify-otp");
+      }
       console.error("OTP verification error:", err);
       setError(
         err?.data?.message ||

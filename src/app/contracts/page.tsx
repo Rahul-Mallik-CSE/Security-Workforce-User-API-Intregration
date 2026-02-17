@@ -20,7 +20,7 @@ const ContractsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAmendModalOpen, setIsAmendModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState<ContractData | null>(
-    null
+    null,
   );
 
   const { data: contractsResponse, isLoading, error } = useGetContractsQuery();
@@ -45,7 +45,7 @@ const ContractsPage = () => {
         pending: "Pending",
         cancelled: "Cancelled",
         is_signed: "Signed",
-        not_pay: "Not Pay",
+        not_pay: "Not Paid",
         completed: "Complete",
       };
 
@@ -62,7 +62,7 @@ const ContractsPage = () => {
         operativeName: engagement.application.candidate.first_name,
         jobRole: engagement.job_details.job_title,
         dateCreated: new Date(
-          engagement.job_details.created_at
+          engagement.job_details.created_at,
         ).toLocaleDateString("en-GB", {
           day: "2-digit",
           month: "short",
@@ -94,7 +94,7 @@ const ContractsPage = () => {
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
       contract.jobRole.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      contract.status.toLowerCase().includes(searchQuery.toLowerCase())
+      contract.status.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleAmendClick = (contract: ContractData) => {
@@ -213,7 +213,7 @@ const ContractsPage = () => {
 
       const splitDetails = doc.splitTextToSize(
         contract.jobDetails,
-        pageWidth - 2 * margin
+        pageWidth - 2 * margin,
       );
 
       splitDetails.forEach((line: string) => {
@@ -235,12 +235,12 @@ const ContractsPage = () => {
       doc.text(
         `Generated on ${new Date().toLocaleDateString()}`,
         margin,
-        doc.internal.pageSize.getHeight() - 10
+        doc.internal.pageSize.getHeight() - 10,
       );
       doc.text(
         `Page ${i} of ${pageCount}`,
         pageWidth - margin - 20,
-        doc.internal.pageSize.getHeight() - 10
+        doc.internal.pageSize.getHeight() - 10,
       );
     }
 
@@ -248,8 +248,8 @@ const ContractsPage = () => {
     doc.save(
       `Contract_${contract.contractId}_${contract.operativeName.replace(
         /\s+/g,
-        "_"
-      )}.pdf`
+        "_",
+      )}.pdf`,
     );
   };
 
@@ -264,7 +264,7 @@ const ContractsPage = () => {
         statusColor = "bg-blue-100 text-blue-700";
       } else if (item.status === "Signed") {
         statusColor = "bg-green-100 text-green-700";
-      } else if (item.status === "Not Pay") {
+      } else if (item.status === "Not Paid") {
         statusColor = "bg-orange-100 text-orange-700";
       }
 
