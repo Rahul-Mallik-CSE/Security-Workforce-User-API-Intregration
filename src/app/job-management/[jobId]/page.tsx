@@ -52,12 +52,22 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
           ? "Tasked"
           : "Untasked";
 
+    // Helper function to format date as DD-MM-YYYY
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString);
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
+
     return {
       id: data.id.toString(),
       jobTitle: data.job_title,
       location: data.address,
-      startDateTime: `${data.job_date} ${data.start_time}`,
-      endDateTime: `${data.job_date} ${data.end_time}`,
+      //date should be DD-MM-YYYY
+      startDateTime: `${formatDate(data.job_date)} ${data.start_time}`,
+      endDateTime: `${formatDate(data.job_date)} ${data.end_time}`,
       duration: `${data.job_duration} hrs`,
       licenseRequirements: data.licence_type_requirements.title.toString(),
       payRateType: data.pay_type,

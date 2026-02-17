@@ -258,7 +258,9 @@ export interface ContractAPIEngagement {
   total_amount: string;
   new_job_duration: string;
   signature_party_a: string;
+  signature_party_a_time?: string;
   signature_party_b: string;
+  signature_party_b_time?: string;
 }
 
 export interface ContractsAPIResponse {
@@ -711,7 +713,9 @@ export interface ContractDetailsEngagement {
   total_amount: string;
   new_job_duration: string;
   signature_party_a: string | null;
+  signature_party_a_time?: string;
   signature_party_b: string | null;
+  signature_party_b_time?: string;
 }
 
 export interface ContractDetailsAPIResponse {

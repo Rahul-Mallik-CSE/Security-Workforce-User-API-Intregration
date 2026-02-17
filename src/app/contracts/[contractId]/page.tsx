@@ -222,7 +222,7 @@ const ContractDetailsPage = () => {
 
       const splitDetails = doc.splitTextToSize(
         jobDetails.job_details,
-        pageWidth - 2 * margin
+        pageWidth - 2 * margin,
       );
       splitDetails.forEach((line: string) => {
         if (yPosition > 270) {
@@ -243,20 +243,20 @@ const ContractDetailsPage = () => {
       doc.text(
         `Generated on ${new Date().toLocaleDateString()}`,
         margin,
-        doc.internal.pageSize.getHeight() - 10
+        doc.internal.pageSize.getHeight() - 10,
       );
       doc.text(
         `Page ${i} of ${pageCount}`,
         pageWidth - margin - 20,
-        doc.internal.pageSize.getHeight() - 10
+        doc.internal.pageSize.getHeight() - 10,
       );
     }
 
     doc.save(
       `Contract_CN-${engagement.id}_${candidate.first_name.replace(
         /\s+/g,
-        "_"
-      )}.pdf`
+        "_",
+      )}.pdf`,
     );
   };
 
@@ -718,16 +718,17 @@ const ContractDetailsPage = () => {
                       Signature Timestamp :
                     </span>
                     <span className="text-base text-gray-900">
-                      {new Date(jobDetails.created_at).toLocaleDateString(
-                        "en-GB",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }
-                      )}
+                      {engagement.signature_party_a_time
+                        ? new Date(
+                            engagement.signature_party_a_time,
+                          ).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "Not signed yet"}
                     </span>
                   </div>
 
@@ -737,7 +738,7 @@ const ContractDetailsPage = () => {
                       <div className="pb-2">
                         <img
                           src={getFullImageFullUrl(
-                            engagement.signature_party_a
+                            engagement.signature_party_a,
                           )}
                           alt="Party A Signature"
                           className="max-h-20 object-contain"
@@ -799,16 +800,17 @@ const ContractDetailsPage = () => {
                       Signature Timestamp :
                     </span>
                     <span className="text-base text-gray-900">
-                      {new Date(candidate.create_at).toLocaleDateString(
-                        "en-GB",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }
-                      )}
+                      {engagement.signature_party_b_time
+                        ? new Date(
+                            engagement.signature_party_b_time,
+                          ).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "Not signed yet"}
                     </span>
                   </div>
 
@@ -818,7 +820,7 @@ const ContractDetailsPage = () => {
                       <div className="pb-2">
                         <img
                           src={getFullImageFullUrl(
-                            engagement.signature_party_b
+                            engagement.signature_party_b,
                           )}
                           alt="Party B Signature"
                           className="max-h-20 object-contain"
