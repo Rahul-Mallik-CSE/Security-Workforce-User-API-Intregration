@@ -59,7 +59,7 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
       startDateTime: `${data.job_date} ${data.start_time}`,
       endDateTime: `${data.job_date} ${data.end_time}`,
       duration: `${data.job_duration} hrs`,
-      licenseRequirements: data.licence_type_requirements.toString(),
+      licenseRequirements: data.licence_type_requirements.title.toString(),
       payRateType: data.pay_type,
       payAmount: `$${data.pay_rate}`,
       minimumRating: data.min_rating_requirements.toString(),
