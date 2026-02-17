@@ -42,10 +42,10 @@ const DashboardComponent = () => {
 
   const statCards = [
     { label: "Untasked Jobs", value: overview?.unticked_jobs || 0 },
-    { label: "Job in Progress", value: overview?.jobs_in_progress || 0 },
+    { label: "Jobs in Progress", value: overview?.jobs_in_progress || 0 },
     { label: "Completed Jobs", value: overview?.completed_jobs || 0 },
     {
-      label: "Industry Performance Rating",
+      label: "Industry Average Performance Rating",
       value: overview?.average_rating || 0,
       icon: <Star className="w-6 h-6 fill-yellow-500" />,
     },
