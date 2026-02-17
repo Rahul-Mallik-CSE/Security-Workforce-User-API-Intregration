@@ -26,6 +26,7 @@ interface CustomTableProps<T> {
   data: T[];
   itemsPerPage?: number;
   renderCell?: (item: T, columnKey: string) => React.ReactNode;
+  onRowClick?: (item: T) => void;
 }
 
 export default function CustomTable<T extends { id: string }>({
@@ -33,6 +34,7 @@ export default function CustomTable<T extends { id: string }>({
   data,
   itemsPerPage = 10,
   renderCell,
+  onRowClick,
 }: CustomTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -108,7 +110,10 @@ export default function CustomTable<T extends { id: string }>({
             {currentData.map((item) => (
               <TableRow
                 key={item.id}
-                className="border-b border-gray-100 hover:bg-gray-50 "
+                className={`border-b border-gray-100 hover:bg-gray-50 ${
+                  onRowClick ? "cursor-pointer" : ""
+                }`}
+                onClick={() => onRowClick?.(item)}
               >
                 {columns.map((column, index) => (
                   <TableCell
