@@ -77,7 +77,7 @@ export default function ChatLayout() {
     const token = localStorage.getItem("accessToken");
     if (!token) return;
 
-    const wsUrl = `ws://148.230.92.132:8001/ws/asc/update_chat_messages/?token=${token}`;
+    const wsUrl = `wss://api.securiverse.com.au/ws/asc/update_chat_messages/?token=${token}`;
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {

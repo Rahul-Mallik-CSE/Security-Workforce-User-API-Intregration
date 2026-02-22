@@ -13,7 +13,7 @@ interface ReferralModalProps {
 
 const ReferralModal: React.FC<ReferralModalProps> = ({ onClose }) => {
   const [copied, setCopied] = useState(false);
-  const referralLink = "https://example.com/signup?refer_code=A2dN91Tt";
+  const referralLink = "https://portal.securiverse.com.au/sign-up?refer_code=A2dN91Tt";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralLink);

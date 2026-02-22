@@ -7,15 +7,14 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "5000",
+        protocol: "https",
+        hostname: "api.securiverse.com.au",
         pathname: "/media/**",
       },
       {
         protocol: "http",
-        hostname: "10.10.12.15",
-        port: "8001",
+        hostname: "localhost",
+        port: "5000",
         pathname: "/media/**",
       },
     ],

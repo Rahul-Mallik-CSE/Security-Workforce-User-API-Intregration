@@ -36,10 +36,10 @@ The following has been implemented:
 6. Create OAuth 2.0 Client ID (Web application)
 7. Add authorized JavaScript origins:
    - `http://localhost:3000` (for development)
-   - Your production domain
+   - `https://portal.securiverse.com.au` (for production)
 8. Add authorized redirect URIs:
    - `http://localhost:3000` (for development)
-   - Your production domain
+   - `https://portal.securiverse.com.au` (for production)
 9. Copy the Client ID
 
 #### Step 2: Configure Environment Variables

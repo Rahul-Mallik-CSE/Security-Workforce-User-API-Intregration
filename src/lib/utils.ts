@@ -20,7 +20,7 @@ export const getFullImageFullUrl = (
   // If it starts with /uploads, prepend the backend URL
   if (imagePath.startsWith("/media")) {
     return `${
-      process.env.NEXT_PUBLIC_API_BASE_URL || "http://10.10.12.15:8001"
+      process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.securiverse.com.au"
     }${imagePath}`;
   }
 
