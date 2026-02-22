@@ -11,10 +11,16 @@ import {
   useLoginMutation,
   useGoogleAuthMutation,
 } from "@/redux/freatures/authAPI";
-import { saveTokens } from "@/services/authService";
 import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
-import { useGoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
+
+// Set auth cookies directly on the client for immediate availability
+const setAuthCookies = (token: string, verified: boolean) => {
+  const maxAge = 60 * 60 * 24 * 7; // 7 days
+  document.cookie = `token=${token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+  document.cookie = `verified=${verified}; path=/; max-age=${maxAge}; SameSite=Lax`;
+};
 
 const SignInForm = () => {
   const router = useRouter();
@@ -22,7 +28,7 @@ const SignInForm = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading }] = useLoginMutation();
-  const [googleAuth, { isLoading: isGoogleLoading }] = useGoogleAuthMutation();
+  const [googleAuth] = useGoogleAuthMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,27 +37,23 @@ const SignInForm = () => {
       const response = await login({ email, password }).unwrap();
 
       if (response.success) {
-        // Save the access token and verified status to both cookies and localStorage
-        await saveTokens(response.access, response.verified);
+        // Set cookies directly on client for immediate availability
+        setAuthCookies(response.access, response.verified);
         localStorage.setItem("accessToken", response.access);
         localStorage.setItem("verified", response.verified.toString());
         localStorage.setItem("companyName", response.company_name || "");
 
-        // Show success toast
         toast.success(response.message || "Login successful!");
-
         console.log("Login successful:", response);
 
-        // Small delay to ensure cookies are saved before redirect
-        // Middleware will handle the redirect based on verified status
-        setTimeout(() => {
-          router.push("/");
-        }, 100);
+        // Redirect — cookie is already set synchronously, no delay needed
+        window.location.href = "/";
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
       // Handle error response
       if (
-        error?.data?.message ===
+        err?.data?.message ===
         "OTP sent to your email. Please verify before logging."
       ) {
         // Handle OTP verification required
@@ -64,46 +66,67 @@ const SignInForm = () => {
         router.push("/verify-otp");
       } else {
         const errorMessage =
-          error?.data?.message || "Login failed. Please try again.";
+          err?.data?.message || "Login failed. Please try again.";
         toast.error(errorMessage);
       }
     }
   };
-  const handleGoogleSignIn = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        // Call your backend API with the access token
-        const response = await googleAuth({
-          id_token: tokenResponse.access_token,
-          user_type: "company",
-        }).unwrap();
-
-        if (response.success) {
-          // Save the access token and verified status
-          await saveTokens(response.access, response.verified);
-          localStorage.setItem("accessToken", response.access);
-          localStorage.setItem("verified", response.verified.toString());
-          localStorage.setItem("companyName", response.company_name || "");
-
-          toast.success(response.message || "Google sign in successful!");
-
-          // Redirect to home
-          setTimeout(() => {
-            router.push("/");
-          }, 100);
-        }
-      } catch (error: any) {
-        console.error("Google sign in error:", error);
-        const errorMessage =
-          error?.data?.message || "Google sign in failed. Please try again.";
-        toast.error(errorMessage);
+  const handleGoogleSignIn = async (credentialResponse: CredentialResponse) => {
+    try {
+      if (!credentialResponse.credential) {
+        toast.error("Google sign in failed. No credential received.");
+        return;
       }
-    },
-    onError: (error) => {
-      console.error("Google Login Failed:", error);
-      toast.error("Google sign in failed. Please try again.");
-    },
-  });
+
+      console.log("Sending Google credential to backend...");
+
+      // Send the JWT id_token (credential) to the backend
+      const response = await googleAuth({
+        id_token: credentialResponse.credential,
+        user_type: "company",
+      }).unwrap();
+
+      console.log("Google auth response:", response);
+
+      // Check for access token (the essential field) rather than success flag
+      if (response.access) {
+        // Set cookies directly on client for immediate availability
+        setAuthCookies(response.access, response.verified ?? true);
+        localStorage.setItem("accessToken", response.access);
+        localStorage.setItem(
+          "verified",
+          (response.verified ?? true).toString(),
+        );
+        localStorage.setItem("companyName", response.company_name || "");
+
+        console.log("Cookies and localStorage set, redirecting...");
+        toast.success(response.message || "Google sign in successful!");
+
+        // Redirect — cookie is already set synchronously
+        window.location.href = "/";
+      } else {
+        // Backend returned response but no access token
+        console.error("No access token in response:", response);
+        toast.error(
+          response.message ||
+            response.error ||
+            "Google sign in failed. No access token received.",
+        );
+      }
+    } catch (error: unknown) {
+      console.error("Google sign in error:", error);
+      const err = error as {
+        data?: { message?: string; error?: string };
+        status?: number;
+      };
+      console.error("Error details:", JSON.stringify(err, null, 2));
+      const errorMessage =
+        err?.data?.message ||
+        err?.data?.error ||
+        "Google sign in failed. Please try again.";
+      toast.error(errorMessage);
+    }
+  };
 
   return (
     <div className="w-full max-w-lg">
@@ -192,31 +215,18 @@ const SignInForm = () => {
         </div>
 
         {/* Google Sign In Button */}
-        <Button
-          type="button"
-          onClick={() => handleGoogleSignIn()}
-          className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg font-medium text-sm flex items-center justify-center gap-3"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path
-              d="M19.8055 10.2292C19.8055 9.55056 19.7502 8.86718 19.6326 8.19824H10.2002V12.0492H15.6014C15.3773 13.2911 14.6571 14.3898 13.6025 15.0879V17.5866H16.8253C18.7174 15.8449 19.8055 13.2728 19.8055 10.2292Z"
-              fill="#4285F4"
-            />
-            <path
-              d="M10.2002 20.0006C12.9517 20.0006 15.2726 19.1151 16.8294 17.5865L13.6066 15.0879C12.7096 15.6979 11.5519 16.0433 10.2044 16.0433C7.54355 16.0433 5.28765 14.2832 4.50303 11.9165H1.17236V14.4923C2.76523 17.8695 6.30955 20.0006 10.2002 20.0006Z"
-              fill="#34A853"
-            />
-            <path
-              d="M4.49891 11.9163C4.07891 10.6744 4.07891 9.33051 4.49891 8.08863V5.51279H1.17241C-0.390966 8.66852 -0.390966 12.3364 1.17241 15.4921L4.49891 11.9163Z"
-              fill="#FBBC04"
-            />
-            <path
-              d="M10.2002 3.95805C11.6247 3.936 13.0006 4.47266 14.0396 5.45722L16.8883 2.60278C15.1847 0.990558 12.9305 0.0967064 10.2002 0.122558C6.30955 0.122558 2.76523 2.25366 1.17236 5.63116L4.49886 8.20699C5.27931 5.83588 7.53938 3.95805 10.2002 3.95805Z"
-              fill="#EA4335"
-            />
-          </svg>
-          {isGoogleLoading ? "Signing in..." : "Log in with Google"}
-        </Button>
+        <div className="w-full flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSignIn}
+            onError={() => {
+              toast.error("Google sign in failed. Please try again.");
+            }}
+            theme="outline"
+            size="large"
+            width="400"
+            text="signin_with"
+          />
+        </div>
       </form>
 
       {/* Sign Up Link */}

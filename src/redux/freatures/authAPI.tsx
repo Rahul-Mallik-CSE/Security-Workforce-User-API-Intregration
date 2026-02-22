@@ -1,6 +1,5 @@
 /** @format */
 
-import { send } from "process";
 import baseApi from "../api/baseAPI";
 
 const authAPI = baseApi.injectEndpoints({
