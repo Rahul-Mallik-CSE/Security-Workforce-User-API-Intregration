@@ -31,6 +31,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const googleClientId =
+    process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+
   return (
     <html lang="en">
       <body
@@ -50,7 +53,7 @@ export default function RootLayout({
           theme="light"
           transition={Bounce}
         />
-        <GoogleOAuthProvider>
+        <GoogleOAuthProvider clientId={googleClientId}>
           <Providers>
             <SidebarProvider>
               <DashboardSidebar />

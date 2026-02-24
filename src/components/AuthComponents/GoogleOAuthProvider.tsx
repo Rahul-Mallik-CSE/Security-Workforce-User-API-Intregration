@@ -7,12 +7,13 @@ import { ReactNode } from "react";
 
 interface GoogleOAuthProviderProps {
   children: ReactNode;
+  clientId: string;
 }
 
-const GoogleOAuthProvider = ({ children }: GoogleOAuthProviderProps) => {
-  // You should get this from environment variables
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
-
+const GoogleOAuthProvider = ({
+  children,
+  clientId,
+}: GoogleOAuthProviderProps) => {
   return <GoogleProvider clientId={clientId}>{children}</GoogleProvider>;
 };
 
