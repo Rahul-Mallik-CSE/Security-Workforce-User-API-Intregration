@@ -48,9 +48,7 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
     const status =
       data.status === "published"
         ? "In Progress"
-        : data.applications?.length > 0
-          ? "Tasked"
-          : "Untasked";
+        : data.status.charAt(0).toUpperCase() + data.status.slice(1);
 
     // Helper function to format date as DD-MM-YYYY
     const formatDate = (dateString: string) => {
