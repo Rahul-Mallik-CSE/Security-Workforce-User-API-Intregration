@@ -59,12 +59,7 @@ const JobManagementPage = () => {
         payRate: `$${job.pay_rate}/hr`,
         required: job.operative_required,
         selected: job.selected_list?.length || 0,
-        status:
-          job.status === "published"
-            ? "In Progress"
-            : job.applications?.length > 0
-              ? "Tasked"
-              : "Untasked",
+        status: job.status === "published" ? "In Progress" : job.status.charAt(0).toUpperCase() + job.status.slice(1),
       }),
     );
   }, [apiResponse]);

@@ -84,7 +84,7 @@ export interface JobManagementData {
   payRate: string;
   required: number;
   selected: number;
-  status: "Tasked" | "In Progress" | "Untasked";
+  status: "Tasked" | "In Progress" | "Untasked" | string;
 }
 
 // API Response Types
