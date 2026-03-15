@@ -74,7 +74,7 @@ const ContractDetailsPage = () => {
       refetch();
     } catch (error) {
       console.error("Failed to upload signature:", error);
-      alert("Failed to upload signature. Please try again.");
+      toast.error("Failed to upload signature. Please try again.");
     }
   };
 

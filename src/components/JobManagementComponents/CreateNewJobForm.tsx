@@ -601,7 +601,7 @@ const CreateNewJobForm = () => {
         {/* Licence Requirements */}
         <div>
           <label className="block text-sm font-semibold text-black mb-2">
-            Security Guard Licence Types{" "}
+            Security Operative Licence Type{" "}
             <span className="text-gray-400 font-normal text-xs">
               (Multiple)
             </span>
