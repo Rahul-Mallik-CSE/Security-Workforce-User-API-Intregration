@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Star } from "lucide-react";
+import { Star, User } from "lucide-react";
 import { ApplicantData } from "@/types/AllTypes";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -29,8 +29,10 @@ const ApplicantsCard = ({
   onDelete,
   jobId,
 }: ApplicantsCardProps) => {
-  const imageUrl =
-    getFullImageFullUrl(applicant.profileImage) || "/profile-img.png";
+  const imageUrl = applicant.profileImage
+    ? getFullImageFullUrl(applicant.profileImage)
+    : "";
+  const hasProfileImage = Boolean(imageUrl);
   const isExternalImage = imageUrl.startsWith("http");
 
   const [selectOperative, { isLoading: isSelecting }] =
@@ -69,14 +71,20 @@ const ApplicantsCard = ({
     <div className="border border-gray-200 rounded-lg p-6 flex flex-col overflow-hidden">
       {/* Profile Image */}
       <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden">
-        <Image
-          src={imageUrl}
-          alt={applicant.operativeName}
-          width={80}
-          height={80}
-          className="w-full h-full object-cover"
-          unoptimized={isExternalImage}
-        />
+        {hasProfileImage ? (
+          <Image
+            src={imageUrl}
+            alt={applicant.operativeName}
+            width={80}
+            height={80}
+            className="w-full h-full object-cover"
+            unoptimized={isExternalImage}
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <User className="w-10 h-10 text-gray-500" />
+          </div>
+        )}
       </div>
 
       {/* Operative Name */}
@@ -144,7 +152,7 @@ const ApplicantsCard = ({
             onClick={() => onDelete?.(applicant.id)}
             className="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-md text-sm font-medium hover:bg-red-600 transition-colors"
           >
-            Delete
+            Unselect
           </Button>
         ) : (
           <Button
