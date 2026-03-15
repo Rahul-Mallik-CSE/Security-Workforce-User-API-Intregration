@@ -10,7 +10,6 @@ import {
 } from "@/redux/freatures/jobManagementAPI";
 import JobRequirementsCard from "@/components/JobManagementComponents/JobRequirementsCard";
 import ApplicantsCard from "@/components/JobManagementComponents/ApplicantsCard";
-import DeleteModal from "@/components/CommonComponents/DeleteModal";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -22,10 +21,6 @@ import {
 const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
   const router = useRouter();
   const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(
-    null,
-  );
 
   // Unwrap params promise
   const { jobId } = use(params);
@@ -120,22 +115,12 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
     );
   };
 
-  const handleDeleteClick = (id: string) => {
-    setSelectedApplicantId(id);
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!selectedApplicantId) return;
-
+  const handleUnselect = async (id: string) => {
     try {
       await removeOperative({
         jobId: jobId,
-        applicationId: selectedApplicantId,
+        applicationId: id,
       }).unwrap();
-
-      setShowDeleteModal(false);
-      setSelectedApplicantId(null);
     } catch (error) {
       console.error("Failed to remove operative:", error);
     }
@@ -219,7 +204,7 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
                         isSelected={true}
                         onSelect={handleSelect}
                         showDelete={true}
-                        onDelete={handleDeleteClick}
+                        onDelete={handleUnselect}
                         jobId={jobId}
                       />
                     ))}
@@ -230,17 +215,6 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
           </div>
         </div>
       </div>
-
-      {/* Delete Modal */}
-      <DeleteModal
-        open={showDeleteModal}
-        onOpenChange={setShowDeleteModal}
-        onConfirm={handleDeleteConfirm}
-        title="Remove Applicant"
-        description="Are you sure you want to remove this applicant from the selected list?"
-        itemName="This applicant"
-        confirmButtonText="Unselect"
-      />
     </div>
   );
 };

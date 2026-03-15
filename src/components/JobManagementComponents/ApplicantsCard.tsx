@@ -107,7 +107,7 @@ const ApplicantsCard = ({
       </div>
 
       {/* Job Experience */}
-      <div className="flex justify-between items-start mb-6 flex-wrap">
+      <div className="flex justify-between items-start mb-3 flex-wrap">
         <span className="text-sm font-semibold text-black">
           Job Experience :
         </span>
