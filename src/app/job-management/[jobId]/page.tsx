@@ -37,8 +37,7 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
     isError,
   } = useGetJobDetailsQuery(jobId);
 
-  const [removeOperative, { isLoading: isRemoving }] =
-    useRemoveOperativeMutation();
+  const [removeOperative] = useRemoveOperativeMutation();
 
   // Transform API data for JobRequirementsCard
   const jobDetails: JobDetailsData | null = useMemo(() => {
@@ -240,6 +239,7 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
         title="Remove Applicant"
         description="Are you sure you want to remove this applicant from the selected list?"
         itemName="This applicant"
+        confirmButtonText="Unselect"
       />
     </div>
   );

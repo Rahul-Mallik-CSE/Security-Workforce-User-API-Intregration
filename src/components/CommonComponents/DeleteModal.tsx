@@ -19,6 +19,7 @@ interface DeleteModalProps {
   title?: string;
   description?: string;
   itemName?: string;
+  confirmButtonText?: string;
 }
 
 const DeleteModal = ({
@@ -28,6 +29,7 @@ const DeleteModal = ({
   title = "Delete Confirmation",
   description = "Are you sure you want to delete this item? This action cannot be undone.",
   itemName,
+  confirmButtonText = "Delete",
 }: DeleteModalProps) => {
   const handleConfirm = () => {
     onConfirm();
@@ -68,7 +70,7 @@ const DeleteModal = ({
             onClick={handleConfirm}
             className="flex-1 bg-red-600 hover:bg-red-700 text-white"
           >
-            Delete
+            {confirmButtonText}
           </Button>
         </div>
       </DialogContent>
