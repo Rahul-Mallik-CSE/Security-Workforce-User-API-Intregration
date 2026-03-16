@@ -862,15 +862,27 @@ const CreateNewJobForm = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="english">English</SelectItem>
-              <SelectItem value="spanish">Spanish</SelectItem>
-              <SelectItem value="mandarin">Mandarin Chinese</SelectItem>
+              <SelectItem value="mandarin">Mandarin</SelectItem>
+              <SelectItem value="cantonese">Cantonese</SelectItem>
               <SelectItem value="hindi">Hindi</SelectItem>
+              <SelectItem value="punjabi">Punjabi</SelectItem>
               <SelectItem value="arabic">Arabic</SelectItem>
-              <SelectItem value="french">French</SelectItem>
-              <SelectItem value="portuguese">Portuguese</SelectItem>
-              <SelectItem value="russian">Russian</SelectItem>
-              <SelectItem value="bangali">Bangali</SelectItem>
+              <SelectItem value="vietnamese">Vietnamese</SelectItem>
+              <SelectItem value="filipino_tagalog">
+                Filipino / Tagalog
+              </SelectItem>
+              <SelectItem value="spanish">Spanish</SelectItem>
+              <SelectItem value="korean">Korean</SelectItem>
               <SelectItem value="japanese">Japanese</SelectItem>
+              <SelectItem value="tamil">Tamil</SelectItem>
+              <SelectItem value="urdu">Urdu</SelectItem>
+              <SelectItem value="greek">Greek</SelectItem>
+              <SelectItem value="italian">Italian</SelectItem>
+              <SelectItem value="turkish">Turkish</SelectItem>
+              <SelectItem value="russian">Russian</SelectItem>
+              <SelectItem value="french">French</SelectItem>
+              <SelectItem value="german">German</SelectItem>
+              <SelectItem value="swahili">Swahili</SelectItem>
             </SelectContent>
           </Select>
         </div>
