@@ -186,6 +186,7 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
                   isSelected={selectedApplicants.includes(applicant.id)}
                   onSelect={handleSelect}
                   jobId={jobId}
+                  isSelectionDisabled={jobDetails.status === "In Progress"}
                 />
               ))}
             </div>
@@ -206,6 +207,9 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
                         showDelete={true}
                         onDelete={handleUnselect}
                         jobId={jobId}
+                        isSelectionDisabled={
+                          jobDetails.status === "In Progress"
+                        }
                       />
                     ))}
                   </div>

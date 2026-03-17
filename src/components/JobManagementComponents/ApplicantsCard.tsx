@@ -19,6 +19,7 @@ interface ApplicantsCardProps {
   showDelete?: boolean;
   onDelete?: (id: string) => void;
   jobId: string;
+  isSelectionDisabled?: boolean;
 }
 
 const ApplicantsCard = ({
@@ -28,6 +29,7 @@ const ApplicantsCard = ({
   showDelete = false,
   onDelete,
   jobId,
+  isSelectionDisabled = false,
 }: ApplicantsCardProps) => {
   const imageUrl = applicant.profileImage
     ? getFullImageFullUrl(applicant.profileImage)
@@ -150,7 +152,8 @@ const ApplicantsCard = ({
         {showDelete ? (
           <Button
             onClick={() => onDelete?.(applicant.id)}
-            className="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-md text-sm font-medium hover:bg-red-600 transition-colors"
+            disabled={isSelectionDisabled}
+            className="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-md text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Unselect
           </Button>
@@ -167,8 +170,8 @@ const ApplicantsCard = ({
                 console.error("Failed to select operative:", error);
               }
             }}
-            disabled={isSelecting}
-            className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium transition-colors ${
+            disabled={isSelecting || isSelectionDisabled}
+            className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
               isSelected
                 ? "bg-green-500 text-white hover:bg-green-600"
                 : "bg-[#1e3a5f] text-white hover:bg-[#152a47]"
