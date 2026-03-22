@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Star, User } from "lucide-react";
+import { Star, User, FileText } from "lucide-react";
 import { ApplicantData } from "@/types/AllTypes";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -11,6 +11,7 @@ import { getFullImageFullUrl } from "@/lib/utils";
 import { useSelectOperativeMutation } from "@/redux/freatures/jobManagementAPI";
 import { useCreateChatMutation } from "@/redux/freatures/chatAPI";
 import { useRouter } from "next/navigation";
+import LicenseImagesModal from "./LicenseImagesModal";
 
 interface ApplicantsCardProps {
   applicant: ApplicantData;
@@ -43,6 +44,7 @@ const ApplicantsCard = ({
   const router = useRouter();
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isLicenseModalOpen, setIsLicenseModalOpen] = useState(false);
 
   const truncateText = (text: string, wordLimit: number) => {
     const words = text.split(" ");
@@ -139,6 +141,23 @@ const ApplicantsCard = ({
           )}
         </div>
       </div>
+      {/*  Licenses Buttons*/}
+      <div className="w-full flex justify-between  items-center gap-2 mb-6 flex-wrap">
+        <span className="text-sm font-semibold text-black ">Licenses :</span>
+        <div className="text-sm text-gray-600 text-right flex-1">
+          {/* View License Button */}
+          <Button
+            onClick={() => setIsLicenseModalOpen(true)}
+            disabled={
+              !applicant.licenseImages || applicant.licenseImages.length === 0
+            }
+            className="h-7 px-2 border bg-transparent border-gray-300 rounded-md flex items-center justify-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <FileText className="w-2 h-2" />
+            View License
+          </Button>
+        </div>
+      </div>
 
       {/* Action Buttons */}
       <div className="flex gap-3 w-full mt-auto flex-wrap">
@@ -149,6 +168,7 @@ const ApplicantsCard = ({
         >
           {isCreatingChat ? "Creating..." : "Chat"}
         </Button>
+
         {showDelete ? (
           <Button
             onClick={() => onDelete?.(applicant.id)}
@@ -181,6 +201,14 @@ const ApplicantsCard = ({
           </Button>
         )}
       </div>
+
+      {/* License Images Modal */}
+      <LicenseImagesModal
+        isOpen={isLicenseModalOpen}
+        onClose={() => setIsLicenseModalOpen(false)}
+        licenseImages={applicant.licenseImages || []}
+        operativeName={applicant.operativeName}
+      />
     </div>
   );
 };

@@ -76,17 +76,27 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
     if (!apiResponse?.data?.applications) return [];
 
     return apiResponse.data.applications.map(
-      (app: JobDetailsAPIApplication) => ({
-        id: app.id.toString(),
-        candidateId: app.candidate.id,
-        operativeName: app.candidate.first_name,
-        jobRole: apiResponse.data.job_title,
-        rating: parseFloat(app.avg_rating_main) || 0,
-        jobExperience: `${app.candidate.exprience_in_years} years`,
-        experienceSummary: app.candidate.exprience_summary,
-        profileImage: app.candidate.image || undefined,
-        status: app.status === "selected" ? "selected" : "pending",
-      }),
+      (app: JobDetailsAPIApplication) => {
+        // Extract all license images
+        const licenseImages =
+          app.candidate.licences?.flatMap(
+            (licence: any) =>
+              licence.licence_images?.map((img: any) => img.file) || [],
+          ) || [];
+
+        return {
+          id: app.id.toString(),
+          candidateId: app.candidate.id,
+          operativeName: app.candidate.first_name,
+          jobRole: apiResponse.data.job_title,
+          rating: parseFloat(app.avg_rating_main) || 0,
+          jobExperience: `${app.candidate.exprience_in_years} years`,
+          experienceSummary: app.candidate.exprience_summary,
+          profileImage: app.candidate.image || undefined,
+          status: app.status === "selected" ? "selected" : "pending",
+          licenseImages,
+        };
+      },
     );
   }, [apiResponse]);
 
@@ -95,17 +105,27 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
     if (!apiResponse?.data?.selected_list) return [];
 
     return apiResponse.data.selected_list.map(
-      (app: JobDetailsAPIApplication) => ({
-        id: app.id.toString(),
-        candidateId: app.candidate.id,
-        operativeName: app.candidate.first_name,
-        jobRole: apiResponse.data.job_title,
-        rating: parseFloat(app.avg_rating_main) || 0,
-        jobExperience: `${app.candidate.exprience_in_years} years`,
-        experienceSummary: app.candidate.exprience_summary,
-        profileImage: app.candidate.image || undefined,
-        status: "selected",
-      }),
+      (app: JobDetailsAPIApplication) => {
+        // Extract all license images
+        const licenseImages =
+          app.candidate.licences?.flatMap(
+            (licence: any) =>
+              licence.licence_images?.map((img: any) => img.file) || [],
+          ) || [];
+
+        return {
+          id: app.id.toString(),
+          candidateId: app.candidate.id,
+          operativeName: app.candidate.first_name,
+          jobRole: apiResponse.data.job_title,
+          rating: parseFloat(app.avg_rating_main) || 0,
+          jobExperience: `${app.candidate.exprience_in_years} years`,
+          experienceSummary: app.candidate.exprience_summary,
+          profileImage: app.candidate.image || undefined,
+          status: "selected",
+          licenseImages,
+        };
+      },
     );
   }, [apiResponse]);
 

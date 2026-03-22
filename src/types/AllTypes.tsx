@@ -175,6 +175,7 @@ export interface ApplicantData {
   experienceSummary: string;
   profileImage?: string;
   status?: "selected" | "pending";
+  licenseImages?: string[];
 }
 
 export interface ContractData {
@@ -291,6 +292,13 @@ export interface JobDetailsAPICandidate {
   is_subscribe: boolean;
   exprience_in_years: number;
   exprience_summary: string;
+  licences?: Array<{
+    id: number;
+    licence_images?: Array<{
+      id: number;
+      file: string;
+    }>;
+  }>;
 }
 
 export interface JobDetailsAPIApplication {
