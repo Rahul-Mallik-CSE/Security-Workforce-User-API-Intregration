@@ -41,11 +41,12 @@ export default function ChatWindow({
     setLocalMessages([]);
   }
 
-  // Fetch messages from API
+  // Fetch messages from API - refetch when switching chats to get latest messages
   const { data: messageData, isLoading } = useGetMessageListQuery(
     chatId || "",
     {
       skip: !chatId,
+      refetchOnMountOrArgChange: true,
     },
   );
 
