@@ -21,13 +21,13 @@ const OperativesTrackerPage = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [guardToRate, setGuardToRate] = useState<OperativeTrackerData | null>(
-    null
+    null,
   );
 
   const { data: apiData, isLoading, error } = useGetOperativeTrackersQuery();
 
   const transformAPIToComponentData = (
-    apiItem: OperativeTrackerAPIItem
+    apiItem: OperativeTrackerAPIItem,
   ): OperativeTrackerData => {
     const statusMap: {
       [key: string]: "Shift Complete" | "On-Duty" | "Not Started";
@@ -61,7 +61,7 @@ const OperativesTrackerPage = () => {
     (guard) =>
       guard.jobId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       guard.operativeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      guard.location.toLowerCase().includes(searchQuery.toLowerCase())
+      guard.location.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns: TableColumn[] = [
@@ -167,7 +167,7 @@ const OperativesTrackerPage = () => {
     <div className="p-6">
       {/* Header with Title and Search */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-semibold">Guards Track</h1>
+        <h1 className="text-2xl font-semibold">Operatives Tracker</h1>
 
         {/* Search Bar */}
         <div className="relative w-full md:w-96">

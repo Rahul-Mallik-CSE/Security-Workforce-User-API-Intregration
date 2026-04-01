@@ -85,7 +85,7 @@ const JobRequirementsCard = ({
           {/* License Requirements */}
           <div className="flex justify-between items-start">
             <span className="text-black text-lg font-semibold">
-              License Requirements :
+              Licence Requirements :
             </span>
             <span className="text-black text-lg  text-right">
               {jobDetails.licenseRequirements}

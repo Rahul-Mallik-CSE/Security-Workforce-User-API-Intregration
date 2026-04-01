@@ -401,7 +401,7 @@ const ContractDetailsPage = () => {
                   </div>
                   <div className="flex justify-between items-start">
                     <span className="text-base font-semibold text-gray-600 w-1/2">
-                      State License Hold :
+                      State Licence Hold :
                     </span>
                     <span className="text-base text-gray-900 w-1/2 text-right">
                       {firstLicence?.state_or_territory || "N/A"}

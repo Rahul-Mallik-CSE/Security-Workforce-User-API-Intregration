@@ -59,7 +59,10 @@ const JobManagementPage = () => {
         payRate: `$${job.pay_rate}/hr`,
         required: job.operative_required,
         selected: job.selected_list?.length || 0,
-        status: job.status === "published" ? "In Progress" : job.status.charAt(0).toUpperCase() + job.status.slice(1),
+        status:
+          job.status === "published"
+            ? "In Progress"
+            : job.status.charAt(0).toUpperCase() + job.status.slice(1),
       }),
     );
   }, [apiResponse]);
@@ -123,7 +126,7 @@ const JobManagementPage = () => {
     if (columnKey === "status") {
       let statusColor = "";
       if (item.status === "Tasked") {
-        statusColor = "bg-red-100 text-red-700";
+        statusColor = "bg-red-100 text-yellow-500";
       } else if (item.status === "In Progress") {
         statusColor = "bg-green-100 text-green-700";
       } else if (item.status === "Untasked") {
