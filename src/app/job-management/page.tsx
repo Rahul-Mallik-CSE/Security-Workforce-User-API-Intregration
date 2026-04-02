@@ -123,15 +123,18 @@ const JobManagementPage = () => {
       return formatDate(item.date);
     }
 
+    //need to change the job status colour perfectly as per the status
     if (columnKey === "status") {
-      let statusColor = "";
-      if (item.status === "Tasked") {
-        statusColor = "bg-red-100 text-yellow-500";
-      } else if (item.status === "In Progress") {
-        statusColor = "bg-green-100 text-green-700";
-      } else if (item.status === "Untasked") {
-        statusColor = "bg-gray-100 text-gray-700";
-      }
+      const statusStyles: Record<string, string> = {
+        "in progress": "bg-blue-100 text-blue-700",
+        "pending contract": "bg-orange-100 text-orange-700",
+        untasked: "bg-gray-100 text-gray-700",
+        tasked: "bg-yellow-200 text-black",
+        finished: "bg-green-100 text-green-700",
+      };
+
+      const statusColor =
+        statusStyles[item.status.toLowerCase()] || "bg-gray-100 text-gray-700";
 
       return (
         <div
