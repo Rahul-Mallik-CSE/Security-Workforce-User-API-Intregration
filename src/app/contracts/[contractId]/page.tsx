@@ -353,13 +353,13 @@ const ContractDetailsPage = () => {
           <div className="border border-gray-200 rounded-2xl p-6">
             <h3 className="text-xl font-semibold mb-3">Disclaimer</h3>
             <p className="text-base text-gray-700 leading-relaxed">
-              Securiverse is a technology platform. It is not the employer of or
-              agent of or act on behalf of the employer or any other party; it
-              does not direct work and is not a party to this contract.
-              Securiverse does not advertise or provide security services and
-              does not employ security officers, crowd controllers,
-              investigators, consultants, installers or any other parties within
-              this agreement.
+              Securiverse is a technology platform only. It is not the employer,
+              agent, representative or supervisor of either Party. It does not
+              direct work, determine employment terms or participate in this
+              contract. Securiverse does not advertise or provide security
+              services and does not employ any personnel referenced in this
+              Agreement. Its role is limited to facilitating communication and
+              storing data as a service.
             </p>
           </div>
 
@@ -385,7 +385,7 @@ const ContractDetailsPage = () => {
                   </div>
                   <div className="flex justify-between items-start">
                     <span className="text-base font-semibold text-gray-600 w-1/2">
-                      ABN :
+                      ABN/ACN :
                     </span>
                     <span className="text-base text-gray-900 w-1/2 text-right">
                       {jobProvider.abn_number || "N/A"}
@@ -401,7 +401,7 @@ const ContractDetailsPage = () => {
                   </div>
                   <div className="flex justify-between items-start">
                     <span className="text-base font-semibold text-gray-600 w-1/2">
-                      State Licence Hold :
+                      State Licence :
                     </span>
                     <span className="text-base text-gray-900 w-1/2 text-right">
                       {firstLicence?.state_or_territory || "N/A"}
@@ -442,7 +442,7 @@ const ContractDetailsPage = () => {
                   </div>
                   <div className="flex justify-between items-start">
                     <span className="text-base font-semibold text-gray-600 w-1/2">
-                      Contact Phone :
+                      Phone :
                     </span>
                     <span className="text-base text-gray-900 w-1/2 text-right">
                       {candidate.phone || "N/A"}
@@ -450,7 +450,7 @@ const ContractDetailsPage = () => {
                   </div>
                   <div className="flex justify-between items-start">
                     <span className="text-base font-semibold text-gray-600 w-1/2">
-                      Contact Email :
+                      Email :
                     </span>
                     <span className="text-base text-gray-900 w-1/2 text-right">
                       {candidate.email}
@@ -495,7 +495,11 @@ const ContractDetailsPage = () => {
             {/* Engagement Details Section */}
             <div>
               <div className="border border-gray-200 rounded-2xl p-6 mb-6">
-                <h3 className="text-xl font-bold mb-6">Engagement Details</h3>
+                <h3 className="text-xl font-bold mb-2">Engagement Details</h3>
+                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  Engagement type is selected solely by Party A. Securiverse
+                  does not determine or influence employment classification.
+                </p>
                 <div className="space-y-3">
                   <div className="flex justify-between items-start">
                     <span className="text-base font-semibold text-gray-600 w-1/2">
@@ -648,26 +652,47 @@ const ContractDetailsPage = () => {
           <div className=" rounded-2xl p-4">
             <h3 className="text-2xl font-bold mb-4">Compliance Confirmation</h3>
             <p className="text-base text-gray-700 leading-relaxed">
-              If disputes arise, they extend no further than the parties
-              mentioned within this Agreement & should be addressed as such.
-              Securiverse retains the right to support discussions with
-              disputing parties and the right to disengage at any point. Parties
-              may seek advice and engage, private, State and/or Federal bodies
-              to support resolution.
+              Securiverse only records Party B’s self declaration. It does not
+              assess, verify, or enforce fitness or suitability. Party B is
+              solely responsible for determining and disclosing their fitness to
+              Party A.
+            </p>
+          </div>
+
+          <div className=" rounded-2xl p-4">
+            <h3 className="text-2xl font-bold mb-4">Dispute Resolution </h3>
+            <p className="text-base text-gray-700 leading-relaxed">
+              Disputes are resolved directly between Party A and Party B.
+              Securiverse only transmits messages on behalf of the Parties and
+              does not originate, modify, approve or supervise instructions.
+              Parties may seek assistance from Fair Work, licensing bodies, or
+              courts.
             </p>
           </div>
 
           {/* Privacy & Data Section */}
           <div className=" rounded-2xl p-4">
             <h3 className="text-2xl font-bold mb-6">Privacy & Data</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 2xl:grid-cols-3  gap-8">
               {/* Consents */}
               <div>
                 <h4 className="text-lg font-semibold mb-3">Consents</h4>
                 <p className="text-base text-gray-700 leading-relaxed">
-                  Each party consents to the information contained within this
-                  Agreement being shared with the other party and stored by
-                  Securiverse.
+                  Parties consent to sharing the information in this Agreement
+                  and to Securiverse storing metadata (timestamps, location
+                  data) for platform integrity.
+                </p>
+              </div>
+
+              {/* Data Storage*/}
+              <div>
+                <h4 className="text-lg font-semibold mb-3">Data Storage</h4>
+                <p className="text-base text-gray-700 leading-relaxed">
+                  Securiverse stores data for its own operations only. It does
+                  not store data on behalf of either Party and does not relieve
+                  either Party of their legal recordkeeping obligations.
+                  Securiverse does not monitor compliance or enforce legal
+                  obligations.
                 </p>
               </div>
 
@@ -675,8 +700,10 @@ const ContractDetailsPage = () => {
               <div>
                 <h4 className="text-lg font-semibold mb-3">Data Use</h4>
                 <p className="text-base text-gray-700 leading-relaxed">
-                  Data collected includes party details, timestamps, and
-                  metadata such as location data stored by Securiverse.
+                  Securiverse collects information entered by the Parties and
+                  associated metadata. It does not monitor attendance, verify
+                  hours worked or track performance, and has no obligation or
+                  liability to do so.
                 </p>
               </div>
             </div>
@@ -684,9 +711,13 @@ const ContractDetailsPage = () => {
 
           {/* Acceptance & Signatures Section */}
           <div className="rounded-2xl p-4">
-            <h3 className="text-2xl font-bold mb-8 text-center">
+            <h3 className="text-2xl font-bold mb-2 text-center">
               Acceptance & Signatures
             </h3>
+            <p className="text-base text-center mb-6 text-gray-700 leading-relaxed">
+              By signing below, Party A and Party B agree to the terms of this
+              Agreement.{" "}
+            </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               {/* Party A - Employer */}
@@ -699,7 +730,7 @@ const ContractDetailsPage = () => {
                       {company.first_name}
                     </span>
                   </div>
-                  <div className="flex justify-between items-start">
+                  {/* <div className="flex justify-between items-start">
                     <span className="text-base text-gray-600">
                       Signature Status :
                     </span>
@@ -712,11 +743,9 @@ const ContractDetailsPage = () => {
                     >
                       {partyASignatureStatus}
                     </span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between items-start">
-                    <span className="text-base text-gray-600">
-                      Signature Timestamp :
-                    </span>
+                    <span className="text-base text-gray-600">Date :</span>
                     <span className="text-base text-gray-900">
                       {engagement.signature_party_a_time
                         ? new Date(
@@ -773,15 +802,15 @@ const ContractDetailsPage = () => {
 
               {/* Party B - Worker */}
               <div>
-                <h4 className="text-lg font-bold mb-6">Party B — Worker</h4>
+                <h4 className="text-lg font-bold mb-6">Party B – Employee</h4>
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
-                    <span className="text-base text-gray-600">Full Name :</span>
+                    <span className="text-base text-gray-600">Name :</span>
                     <span className="text-base text-gray-900 font-medium">
                       {candidate.first_name}
                     </span>
                   </div>
-                  <div className="flex justify-between items-start">
+                  {/* <div className="flex justify-between items-start">
                     <span className="text-base text-gray-600">
                       Signature Status :
                     </span>
@@ -794,11 +823,9 @@ const ContractDetailsPage = () => {
                     >
                       {partyBSignatureStatus}
                     </span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between items-start">
-                    <span className="text-base text-gray-600">
-                      Signature Timestamp :
-                    </span>
+                    <span className="text-base text-gray-600">Date :</span>
                     <span className="text-base text-gray-900">
                       {engagement.signature_party_b_time
                         ? new Date(
