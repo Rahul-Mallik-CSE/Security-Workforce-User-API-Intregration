@@ -48,6 +48,18 @@ const ContractDetailsPage = () => {
     candidate?.licences && candidate.licences.length > 0
       ? candidate.licences[0]
       : null;
+  const contractDate = jobDetails?.job_date
+    ? new Date(jobDetails.job_date)
+    : null;
+  const formattedContractDate =
+    contractDate && !Number.isNaN(contractDate.getTime())
+      ? contractDate.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })
+      : jobDetails?.job_date || "N/A";
+  const contractEndTime = engagement?.new_end_time || jobDetails?.end_time;
 
   const handleSignClick = () => {
     setIsModalOpen(true);
@@ -315,7 +327,7 @@ const ContractDetailsPage = () => {
           <div className="flex items-center gap-3 mb-6">
             <button
               onClick={() => router.back()}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 cursor-pointer hover:bg-gray-100 rounded-lg transition-colors"
               aria-label="Go back"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -416,6 +428,33 @@ const ContractDetailsPage = () => {
                     </span>
                   </div>
                 </div>
+
+                <div className="mt-6 border-t border-gray-200 pt-4">
+                  <h5 className="text-lg font-semibold mb-3 text-gray-900">
+                    Party A Warranties
+                  </h5>
+                  <p className="text-base text-gray-700 mb-3">
+                    Party A confirms it:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-2 text-base text-gray-700">
+                    <li>holds all required licences;</li>
+                    <li>
+                      maintains public liability and workers&apos; compensation
+                      insurance;
+                    </li>
+                    <li>
+                      deploys Party B lawfully and within licence conditions;
+                    </li>
+                    <li>
+                      complies with all employment, safety, Award and Fair Work
+                      obligations;
+                    </li>
+                    <li>
+                      ensures Party B is covered under its workers&apos;
+                      compensation policy.
+                    </li>
+                  </ul>
+                </div>
               </div>
 
               {/* Party B - Employee */}
@@ -495,67 +534,75 @@ const ContractDetailsPage = () => {
             {/* Engagement Details Section */}
             <div>
               <div className="border border-gray-200 rounded-2xl p-6 mb-6">
-                <h3 className="text-xl font-bold mb-2">Engagement Details</h3>
-                <p className="text-base text-gray-700 leading-relaxed mb-4">
+                <h3 className="text-xl font-bold mb-3">Engagement Details</h3>
+                <p className="text-base text-gray-700 leading-relaxed mb-6">
                   Engagement type is selected solely by Party A. Securiverse
                   does not determine or influence employment classification.
                 </p>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-start">
-                    <span className="text-base font-semibold text-gray-600 w-1/2">
-                      Engagement Type :
-                    </span>
-                    <span className="text-base text-gray-900 w-1/2 text-right">
-                      {jobDetails.engagement_type}
-                    </span>
+
+                <div className="space-y-6">
+                  <div className="space-y-3 text-base text-gray-900">
+                    <div className="flex items-start justify-between gap-4">
+                      <span className="w-1/2 font-semibold text-gray-600">
+                        Engagement Type:
+                      </span>
+                      <span className="w-1/2 text-right">
+                        {jobDetails.engagement_type || "N/A"}
+                      </span>
+                    </div>
+                    <div className="flex items-start justify-between gap-4">
+                      <span className="w-1/2 font-semibold text-gray-600">
+                        Role:
+                      </span>
+                      <span className="w-1/2 text-right">
+                        {jobDetails.job_title || "N/A"}
+                      </span>
+                    </div>
+                    <div className="flex items-start justify-between gap-4">
+                      <span className="w-1/2 font-semibold text-gray-600">
+                        Site:
+                      </span>
+                      <span className="w-1/2 text-right">
+                        {jobDetails.address || "N/A"}
+                      </span>
+                    </div>
+                    <div className="flex items-start justify-between gap-4">
+                      <span className="w-1/2 font-semibold text-gray-600">
+                        Client:
+                      </span>
+                      <span className="w-1/2 text-right">
+                        {company.first_name || "N/A"}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-start">
-                    <span className="text-base font-semibold text-gray-600 w-1/2">
-                      Role Type :
-                    </span>
-                    <span className="text-base text-gray-900 w-1/2 text-right">
-                      {jobDetails.job_title}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-start">
-                    <span className="text-base font-semibold text-gray-600 w-1/2">
-                      Location Address :
-                    </span>
-                    <span className="text-base text-gray-900 w-1/2 text-right">
-                      {jobDetails.address}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-start">
-                    <span className="text-base font-semibold text-gray-600 w-1/2">
-                      Company Name :
-                    </span>
-                    <span className="text-base text-gray-900 w-1/2 text-right">
-                      {company.first_name}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-start">
-                    <span className="text-base font-semibold text-gray-600 w-1/2">
-                      Start Time :
-                    </span>
-                    <span className="text-base text-gray-900 w-1/2 text-right">
-                      {jobDetails.start_time}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-start">
-                    <span className="text-base font-semibold text-gray-600 w-1/2">
-                      End Time :
-                    </span>
-                    <span className="text-base text-gray-900 w-1/2 text-right">
-                      {engagement.new_end_time || jobDetails.end_time}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-start">
-                    <span className="text-base font-semibold text-gray-600 w-1/2">
-                      Duration (hours) :
-                    </span>
-                    <span className="text-base text-gray-900 w-1/2 text-right">
-                      {jobDetails.job_duration} hours
-                    </span>
+
+                  <div className="border-t border-gray-200 pt-6">
+                    <h4 className="text-lg font-semibold mb-3">
+                      Commencement &amp; Termination
+                    </h4>
+                    <div className="space-y-3 text-base text-gray-700 leading-relaxed">
+                      <p>
+                        Employment begins at :{" "}
+                        <span className="font-bold">
+                          {formattedContractDate} {jobDetails.start_time}
+                        </span>
+                        .
+                      </p>
+                      <p>
+                        Employment ends automatically at :{" "}
+                        <span className="font-bold">
+                          {formattedContractDate} {contractEndTime}
+                        </span>
+                        .
+                      </p>
+                      <p>
+                        Any extension must be agreed between Party A and Party
+                        B. Party A is responsible for any penalties or loadings
+                        triggered by an extension.
+                      </p>
+                      <p>No ongoing employment relationship is created.</p>
+                      <p>Any further engagement requires a new contract.</p>
+                    </div>
                   </div>
                 </div>
               </div>
