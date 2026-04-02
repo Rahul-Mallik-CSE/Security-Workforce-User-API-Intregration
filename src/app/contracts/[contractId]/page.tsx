@@ -696,7 +696,7 @@ const ContractDetailsPage = () => {
           </div>
 
           {/* Compliance Confirmation Section */}
-          <div className=" rounded-2xl p-4">
+          <div className=" rounded-2xl px-4">
             <h3 className="text-2xl font-bold mb-4">Compliance Confirmation</h3>
             <p className="text-base text-gray-700 leading-relaxed">
               Securiverse only records Party B’s self declaration. It does not
@@ -706,7 +706,7 @@ const ContractDetailsPage = () => {
             </p>
           </div>
 
-          <div className=" rounded-2xl p-4">
+          <div className=" rounded-2xl px-4">
             <h3 className="text-2xl font-bold mb-4">Dispute Resolution </h3>
             <p className="text-base text-gray-700 leading-relaxed">
               Disputes are resolved directly between Party A and Party B.
