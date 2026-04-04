@@ -17,7 +17,19 @@ const payrollAPI = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Payroll"],
     }),
+    bulkMarkAsPaid: builder.mutation<void, number[]>({
+      query: (invoiceIds) => ({
+        url: "/api/jobs/comanny-payroll-management-views/",
+        method: "POST",
+        body: { invoice_ids: invoiceIds },
+      }),
+      invalidatesTags: ["Payroll"],
+    }),
   }),
 });
 
-export const { useGetPayrollsQuery, useMarkAsPaidMutation } = payrollAPI;
+export const {
+  useGetPayrollsQuery,
+  useMarkAsPaidMutation,
+  useBulkMarkAsPaidMutation,
+} = payrollAPI;

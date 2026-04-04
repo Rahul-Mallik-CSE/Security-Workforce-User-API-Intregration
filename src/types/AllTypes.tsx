@@ -20,6 +20,10 @@ export interface PayrollData {
   startTime?: string;
   endTime?: string;
   jobDetails?: string;
+  bankName?: string;
+  accountHolderName?: string;
+  bankBranch?: string;
+  accountNumber?: string;
 }
 
 export interface ReferralUserData {
@@ -505,6 +509,10 @@ export interface PayrollAPICandidate {
   is_admin_rejected: boolean;
   is_subscribe: boolean;
   exprience_in_years: number;
+  bank_name?: string;
+  account_holder_name?: string;
+  bank_branch?: string;
+  account_no?: string;
 }
 
 export interface PayrollAPIApplication {

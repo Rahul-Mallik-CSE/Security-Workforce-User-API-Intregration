@@ -26,6 +26,7 @@ interface CustomTableProps<T> {
   data: T[];
   itemsPerPage?: number;
   renderCell?: (item: T, columnKey: string) => React.ReactNode;
+  renderHeaderCell?: (columnKey: string) => React.ReactNode;
   onRowClick?: (item: T) => void;
 }
 
@@ -34,6 +35,7 @@ export default function CustomTable<T extends { id: string }>({
   data,
   itemsPerPage = 10,
   renderCell,
+  renderHeaderCell,
   onRowClick,
 }: CustomTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -101,7 +103,9 @@ export default function CustomTable<T extends { id: string }>({
                   }`}
                   style={{ width: column.width }}
                 >
-                  {column.label}
+                  {column.key === "checkbox" && renderHeaderCell
+                    ? renderHeaderCell(column.key)
+                    : column.label}
                 </TableHead>
               ))}
             </TableRow>
