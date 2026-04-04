@@ -343,12 +343,14 @@ const PayrollPage = () => {
             >
               <Eye className="w-4 h-4 text-gray-600" />
             </Button>
-            <Button
-              onClick={() => handleChangePaidStatus(item)}
-              className="px-2 h-7  text-black bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
-            >
-              Mark as Paid
-            </Button>
+            {item.status !== "Paid" && (
+              <Button
+                onClick={() => handleChangePaidStatus(item)}
+                className="px-2 h-7  text-black bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
+              >
+                Mark as Paid
+              </Button>
+            )}
           </div>
         );
       default:
