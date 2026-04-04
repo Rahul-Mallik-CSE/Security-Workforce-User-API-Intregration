@@ -14,7 +14,7 @@ import PaidStatusChangeModal from "@/components/PayRollComponents/PaidStatusChan
 const PayrollPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPayroll, setSelectedPayroll] = useState<PayrollData | null>(
-    null
+    null,
   );
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isPaidModalOpen, setIsPaidModalOpen] = useState(false);
@@ -22,7 +22,7 @@ const PayrollPage = () => {
   const { data: apiData, isLoading, error } = useGetPayrollsQuery();
 
   const transformAPIToComponentData = (
-    apiItem: PayrollAPIItem
+    apiItem: PayrollAPIItem,
   ): PayrollData => {
     const isPaid = apiItem.contacts_trackers === "not_pay";
 
@@ -63,7 +63,7 @@ const PayrollPage = () => {
     (item) =>
       item.jobId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.operativeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.status.toLowerCase().includes(searchQuery.toLowerCase())
+      item.status.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleViewDetails = (item: PayrollData) => {
@@ -102,9 +102,10 @@ const PayrollPage = () => {
             </Button>
             <Button
               onClick={() => handleChangePaidStatus(item)}
-              className="p-0.5 bg-transparent hover:bg-gray-100 rounded-md transition-colors"
+              className="px-2 h-7  text-black bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
             >
-              <LucideBadgeDollarSign className="w-4 h-4 text-gray-600" />
+              Mark as Paid
+              {/* <LucideBadgeDollarSign className="w-4 h-4 text-gray-600" /> */}
             </Button>
           </div>
         );
