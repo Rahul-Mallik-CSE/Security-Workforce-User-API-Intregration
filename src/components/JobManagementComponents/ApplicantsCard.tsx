@@ -141,20 +141,21 @@ const ApplicantsCard = ({
           )}
         </div>
       </div>
-      {/*  Licenses Buttons*/}
+      {/*  Licenses & Accreditations Buttons*/}
       <div className="w-full flex justify-between  items-center gap-2 mb-6 flex-wrap">
-        <span className="text-sm font-semibold text-black ">Licenses :</span>
         <div className="text-sm text-gray-600 text-right flex-1">
           {/* View License Button */}
           <Button
             onClick={() => setIsLicenseModalOpen(true)}
             disabled={
-              !applicant.licenseImages || applicant.licenseImages.length === 0
+              (!applicant.licences || applicant.licences.length === 0) &&
+              (!applicant.accreditations ||
+                applicant.accreditations.length === 0)
             }
             className="h-7 px-2 border bg-transparent border-gray-300 rounded-md flex items-center justify-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FileText className="w-2 h-2" />
-            View License
+            View Licence & Accreditation
           </Button>
         </div>
       </div>
@@ -206,7 +207,8 @@ const ApplicantsCard = ({
       <LicenseImagesModal
         isOpen={isLicenseModalOpen}
         onClose={() => setIsLicenseModalOpen(false)}
-        licenseImages={applicant.licenseImages || []}
+        licences={applicant.licences}
+        accreditations={applicant.accreditations}
         operativeName={applicant.operativeName}
       />
     </div>

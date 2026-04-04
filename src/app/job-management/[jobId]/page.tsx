@@ -77,12 +77,21 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
 
     return apiResponse.data.applications.map(
       (app: JobDetailsAPIApplication) => {
-        // Extract all license images
-        const licenseImages =
-          app.candidate.licences?.flatMap(
-            (licence: any) =>
-              licence.licence_images?.map((img: any) => img.file) || [],
-          ) || [];
+        // Extract licences with titles
+        const licences =
+          app.candidate.licences?.map((licence) => ({
+            id: licence.id.toString(),
+            title: licence.licence_type?.title || "",
+            stateOrTerritory:
+              licence.licence_type?.state_or_territory || undefined,
+          })) || [];
+
+        // Extract accreditations with titles
+        const accreditations =
+          app.candidate.accreditations?.map((accred) => ({
+            id: accred.id.toString(),
+            title: accred.accreditation_type?.title || "",
+          })) || [];
 
         return {
           id: app.id.toString(),
@@ -94,7 +103,8 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
           experienceSummary: app.candidate.exprience_summary,
           profileImage: app.candidate.image || undefined,
           status: app.status === "selected" ? "selected" : "pending",
-          licenseImages,
+          licences,
+          accreditations,
         };
       },
     );
@@ -106,12 +116,21 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
 
     return apiResponse.data.selected_list.map(
       (app: JobDetailsAPIApplication) => {
-        // Extract all license images
-        const licenseImages =
-          app.candidate.licences?.flatMap(
-            (licence: any) =>
-              licence.licence_images?.map((img: any) => img.file) || [],
-          ) || [];
+        // Extract licences with titles
+        const licences =
+          app.candidate.licences?.map((licence) => ({
+            id: licence.id.toString(),
+            title: licence.licence_type?.title || "",
+            stateOrTerritory:
+              licence.licence_type?.state_or_territory || undefined,
+          })) || [];
+
+        // Extract accreditations with titles
+        const accreditations =
+          app.candidate.accreditations?.map((accred) => ({
+            id: accred.id.toString(),
+            title: accred.accreditation_type?.title || "",
+          })) || [];
 
         return {
           id: app.id.toString(),
@@ -123,7 +142,8 @@ const JobDetailsPage = ({ params }: { params: Promise<{ jobId: string }> }) => {
           experienceSummary: app.candidate.exprience_summary,
           profileImage: app.candidate.image || undefined,
           status: "selected",
-          licenseImages,
+          licences,
+          accreditations,
         };
       },
     );

@@ -175,6 +175,17 @@ export interface JobDetailsData {
   status?: "Tasked" | "In Progress" | "Untasked";
 }
 
+export interface LicenceInfo {
+  id: string;
+  title: string;
+  stateOrTerritory?: string;
+}
+
+export interface AccreditationInfo {
+  id: string;
+  title: string;
+}
+
 export interface ApplicantData {
   id: string;
   candidateId?: number;
@@ -186,6 +197,8 @@ export interface ApplicantData {
   profileImage?: string;
   status?: "selected" | "pending";
   licenseImages?: string[];
+  licences?: LicenceInfo[];
+  accreditations?: AccreditationInfo[];
 }
 
 export interface ContractData {
@@ -308,6 +321,20 @@ export interface JobDetailsAPICandidate {
       id: number;
       file: string;
     }>;
+    licence_type?: {
+      id: number;
+      title: string;
+      state_or_territory?: string;
+    };
+  }>;
+  accreditations?: Array<{
+    id: number;
+    accreditation: string;
+    accreditation_type?: {
+      id: number;
+      title: string;
+      state_or_territory?: string;
+    };
   }>;
 }
 
