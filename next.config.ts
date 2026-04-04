@@ -3,7 +3,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["10.10.12.21"],
+  allowedDevOrigins: [
+    "10.10.12.21",
+    "https://portal.securiverse.com.au/",
+    "portal.securiverse.com.au",
+    "http://localhost:3000",
+  ],
   output: "standalone",
   images: {
     remotePatterns: [
