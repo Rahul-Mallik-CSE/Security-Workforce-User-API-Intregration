@@ -7,6 +7,7 @@ import { Star } from "lucide-react";
 import { JobDetailsData } from "@/types/AllTypes";
 import { Button } from "../ui/button";
 import { useCompleteJobSelectionMutation } from "@/redux/freatures/jobManagementAPI";
+import { useRouter } from "next/navigation";
 
 interface JobRequirementsCardProps {
   jobDetails: JobDetailsData;
@@ -17,6 +18,7 @@ const JobRequirementsCard = ({
   jobDetails,
   jobId,
 }: JobRequirementsCardProps) => {
+  const router = useRouter();
   const [completeJobSelection, { isLoading: isCompleting }] =
     useCompleteJobSelectionMutation();
 
@@ -29,6 +31,11 @@ const JobRequirementsCard = ({
       console.error("Failed to complete job selection:", error);
     }
   };
+
+  const handleSignContractNow = () => {
+    router.push(`/contracts/${jobId}`);
+  };
+
   return (
     <div>
       <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -147,7 +154,13 @@ const JobRequirementsCard = ({
         </div>
       </div>
       {/* Selection Complete Button */}
-      <div className="pt-6 flex justify-center">
+      <div className="pt-6 flex justify-center gap-3 flex-wrap">
+        <Button
+          onClick={handleSignContractNow}
+          className="py-2.5 bg-black text-white rounded-md hover:bg-gray-800 transition-colors text-sm font-medium"
+        >
+          Sign Contract Now
+        </Button>
         <Button
           onClick={handleSelectionComplete}
           disabled={isCompleting || jobDetails.status === "In Progress"}

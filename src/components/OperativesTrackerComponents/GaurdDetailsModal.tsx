@@ -50,7 +50,7 @@ const GuardDetailsModal = ({
       <DialogContent className="sm:max-w-[400px] bg-white">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            Guard Track Details
+            Job Details
           </DialogTitle>
         </DialogHeader>
         <div className="py-4">
@@ -137,7 +137,7 @@ const GuardDetailsModal = ({
           </div>
 
           {/* Approve Button */}
-          <div className="pt-6">
+          {/* <div className="pt-6">
             <button
               onClick={handleApprove}
               disabled={!isShiftCompleted || isApproving || isShiftEnded}
@@ -153,7 +153,7 @@ const GuardDetailsModal = ({
                 ? "Approving..."
                 : "Approve"}
             </button>
-          </div>
+          </div> */}
         </div>
       </DialogContent>
     </Dialog>

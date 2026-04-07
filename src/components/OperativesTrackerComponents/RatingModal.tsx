@@ -44,7 +44,7 @@ const RatingModal = ({
 
   const handleRating = (categoryId: string, rating: number) => {
     setRatings((prev) =>
-      prev.map((item) => (item.id === categoryId ? { ...item, rating } : item))
+      prev.map((item) => (item.id === categoryId ? { ...item, rating } : item)),
     );
   };
 
@@ -138,7 +138,7 @@ const RatingModal = ({
           ))}
 
           {/* Comments Textarea */}
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">
               Comments
             </label>
@@ -148,7 +148,7 @@ const RatingModal = ({
               placeholder="Add your comments here..."
               className="w-full min-h-[80px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-200"
             />
-          </div>
+          </div> */}
 
           {/* Buttons */}
           <div className="flex items-center gap-3 pt-6">

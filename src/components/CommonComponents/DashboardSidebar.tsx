@@ -123,7 +123,7 @@ function DashboardSidebarContent() {
       label: "Operatives Tracker",
       icon: RiMapPinLine,
     },
-    { href: "/payroll", label: "Payroll", icon: AiOutlineDollarCircle },
+    // { href: "/payroll", label: "Payroll", icon: AiOutlineDollarCircle },
     { href: "/settings", label: "Settings", icon: FiSettings },
     { href: "/support", label: "Support", icon: BiSupport },
     { href: "/my-referral-user", label: "Referrals", icon: BiUserPlus },
