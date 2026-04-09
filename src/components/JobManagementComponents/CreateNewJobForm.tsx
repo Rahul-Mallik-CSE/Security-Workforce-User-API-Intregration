@@ -237,7 +237,7 @@ const CreateNewJobForm = () => {
       job_expire: formData.jobExpire,
       start_time: formData.startTime,
       end_time: formData.endTime,
-      job_duration: parseInt(formData.duration) || 0,
+      job_duration: parseFloat(formData.duration) || 0,
       pay_type: formData.payType,
       pay_rate: formData.payRate,
       operative_required: parseInt(formData.operativesRequired) || 0,
