@@ -33,7 +33,7 @@ const JobRequirementsCard = ({
   };
 
   const handleSignContractNow = () => {
-    router.push(`/contracts/${jobId}`);
+    router.push(`/contracts`);
   };
 
   return (
